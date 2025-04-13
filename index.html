@@ -3,161 +3,143 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MTA.IA</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet"/>
+  <title>MTA.IA - Início</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Inter', sans-serif;
-    }
-
     body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
       background: #0f0f0f;
       color: white;
-      height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
       align-items: center;
-      text-align: center;
-      padding: 1rem;
     }
-
-    .header {
+    header {
       width: 100%;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       padding: 1rem 2rem;
+      background-color: #121212;
     }
-
-    .header img {
-      height: 50px;
+    header img {
+      height: 40px;
     }
-
-    .titulo {
-      font-size: 2rem;
+    h1 {
+      font-size: 3rem;
       color: #00ff99;
-      margin-top: 1rem;
+      margin: 2rem 0 1rem;
+      text-align: center;
     }
-
-    .main-content {
-      flex-grow: 1;
+    .container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       gap: 2rem;
+      margin-top: 2rem;
     }
-
-    .botao-destaque {
-      background: #00ff99;
-      color: #000;
-      font-size: 1.5rem;
-      font-weight: bold;
-      padding: 1rem 2rem;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      margin-bottom: 2rem;
-    }
-
-    .quadrados {
+    .cards {
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: row;
       gap: 2rem;
+      flex-wrap: wrap;
       justify-content: center;
     }
-
-    .box {
+    .card {
       background: #1a1a1a;
       border: 1px solid #333;
+      border-radius: 12px;
       padding: 2rem;
-      border-radius: 10px;
-      width: 250px;
-      height: 200px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      width: 280px;
+      text-align: center;
+      position: relative;
     }
-
-    .box h3 {
-      color: #00ffcc;
-      font-size: 1.2rem;
+    .card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
     }
-
-    .box img {
-      width: 120px;
-      height: 120px;
-    }
-
-    .footer {
-      width: 100%;
-      display: flex;
-      justify-content: flex-start;
-      padding: 1rem 2rem;
-    }
-
-    .social-icons a {
-      margin-right: 1rem;
-      color: #00ffcc;
-      text-decoration: none;
+    .card p {
       font-size: 1rem;
+      color: #aaa;
+    }
+    .highlight {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #00ffcc;
+    }
+    .qr-hover {
+      position: relative;
+      cursor: pointer;
+    }
+    .qr-hover .qr-code {
+      display: none;
+      position: absolute;
+      top: 110%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      padding: 1rem;
+      border-radius: 10px;
+      z-index: 10;
+    }
+    .qr-hover:hover .qr-code {
+      display: block;
+    }
+    .socials {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+    }
+    .socials a {
+      margin-right: 10px;
+      text-decoration: none;
+      color: #00ffcc;
+      font-size: 1rem;
+    }
+    @media (max-width: 600px) {
+      .cards {
+        flex-direction: column;
+        align-items: center;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- TOPO COM LOGO E TÍTULO -->
-  <div class="header">
-    <img src="/logo.png" alt="Logo MTA.IA" />
-    <div class="titulo">MTA.IA</div>
-    <div></div>
-  </div>
+  <header>
+    <!-- 🖼️ Substitua 'logo-mta.png' pelo caminho correto da sua logo -->
+    <img src="C:\Users\Jean\Pictures\Saved Pictures\ChatGPT Image 13 de abr. de 2025, 02_16_45.png" alt="Logo MTA.IA" />
+  </header>
 
-  <!-- CONTEÚDO CENTRAL -->
-  <div class="main-content">
-    <button class="botao-destaque" onclick="comecarAgora()">Começar Agora</button>
+  <h1>MTA.IA</h1>
 
-    <div class="quadrados">
-      <div class="box">
-        <h3>Teste MTA.IA 1.0</h3>
+  <div class="container">
+    <div class="cards">
+
+      <!-- Card de Começar Agora -->
+      <div class="card">
+        <h2 class="highlight">Começar Agora</h2>
+        <p>Teste MTA.IA 1.0</p>
       </div>
 
-      <div class="box" id="appBox">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://seusite.com/app-download" alt="QR Code" />
-        <h3>Baixe no PC</h3>
+      <!-- Card de Baixar App -->
+      <div class="card qr-hover">
+        <h2 class="highlight">Baixe o App</h2>
+        <p>Passe o mouse para ver o QR Code</p>
+        <div class="qr-code">
+          <!-- 🖼️ Substitua 'qr-code.png' pelo caminho do QR Code -->
+          <img src="qr-code.png" alt="QR Code" width="150" />
+        </div>
       </div>
+
     </div>
   </div>
 
-  <!-- RODAPÉ COM REDES SOCIAIS -->
-  <div class="footer">
-    <div class="social-icons">
-      <a href="https://instagram.com/sua_ia" target="_blank">📷 Instagram</a>
-      <a href="https://twitter.com/sua_ia" target="_blank">🐦 X</a>
-      <a href="https://tiktok.com/@sua_ia" target="_blank">🎵 TikTok</a>
-    </div>
+  <div class="socials">
+    <a href="https://instagram.com/SUA_REDE" target="_blank">Instagram</a>
+    <a href="https://x.com/SUA_REDE" target="_blank">X (Twitter)</a>
+    <a href="https://tiktok.com/@SUA_REDE" target="_blank">TikTok</a>
   </div>
-
-  <!-- JS PARA DETECTAR CELULAR E REDIRECIONAR -->
-  <script>
-    function comecarAgora() {
-      alert("Você pode iniciar o uso da MTA.IA agora! (aqui redirecionamos para login ou tutorial)");
-      // window.location.href = '/login.html';
-    }
-
-    // Redirecionar para Play Store se for celular
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile) {
-      document.getElementById('appBox').onclick = () => {
-        window.location.href = 'https://play.google.com/store/apps/details?id=seuappid';
-      };
-    }
-  </script>
 
 </body>
 </html>
