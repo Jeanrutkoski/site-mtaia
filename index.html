@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MTA.IA - Sua Inteligência Artificial Completa</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MTA.IA - Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
     * {
       margin: 0;
@@ -13,251 +13,104 @@
       font-family: 'Inter', sans-serif;
     }
     body {
-      background: #0f0f0f;
-      color: #fff;
-      padding: 0;
+      background-color: #0f0f0f;
+      color: white;
     }
-    header {
-      text-align: center;
-      margin-bottom: 2rem;
-      background: #111;
-      padding: 20px;
-    }
-    h1 {
-      font-size: 3rem;
-      color: #00ff99;
-    }
-    p {
-      font-size: 1.2rem;
-      margin-top: 1rem;
-      color: #ccc;
-    }
-    /* Menu */
-    .menu-bar {
-      display: flex;
-      justify-content: space-around;
-      background-color: #1a1a1a;
-      padding: 10px 20px;
-      position: fixed;
-      top: 0;
-      width: 100%;
-      z-index: 1000;
-    }
-    .menu-bar a {
-      color: #00ffcc;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .menu-bar button {
-      display: none;
-    }
-    /* Logo */
-    .logo {
-      width: 150px; /* Ajuste o tamanho conforme necessário */
-      margin: 20px 0;
-    }
-    /* Tela de Login */
-    #login-section {
+    .login-container {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
-      background: #111;
-    }
-    #login-section button {
-      background-color: #00ff99;
-      padding: 15px 30px;
-      margin: 10px;
-      font-size: 1rem;
-      color: #000;
-      font-weight: bold;
-      border-radius: 8px;
-      border: none;
-    }
-    .section {
-      margin-top: 4rem;
-      border: 1px solid #333;
       padding: 2rem;
-      border-radius: 10px;
-      background: #1a1a1a;
-      margin-bottom: 3rem;
     }
-    .section h2 {
-      color: #00ffcc;
+    .login-container img {
+      width: 150px;
       margin-bottom: 1rem;
     }
-    /* Centralização IA */
-    #chat-section {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 70vh;
+    .login-container h1 {
+      font-size: 2rem;
+      color: #00ff99;
+      margin-bottom: 2rem;
     }
-    .chat-box {
-      background: #1a1a1a;
-      border: 1px solid #333;
-      padding: 1rem;
-      border-radius: 10px;
-      max-width: 600px;
-      width: 100%;
-    }
-    .chat-box textarea {
-      width: 100%;
-      height: 80px;
-      border: none;
-      padding: 1rem;
-      border-radius: 8px;
-      font-size: 1rem;
-      margin-bottom: 1rem;
-    }
-    .chat-box button {
+    .login-options button {
       background: #00ff99;
-      border: none;
-      padding: 0.8rem 1.5rem;
-      border-radius: 8px;
+      color: black;
       font-weight: bold;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      margin: 0.5rem;
       cursor: pointer;
     }
-    .response {
-      margin-top: 1rem;
-      background: #2a2a2a;
-      padding: 1rem;
-      border-radius: 8px;
-    }
-    /* Tutorial */
-    #tutorial-section {
+    .dashboard {
       display: none;
-      background: #111;
-      color: #fff;
-      text-align: center;
-      padding: 30px;
-      margin-top: 3rem;
+      padding: 2rem;
     }
-    /* Responsividade para celular */
-    @media (max-width: 768px) {
-      .menu-bar {
-        flex-direction: column;
-        align-items: center;
-      }
-      .menu-bar button {
-        display: block;
-        background: #00ff99;
-        padding: 10px;
-        border-radius: 8px;
-        margin-bottom: 10px;
-      }
+    .toolbar {
+      display: flex;
+      align-items: center;
+      background: #1a1a1a;
+      padding: 1rem;
+      gap: 1rem;
+    }
+    .toolbar img {
+      height: 40px;
+    }
+    .tool {
+      background: #00ff99;
+      color: black;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
   <!-- Tela de Login -->
-  <section id="login-section">
-    <img src="sua_logo_aqui.png" alt="Logo" class="logo"> <!-- Coloque a URL da sua logo aqui -->
-    <h1>Bem-vindo ao MTA.IA</h1>
-    <p>Faça login ou crie uma conta para acessar todas as funcionalidades.</p>
-    <button onclick="login()">Login com E-mail</button>
-    <button onclick="register()">Cadastrar-se</button>
-    <p><a href="#">Termos de Uso</a> | <a href="#">Política de Privacidade</a></p>
-  </section>
-
-  <!-- Formulário de Cadastro (aparecerá após clicar em "Cadastrar-se") -->
-  <section id="register-section" style="display: none;">
-    <img src="sua_logo_aqui.png" alt="Logo" class="logo" style="position: absolute; top: 20px; left: 20px;"> <!-- Logo na parte esquerda da segunda tela -->
-    <h1>Criar Conta</h1>
-    <button onclick="registerWithEmail()">Registrar com E-mail</button>
-    <button onclick="registerWithPhone()">Registrar com Celular</button>
-    <button onclick="registerWithTwitter()">Registrar com Twitter</button>
-    <button onclick="registerWithInstagram()">Registrar com Instagram</button>
-    <p><a href="#">Voltar ao Login</a></p>
-  </section>
-
-  <!-- Menu de navegação (só visível após login) -->
-  <header class="menu-bar" id="menu-bar" style="display: none;">
-    <a href="#estudos">Estudos</a>
-    <a href="#financas">Finanças</a>
-    <a href="#apostas">Apostas</a>
-    <a href="#pdfs">PDFs</a>
-    <a href="#bemestar">Bem-estar</a>
-    <a href="#empresas">Empresas</a>
-    <a href="#treinadores">Treinadores</a>
-  </header>
-
-  <!-- Tutorial de funcionalidades (só visível após login) -->
-  <section id="tutorial-section" style="display: none;">
-    <h2>🔍 Tutorial de Uso</h2>
-    <p>Bem-vindo ao MTA.IA! Aqui estão as principais funcionalidades:</p>
-    <ul>
-      <li><strong>Estudos:</strong> Resumos, explicações e exercícios para escola, ENEM, faculdade.</li>
-      <li><strong>Finanças:</strong> Controle de gastos, planilhas automáticas e dicas de investimentos.</li>
-      <li><strong>Apostas:</strong> Estatísticas, análises e probabilidades de jogos.</li>
-      <li><strong>PDFs:</strong> Criar, editar e analisar PDFs.</li>
-      <li><strong>Bem-estar:</strong> Planos de treino e dicas de alimentação saudável.</li>
-    </ul>
-    <button class="btn" onclick="startChat()">Começar a conversar com a IA</button>
-  </section>
-
-  <!-- IA no centro da tela (aparece após login) -->
-  <section id="chat-section" style="display: none;">
-    <div class="chat-box">
-      <textarea id="userInput" placeholder="Digite sua pergunta..."></textarea>
-      <button onclick="sendMessage()">Enviar</button>
-      <div id="response" class="response"></div>
+  <div class="login-container" id="loginScreen">
+    <img src="/logo.png" alt="Logo MTA.IA" />
+    <h1>Bem-vindo à MTA.IA</h1>
+    <div class="login-options">
+      <button onclick="login()">Entrar com Email</button>
+      <button onclick="login()">Entrar com Celular</button>
+      <button onclick="seguirRedes('twitter')">Entrar com Twitter</button>
+      <button onclick="seguirRedes('instagram')">Entrar com Instagram</button>
     </div>
-  </section>
+  </div>
+
+  <!-- Dashboard -->
+  <div class="dashboard" id="dashboard">
+    <div class="toolbar">
+      <img src="/logo.png" alt="Logo MTA.IA" />
+      <div class="tool">📚 Estudos</div>
+      <div class="tool">💸 Finanças</div>
+      <div class="tool">⚽ Apostas</div>
+      <div class="tool">📄 PDFs</div>
+      <div class="tool">💪 Bem-estar</div>
+      <div class="tool">🏢 Empresas</div>
+      <div class="tool">📊 Treinadores</div>
+    </div>
+    <div class="ia-box">
+      <h2>Converse com a IA</h2>
+      <!-- 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 -->
+    </div>
+  </div>
 
   <script>
-    // Função de login
     function login() {
-      document.getElementById('login-section').style.display = 'none';
-      document.getElementById('menu-bar').style.display = 'flex';
-      document.getElementById('tutorial-section').style.display = 'block';
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
     }
 
-    // Funções de registro (simulando o processo)
-    function register() {
-      document.getElementById('login-section').style.display = 'none';
-      document.getElementById('register-section').style.display = 'block';
+    function seguirRedes(rede) {
+      if (rede === 'twitter') {
+        window.open('https://twitter.com/SEU_USUARIO', '_blank');
+      } else if (rede === 'instagram') {
+        window.open('https://instagram.com/SEU_USUARIO', '_blank');
+      }
+      login();
     }
-
-    function registerWithEmail() {
-      alert('Cadastro com E-mail');
-      // Lógica de cadastro com e-mail
-    }
-
-    function registerWithPhone() {
-      alert('Cadastro com Celular');
-      // Lógica de cadastro com celular
-    }
-
-    function registerWithTwitter() {
-      alert('Cadastro com Twitter');
-      // Lógica de cadastro com Twitter
-    }
-
-    function registerWithInstagram() {
-      alert('Cadastro com Instagram');
-      // Lógica de cadastro com Instagram
-    }
-
-    // Função para iniciar o chat com a IA
-    function startChat() {
-      document.getElementById('tutorial-section').style.display = 'none';
-      document.getElementById('chat-section').style.display = 'block';
-    }
-
-    // Função para enviar mensagem para a IA
-    async function sendMessage() {
-      const input = document.getElementById('userInput').value;
-      const responseDiv = document.getElementById('response');
-      responseDiv.innerHTML = '⏳ Carregando resposta...';
-
-      const res = await fetch('https://api.openai.com/v1/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer SUA_API_KEY_AQUI'
-        },
-        body: JSON.stringify({
-          model: 'text-davinci-003',
-          prompt: input,
+  </script>
+</body>
+</html>
