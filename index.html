@@ -1,37 +1,51 @@
-mport Head from 'next/head';
+import Head from 'next/head';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 flex items-center justify-center p-4">
       <Head>
-        <title>Assistente IA Completo</title>
+        <title>mta.ia - Seu Assistente Inteligente</title>
+        <link rel="icon" href="/favicon.ico" />
       </Head>
       
       <div className="text-center text-white max-w-2xl">
-        <h1 className="text-5xl font-bold mb-4">Seu Assistente <span className="text-yellow-300">Inteligente</span>!</h1>
+        {/* Logo/Nome */}
+        <h1 className="text-6xl font-bold mb-2">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-200">mta.ia</span>
+        </h1>
+        
+        {/* Slogan */}
+        <h2 className="text-4xl font-bold mb-4">A IA que <span className="text-yellow-300">fala sua língua</span>!</h2>
+        
+        {/* Descrição */}
         <p className="text-xl mb-8">
-          Ajuda em estudos, apostas, finanças e muito mais. 
-          <br />Fala como um amigo e resolve tudo na hora!
+          Do ENEM às apostas esportivas, de PDFs a finanças: 
+          <br />resolvo <span className="font-bold">TUDO</span> no estilo brasileiro!
         </p>
         
+        {/* Botões */}
         <div className="flex justify-center space-x-4 mb-12">
-          <button className="bg-yellow-400 text-black px-6 py-3 rounded-full font-bold hover:bg-yellow-300">
-            Experimente Grátis
+          <button className="bg-cyan-400 text-gray-900 px-8 py-3 rounded-full font-bold hover:bg-cyan-300 transition-all shadow-lg">
+            🚀 Começar Agora
           </button>
-          <button className="bg-transparent border-2 border-white px-6 py-3 rounded-full font-bold hover:bg-white hover:text-purple-600">
-            Ver Demonstração
+          <button className="bg-transparent border-2 border-cyan-300 text-cyan-100 px-6 py-3 rounded-full font-bold hover:bg-cyan-300/20 transition-all">
+            Como Funciona?
           </button>
         </div>
         
+        {/* Recursos em Destaque */}
         <div className="flex flex-wrap justify-center gap-4">
-          <div className="bg-white/20 backdrop-blur-sm p-4 rounded-lg">
-            📚 Estudos
+          <div className="bg-white/10 backdrop-blur-sm p-3 rounded-lg border border-cyan-300/30">
+            📚 Ensino Completo
           </div>
-          <div className="bg-white/20 backdrop-blur-sm p-4 rounded-lg">
-            ⚽ Apostas
+          <div className="bg-white/10 backdrop-blur-sm p-3 rounded-lg border border-purple-300/30">
+            ⚽ Apostas Inteligentes
           </div>
-          <div className="bg-white/20 backdrop-blur-sm p-4 rounded-lg">
-            📄 PDF Inteligente
+          <div className="bg-white/10 backdrop-blur-sm p-3 rounded-lg border border-yellow-300/30">
+            📄 PDF Mágico
+          </div>
+          <div className="bg-white/10 backdrop-blur-sm p-3 rounded-lg border border-pink-300/30">
+            💰 Coach Financeiro
           </div>
         </div>
       </div>
