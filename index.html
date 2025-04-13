@@ -115,32 +115,101 @@
       border-radius: 8px;
     }
 
-    /* Estilos de transição da aba */
-    .sidebar-toggle {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      font-size: 2rem;
+    /* Estilos para tela inicial com quadrados */
+    .intro-page {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #121212;
+      flex-direction: column;
+      padding: 2rem;
+    }
+
+    .start-btn {
+      background: #00ff99;
+      color: #000;
+      font-size: 1.5rem;
+      font-weight: bold;
+      padding: 20px 30px;
+      border-radius: 10px;
       cursor: pointer;
-      z-index: 15;
+      margin-bottom: 1rem;
+    }
+
+    .qr-code {
+      display: none;
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    .qr-code img {
+      width: 150px;
+    }
+
+    .intro-box {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 600px;
+      padding: 1.5rem;
+      background: #1a1a1a;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .intro-box .text {
+      color: #ccc;
+      font-size: 1rem;
+    }
+
+    .intro-box .text p {
+      margin-top: 0.5rem;
+    }
+
+    .social-links {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      display: flex;
+      justify-content: space-around;
+      width: 200px;
+    }
+
+    .social-links a {
+      color: #fff;
+      font-size: 1.5rem;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <a href="#">Dashboard</a>
-    <a href="#">Ferramenta 1</a>
-    <a href="#">Ferramenta 2</a>
-    <a href="#">Configurações</a>
+  <!-- Tela inicial -->
+  <div class="intro-page">
+    <div class="intro-box">
+      <div class="text">
+        <div class="start-btn" onclick="showLogin()">Começar Agora</div>
+        <p style="font-size: 0.8rem; color: #888;">Teste MTA.IA 1.0</p>
+      </div>
+      <div class="text">
+        <p>MTA.IA</p>
+        <div class="qr-code">
+          <img src="QR_CODE_AQUI" alt="QR Code">
+        </div>
+      </div>
+    </div>
+    <div class="social-links">
+      <a href="https://www.instagram.com/MTA_IA" target="_blank">Instagram</a>
+      <a href="https://x.com/MTA_IA" target="_blank">X</a>
+      <a href="https://www.tiktok.com/@MTA_IA" target="_blank">TikTok</a>
+    </div>
   </div>
 
-  <!-- Main content -->
-  <div class="main-content">
+  <!-- Página após login -->
+  <div class="main-content" id="chatPage" style="display: none;">
     <div class="logo">
-      <img src="LOGO_URL_AQUI" alt="MTA.IA Logo"> <!-- Coloque o link da sua logo aqui -->
+      <img src="LOGO_URL_AQUI" alt="MTA.IA Logo"> <!-- Substitua com sua logo -->
     </div>
-
     <div class="greeting">
       Olá, sou a MTA.IA. O que posso te ajudar hoje?
     </div>
@@ -153,7 +222,13 @@
   </div>
 
   <script>
-    // Função para enviar mensagem
+    // Função para mostrar a tela de login e esconder a tela inicial
+    function showLogin() {
+      document.querySelector('.intro-page').style.display = 'none';
+      document.getElementById('chatPage').style.display = 'flex';
+    }
+
+    // Função para enviar mensagem para a IA
     async function sendMessage() {
       const input = document.getElementById('userInput').value;
       const responseDiv = document.getElementById('response');
