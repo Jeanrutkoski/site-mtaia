@@ -51,7 +51,12 @@
     .menu-bar button {
       display: none;
     }
-    /* Login e Formulário */
+    /* Logo */
+    .logo {
+      width: 150px; /* Ajuste o tamanho conforme necessário */
+      margin: 20px 0;
+    }
+    /* Tela de Login */
     #login-section {
       display: flex;
       flex-direction: column;
@@ -148,6 +153,7 @@
 <body>
   <!-- Tela de Login -->
   <section id="login-section">
+    <img src="sua_logo_aqui.png" alt="Logo" class="logo"> <!-- Coloque a URL da sua logo aqui -->
     <h1>Bem-vindo ao MTA.IA</h1>
     <p>Faça login ou crie uma conta para acessar todas as funcionalidades.</p>
     <button onclick="login()">Login com E-mail</button>
@@ -157,6 +163,7 @@
 
   <!-- Formulário de Cadastro (aparecerá após clicar em "Cadastrar-se") -->
   <section id="register-section" style="display: none;">
+    <img src="sua_logo_aqui.png" alt="Logo" class="logo" style="position: absolute; top: 20px; left: 20px;"> <!-- Logo na parte esquerda da segunda tela -->
     <h1>Criar Conta</h1>
     <button onclick="registerWithEmail()">Registrar com E-mail</button>
     <button onclick="registerWithPhone()">Registrar com Celular</button>
@@ -245,6 +252,12 @@
       const responseDiv = document.getElementById('response');
       responseDiv.innerHTML = '⏳ Carregando resposta...';
 
-      const res = await fetch('https://api.openai.com/v1
-
-            
+      const res = await fetch('https://api.openai.com/v1/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer SUA_API_KEY_AQUI'
+        },
+        body: JSON.stringify({
+          model: 'text-davinci-003',
+          prompt: input,
