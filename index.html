@@ -322,20 +322,20 @@
         setTimeout(() => {
           chatMessages.removeChild(typingIndicator);
           
-          // Resposta simulada - substitua pela chamada real à API
+          // Resposta simulada - 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
           const responses = [
             "Entendi sua pergunta sobre isso. Aqui está a resposta...",
             "Ótima pergunta! Vou te explicar detalhadamente.",
             "Sobre esse assunto, posso te ajudar com várias informações.",
             "Vamos lá! Aqui está o que você precisa saber..."
-          ];
+          ];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
           
           const randomResponse = responses[Math.floor(Math.random() * responses.length)];
           addMessage('ai', randomResponse);
         }, 1500);
         
         // Para usar a API real da OpenAI, descomente o código abaixo:
-        /*
+        /*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
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
           method: 'POST',
           headers: {
