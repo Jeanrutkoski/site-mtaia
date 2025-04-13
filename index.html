@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MTA.IA - Login</title>
+  <title>MTA.IA</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
     * {
@@ -12,105 +12,152 @@
       box-sizing: border-box;
       font-family: 'Inter', sans-serif;
     }
+
     body {
-      background-color: #0f0f0f;
+      background: #0f0f0f;
       color: white;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+      padding: 1rem;
     }
-    .login-container {
+
+    .header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+    }
+
+    .header img {
+      height: 50px;
+    }
+
+    .titulo {
+      font-size: 2rem;
+      color: #00ff99;
+      margin-top: 1rem;
+    }
+
+    .main-content {
+      flex-grow: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      padding: 2rem;
+      gap: 2rem;
     }
-    .login-container img {
-      width: 150px;
-      margin-bottom: 1rem;
-    }
-    .login-container h1 {
-      font-size: 2rem;
-      color: #00ff99;
+
+    .botao-destaque {
+      background: #00ff99;
+      color: #000;
+      font-size: 1.5rem;
+      font-weight: bold;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
       margin-bottom: 2rem;
     }
-    .login-options button {
-      background: #00ff99;
-      color: black;
-      font-weight: bold;
-      border: none;
-      padding: 1rem 2rem;
-      border-radius: 8px;
-      margin: 0.5rem;
-      cursor: pointer;
-    }
-    .dashboard {
-      display: none;
-      padding: 2rem;
-    }
-    .toolbar {
+
+    .quadrados {
       display: flex;
-      align-items: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+    }
+
+    .box {
       background: #1a1a1a;
-      padding: 1rem;
-      gap: 1rem;
+      border: 1px solid #333;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 250px;
+      height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
-    .toolbar img {
-      height: 40px;
+
+    .box h3 {
+      color: #00ffcc;
+      font-size: 1.2rem;
     }
-    .tool {
-      background: #00ff99;
-      color: black;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      font-weight: bold;
+
+    .box img {
+      width: 120px;
+      height: 120px;
+    }
+
+    .footer {
+      width: 100%;
+      display: flex;
+      justify-content: flex-start;
+      padding: 1rem 2rem;
+    }
+
+    .social-icons a {
+      margin-right: 1rem;
+      color: #00ffcc;
+      text-decoration: none;
+      font-size: 1rem;
     }
   </style>
 </head>
 <body>
-  <!-- Tela de Login -->
-  <div class="login-container" id="loginScreen">
+
+  <!-- TOPO COM LOGO E TÍTULO -->
+  <div class="header">
     <img src="/logo.png" alt="Logo MTA.IA" />
-    <h1>Bem-vindo à MTA.IA</h1>
-    <div class="login-options">
-      <button onclick="login()">Entrar com Email</button>
-      <button onclick="login()">Entrar com Celular</button>
-      <button onclick="seguirRedes('twitter')">Entrar com Twitter</button>
-      <button onclick="seguirRedes('instagram')">Entrar com Instagram</button>
+    <div class="titulo">MTA.IA</div>
+    <div></div>
+  </div>
+
+  <!-- CONTEÚDO CENTRAL -->
+  <div class="main-content">
+    <button class="botao-destaque" onclick="comecarAgora()">Começar Agora</button>
+
+    <div class="quadrados">
+      <div class="box">
+        <h3>Teste MTA.IA 1.0</h3>
+      </div>
+
+      <div class="box" id="appBox">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://seusite.com/app-download" alt="QR Code" />
+        <h3>Baixe no PC</h3>
+      </div>
     </div>
   </div>
 
-  <!-- Dashboard -->
-  <div class="dashboard" id="dashboard">
-    <div class="toolbar">
-      <img src="/logo.png" alt="Logo MTA.IA" />
-      <div class="tool">📚 Estudos</div>
-      <div class="tool">💸 Finanças</div>
-      <div class="tool">⚽ Apostas</div>
-      <div class="tool">📄 PDFs</div>
-      <div class="tool">💪 Bem-estar</div>
-      <div class="tool">🏢 Empresas</div>
-      <div class="tool">📊 Treinadores</div>
-    </div>
-    <div class="ia-box">
-      <h2>Converse com a IA</h2>
-      <!-- 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 -->
+  <!-- RODAPÉ COM REDES SOCIAIS -->
+  <div class="footer">
+    <div class="social-icons">
+      <a href="https://instagram.com/sua_ia" target="_blank">📷 Instagram</a>
+      <a href="https://twitter.com/sua_ia" target="_blank">🐦 X</a>
+      <a href="https://tiktok.com/@sua_ia" target="_blank">🎵 TikTok</a>
     </div>
   </div>
 
+  <!-- JS PARA DETECTAR CELULAR E REDIRECIONAR -->
   <script>
-    function login() {
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('dashboard').style.display = 'block';
+    function comecarAgora() {
+      alert("Você pode iniciar o uso da MTA.IA agora! (aqui redirecionamos para login ou tutorial)");
+      // window.location.href = '/login.html';
     }
 
-    function seguirRedes(rede) {
-      if (rede === 'twitter') {
-        window.open('https://twitter.com/SEU_USUARIO', '_blank');
-      } else if (rede === 'instagram') {
-        window.open('https://instagram.com/SEU_USUARIO', '_blank');
-      }
-      login();
+    // Redirecionar para Play Store se for celular
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+      document.getElementById('appBox').onclick = () => {
+        window.location.href = 'https://play.google.com/store/apps/details?id=seuappid';
+      };
     }
   </script>
+
 </body>
 </html>
