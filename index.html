@@ -634,6 +634,296 @@
 
 </body>
 </html>
+`interactive_video_creator.html`
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Assistente Interativo para Criação de Vídeo</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f0f3f7;
+    margin: 0; padding: 1rem;
+    color: #333;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  header {
+    text-align: center;
+    padding-bottom: 1rem;
+  }
+  h1 {
+    margin-bottom: 0;
+  }
+  #chat-container {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: white;
+    height: 400px;
+    overflow-y: auto;
+    padding: 1rem;
+    box-sizing: border-box;
+    margin-bottom: 1rem;
+  }
+  .message {
+    margin-bottom: 1rem;
+    display: flex;
+  }
+  .message.client {
+    justify-content: flex-end;
+  }
+  .message.ia {
+    justify-content: flex-start;
+  }
+  .message .bubble {
+    max-width: 70%;
+    padding: 0.6rem 1rem;
+    border-radius: 16px;
+    font-size: 1rem;
+    line-height: 1.3;
+  }
+  .message.client .bubble {
+    background-color: #2d89ef;
+    color: white;
+    border-bottom-right-radius: 0;
+  }
+  .message.ia .bubble {
+    background-color: #e7f0fd;
+    color: #2d89ef;
+    border-bottom-left-radius: 0;
+  }
+  #input-area {
+    display: flex;
+    gap: 0.5rem;
+  }
+  #user-input {
+    flex: 1;
+    padding: 0.6rem 1rem;
+    border-radius: 24px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+  }
+  #send-btn {
+    padding: 0 1rem;
+    background: #2d89ef;
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  #send-btn:hover {
+    background: #1b5fbd;
+  }
+  #video-output {
+    text-align: center;
+    margin-top: 1rem;
+  }
+  video {
+    max-width: 100%;
+    border-radius: 10px;
+  }
+  /* Loader animation */
+  #loader {
+    display: none;
+    margin-left: 0.5rem;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #2d89ef;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg);}
+    100% { transform: rotate(360deg);}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Assistente Interativo para Criação de Vídeo</h1>
+  <p>Converse com a IA para criar seu vídeo passo a passo.</p>
+</header>
+
+<div id="chat-container" aria-live="polite" aria-label="Chat de interação com a IA"></div>
+
+<div id="input-area">
+  <input id="user-input" type="text" aria-label="Digite sua mensagem aqui" placeholder="Digite aqui..." autocomplete="off" />
+  <button id="send-btn" aria-label="Enviar mensagem">Enviar</button>
+  <div id="loader" aria-hidden="true"></div>
+</div>
+
+<div id="video-output" aria-live="polite"></div>
+
+<script>
+  // Estado do diálogo
+  const chatContainer = document.getElementById('chat-container');
+  const userInput = document.getElementById('user-input');
+  const sendBtn = document.getElementById('send-btn');
+  const videoOutput = document.getElementById('video-output');
+  const loader = document.getElementById('loader');
+
+  let conversation = [];
+  let step = 0;
+  let videoData = {
+    briefing: '',
+    music: '',
+    duration: '',
+    mediaUploads: []
+  };
+
+  // Função para adicionar mensagem ao chat
+  function addMessage(text, author = 'ia') {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'message ' + (author === 'client' ? 'client' : 'ia');
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.textContent = text;
+    msgDiv.appendChild(bubble);
+    chatContainer.appendChild(msgDiv);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
+
+  // Função para a IA responder conforme step e input
+  async function handleUserInput(input) {
+    addMessage(input, 'client');
+
+    // Processa diálogo passo a passo
+    switch(step) {
+      case 0:
+        videoData.briefing = input;
+        addMessage("Ótimo! Você quer essa edit com qual música? Por favor, informe o nome da música.");
+        step = 1;
+        break;
+
+      case 1:
+        videoData.music = input;
+        addMessage("Ok, agora me fala qual a duração desejada do vídeo (exemplo: 30s, 1min).");
+        step = 2;
+        break;
+
+      case 2:
+        videoData.duration = input;
+        addMessage("Perfeito! Agora envie imagens ou vídeos que deseja incluir (clique no botão abaixo para enviar arquivos).");
+        addFileUploadInput();
+        step = 3;
+        break;
+
+      case 3:
+        addMessage("Por favor, envie os arquivos usando o botão de upload. Quando terminar, escreva 'pronto' para gerar o vídeo.");
+        if(input.toLowerCase() === 'pronto') {
+          addMessage("Gerando seu vídeo, por favor aguarde...");
+          await generateVideoMock();
+          step = 4;
+        }
+        break;
+
+      case 4:
+        addMessage("O vídeo foi gerado! Se quiser criar outro, escreva 'reiniciar'.");
+        if(input.toLowerCase() === 'reiniciar') {
+          resetConversation();
+        }
+        break;
+
+      default:
+        addMessage("Desculpe, não entendi. Para reiniciar escreva 'reiniciar'.");
+        if(input.toLowerCase() === 'reiniciar') {
+          resetConversation();
+        }
+        break;
+    }
+  }
+
+  // Adiciona input para upload de arquivos na conversa
+  function addFileUploadInput() {
+    if(document.getElementById('file-upload')) return; // já existe
+
+    const inputArea = document.getElementById('input-area');
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.id = 'file-upload';
+    fileInput.multiple = true;
+    fileInput.accept = "image/*,video/*";
+    fileInput.style.marginLeft = '8px';
+    fileInput.setAttribute('aria-label', 'Upload de fotos e vídeos');
+    inputArea.insertBefore(fileInput, loader);
+
+    fileInput.addEventListener('change', e => {
+      const files = e.target.files;
+      for (let file of files) {
+        videoData.mediaUploads.push(file);
+      }
+      addMessage(`${files.length} arquivo(s) adicionados ao vídeo.`,"ia");
+    });
+  }
+
+  // Simula a geração do vídeo com base nos dados coletados
+  async function generateVideoMock() {
+    showLoader(true);
+    // Simular delay de geração
+    await new Promise(r => setTimeout(r, 2500));
+    showLoader(false);
+
+    // Exibir resumo e vídeo mockup
+    videoOutput.innerHTML = `
+      <h2>Vídeo Criado!</h2>
+      <p><strong>Briefing:</strong> ${videoData.briefing}</p>
+      <p><strong>Música:</strong> ${videoData.music}</p>
+      <p><strong>Duração:</strong> ${videoData.duration}</p>
+      <p><strong>Arquivos enviados:</strong> ${videoData.mediaUploads.length}</p>
+      <video controls autoplay muted loop>
+        <source src="https://interactive-examples.mdn.mozilla.net/media/examples/flower.webm" type="video/webm" />
+        <source src="https://interactive-examples.mdn.mozilla.net/media/examples/flower.mp4" type="video/mp4" />
+        Seu navegador não suporta vídeo.
+      </video>
+      <p>Observação: esta é uma simulação. O vídeo real seria processado no backend.</p>
+    `;
+  }
+
+  function showLoader(show) {
+    loader.style.display = show ? "inline-block" : "none";
+  }
+
+  function resetConversation() {
+    conversation = [];
+    step = 0;
+    videoData = { briefing: '', music: '', duration: '', mediaUploads: []};
+    chatContainer.innerHTML = '';
+    videoOutput.innerHTML = '';
+    const fileInput = document.getElementById('file-upload');
+    if(fileInput) fileInput.remove();
+    addMessage("Olá! Me diga o que você quer no seu vídeo.");
+  }
+
+  // Inicializa conversa
+  resetConversation();
+
+  // Eventos
+  sendBtn.addEventListener('click', () => {
+    const text = userInput.value.trim();
+    if(text === '') return;
+    userInput.value = '';
+    handleUserInput(text);
+  });
+
+  userInput.addEventListener('keypress', e => {
+    if(e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendBtn.click();
+    }
+  });
+</script>
+</body>
+</html>
+
+```
+
 
 ```
 
