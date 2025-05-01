@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MTA.IA - Plataforma Completa de Edição</title>
+    <title>MTA.IA - Diga o que quer e nós criamos</title>
     <style>
         :root {
             --primary: #6e48aa;
@@ -12,125 +12,186 @@
             --light: #f8f9fa;
             --dark: #343a40;
             --success: #28a745;
-            --warning: #ffc107;
-            --danger: #dc3545;
         }
         
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
         
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         
         header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            padding: 2rem 0;
+            padding: 2rem 1rem;
             text-align: center;
-            border-radius: 0 0 25px 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
         .logo {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 10px;
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
         }
         
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 30px;
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
         }
         
-        .creation-panel {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .result-panel {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        main {
+            flex: 1;
             display: flex;
             flex-direction: column;
-        }
-        
-        h2 {
-            color: var(--primary);
-            margin-top: 0;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-        
-        input[type="text"], textarea, select {
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
             width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 16px;
         }
         
-        button {
+        .input-card {
+            background: white;
+            width: 100%;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+        
+        .input-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-icon {
+            background: var(--accent);
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .input-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        #video-request {
+            width: 100%;
+            padding: 1.5rem;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+            min-height: 120px;
+        }
+        
+        #video-request:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(71, 118, 230, 0.2);
+        }
+        
+        .examples {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+        
+        .example {
+            display: inline-block;
+            background: #f0f4ff;
+            color: var(--accent);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            margin: 0.3rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .example:hover {
+            background: var(--accent);
+            color: white;
+        }
+        
+        #generate-btn {
             background: var(--accent);
             color: white;
             border: none;
-            padding: 14px 25px;
-            border-radius: 8px;
-            font-size: 16px;
+            padding: 1.2rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            font-weight: 600;
-            display: inline-flex;
+            width: 100%;
+            display: flex;
             align-items: center;
+            justify-content: center;
         }
         
-        button:hover {
+        #generate-btn:hover {
             background: #3a5bd9;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(58, 91, 217, 0.3);
         }
         
-        button i {
+        #generate-btn i {
             margin-right: 10px;
+        }
+        
+        .result-card {
+            background: white;
+            width: 100%;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            display: none;
         }
         
         .video-container {
             width: 100%;
             background: #000;
-            border-radius: 10px;
+            border-radius: 12px;
             overflow: hidden;
-            margin-bottom: 20px;
+            margin: 1.5rem 0;
             aspect-ratio: 16/9;
         }
         
         video {
             width: 100%;
-            display: block;
+            height: 100%;
+            object-fit: cover;
         }
         
         .progress-container {
-            height: 8px;
+            height: 6px;
             background: #eee;
-            border-radius: 4px;
-            margin: 20px 0;
+            border-radius: 3px;
+            margin: 1.5rem 0;
             overflow: hidden;
         }
         
@@ -141,17 +202,23 @@
             transition: width 0.5s ease;
         }
         
-        .avatar-preview {
-            width: 100%;
-            border-radius: 8px;
-            border: 2px dashed #ddd;
-            margin: 15px 0;
-            aspect-ratio: 16/9;
-            background: #f9f9f9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--gray);
+        .download-btn {
+            background: var(--success);
+            color: white;
+            text-align: center;
+            padding: 1.2rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            display: block;
+            margin-top: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .download-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(33, 136, 56, 0.3);
         }
         
         .loading {
@@ -169,27 +236,20 @@
             to { transform: rotate(360deg); }
         }
         
-        .download-btn {
-            background: var(--success);
-            color: white;
+        footer {
             text-align: center;
-            padding: 15px;
-            border-radius: 8px;
-            text-decoration: none;
-            margin-top: auto;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .download-btn:hover {
-            background: #218838;
+            padding: 1.5rem;
+            color: #666;
+            font-size: 0.9rem;
         }
         
         @media (max-width: 768px) {
-            .main-grid {
-                grid-template-columns: 1fr;
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .input-card, .result-card {
+                padding: 1.5rem;
             }
         }
     </style>
@@ -197,245 +257,198 @@
 </head>
 <body>
     <header>
-        <div class="container">
-            <div class="logo">MTA.IA</div>
-            <p>Plataforma Completa de Edição com Inteligência Artificial</p>
-        </div>
+        <div class="logo">MTA.IA</div>
+        <div class="tagline">Digite o que você quer e nós criamos o vídeo automaticamente</div>
     </header>
     
-    <div class="container">
-        <div class="main-grid">
-            <div class="creation-panel">
-                <h2><i class="fas fa-magic"></i> Criar Novo Vídeo</h2>
-                
-                <label for="video-type">Tipo de Vídeo:</label>
-                <select id="video-type">
-                    <option value="edit">Edit Criativo</option>
-                    <option value="promotional">Vídeo Promocional</option>
-                    <option value="educational">Conteúdo Educativo</option>
-                </select>
-                
-                <label for="video-subject">Assunto do Vídeo:</label>
-                <input type="text" id="video-subject" placeholder="Ex: Edit do Messi, Sandália Grendene, Astronomia...">
-                
-                <div id="edit-options">
-                    <label for="music-track">Música (opcional):</label>
-                    <input type="text" id="music-track" placeholder="Ex: Sunflower 1:02 até 2:18">
-                    
-                    <label for="video-duration">Duração (segundos):</label>
-                    <input type="number" id="video-duration" placeholder="Ex: 45" value="45">
+    <main>
+        <div class="input-card">
+            <div class="input-header">
+                <div class="input-icon">
+                    <i class="fas fa-magic"></i>
                 </div>
-                
-                <div id="promotional-options" style="display: none;">
-                    <label>Precisa de um apresentador virtual?</label>
-                    <div style="margin-bottom: 20px;">
-                        <button id="generate-avatar-btn" style="background: var(--secondary);">
-                            <i class="fas fa-robot"></i> Criar Apresentador IA
-                        </button>
-                    </div>
-                    
-                    <div id="avatar-section" style="display: none;">
-                        <label>Descrição do Apresentador:</label>
-                        <textarea id="avatar-description" placeholder="Ex: Mulher 30 anos, cabelos castanhos, usando sandália Grendene..."></textarea>
-                        
-                        <div class="avatar-preview" id="avatar-preview">
-                            Pré-visualização do avatar aparecerá aqui
-                        </div>
-                    </div>
-                    
-                    <label>Precisa de narração?</label>
-                    <div>
-                        <button id="generate-script-btn" style="background: var(--primary);">
-                            <i class="fas fa-microphone"></i> Gerar Roteiro de Narração
-                        </button>
-                    </div>
-                    
-                    <div id="script-section" style="display: none; margin-top: 20px;">
-                        <label>Pontos Principais:</label>
-                        <textarea id="script-points" placeholder="Liste os pontos que devem ser mencionados..."></textarea>
-                    </div>
-                </div>
-                
-                <button id="generate-btn" style="width: 100%; margin-top: 20px;">
-                    <i class="fas fa-play"></i> Gerar Vídeo
-                </button>
-                
-                <div class="progress-container" id="progress-container" style="display: none;">
-                    <div class="progress-bar" id="progress-bar"></div>
-                </div>
+                <div class="input-title">Crie seu vídeo</div>
             </div>
             
-            <div class="result-panel">
-                <h2><i class="fas fa-play-circle"></i> Pré-visualização</h2>
-                
-                <div class="video-container">
-                    <video id="preview-video" controls>
-                        Seu navegador não suporta vídeos HTML5.
-                    </video>
-                </div>
-                
-                <div id="video-details" style="margin-bottom: 20px;">
-                    <!-- Detalhes serão inseridos aqui -->
-                </div>
-                
-                <a href="#" class="download-btn" id="download-btn" style="display: none;">
-                    <i class="fas fa-download"></i> Baixar Vídeo
-                </a>
+            <textarea id="video-request" placeholder="Ex: 'Edit do Messi com música eletrônica de 45 segundos', 'Vídeo promocional de 1 minuto para sandália Grendene com modelo virtual', 'Vídeo educativo de 2 minutos sobre os planetas do sistema solar'"></textarea>
+            
+            <div class="examples">
+                <span>Exemplos:</span>
+                <div class="example">Edit do Neymar com trap</div>
+                <div class="example">Vídeo de produto com modelo IA</div>
+                <div class="example">Vídeo educativo sobre astronomia</div>
             </div>
+            
+            <button id="generate-btn">
+                <i class="fas fa-play"></i> Gerar Vídeo Automático
+            </button>
         </div>
-    </div>
+        
+        <div class="result-card" id="result-card">
+            <div class="input-header">
+                <div class="input-icon" style="background: var(--success);">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="input-title">Seu vídeo está pronto!</div>
+            </div>
+            
+            <div class="video-container">
+                <video id="preview-video" controls></video>
+            </div>
+            
+            <div class="progress-container" id="progress-container" style="display: none;">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            
+            <a href="#" class="download-btn" id="download-btn">
+                <i class="fas fa-download"></i> Baixar Vídeo
+            </a>
+        </div>
+    </main>
+    
+    <footer>
+        MTA.IA &copy; 2023 - Criação automática de vídeos com inteligência artificial
+    </footer>
 
     <script>
         // Elementos do DOM
-        const videoTypeSelect = document.getElementById('video-type');
-        const videoSubjectInput = document.getElementById('video-subject');
-        const editOptionsDiv = document.getElementById('edit-options');
-        const promotionalOptionsDiv = document.getElementById('promotional-options');
+        const videoRequest = document.getElementById('video-request');
         const generateBtn = document.getElementById('generate-btn');
+        const resultCard = document.getElementById('result-card');
         const previewVideo = document.getElementById('preview-video');
         const progressContainer = document.getElementById('progress-container');
         const progressBar = document.getElementById('progress-bar');
         const downloadBtn = document.getElementById('download-btn');
-        const videoDetailsDiv = document.getElementById('video-details');
-        const generateAvatarBtn = document.getElementById('generate-avatar-btn');
-        const avatarSection = document.getElementById('avatar-section');
-        const avatarPreview = document.getElementById('avatar-preview');
-        const avatarDescription = document.getElementById('avatar-description');
-        const generateScriptBtn = document.getElementById('generate-script-btn');
-        const scriptSection = document.getElementById('script-section');
-        const scriptPoints = document.getElementById('script-points');
-        const musicTrackInput = document.getElementById('music-track');
-        const videoDurationInput = document.getElementById('video-duration');
+        const examples = document.querySelectorAll('.example');
 
-        // Configuração de exemplos
-        const examples = {
-            'edit': [
-                { name: 'Edit do Messi', subject: 'Edit do Messi - Melhores Momentos', music: 'Trap Royalty Free 0:00 até 0:45', duration: 45 },
-                { name: 'Edit de F1', subject: 'Edit de F1 - Emoção nas Pistas', music: 'Eletrônica Energética 1:10 até 1:55', duration: 45 }
-            ],
-            'promotional': [
-                { name: 'Sandália Grendene', subject: 'Sandália Grendene Verão 2024', avatar: 'Mulher 30 anos, sorrindo, mostrando os pés com a sandália em praia', script: 'Conforto, resistência, design moderno, qualidade' }
-            ],
-            'educational': [
-                { name: 'Astronomia', subject: 'Os 5 maiores planetas do sistema solar', script: 'Mercúrio, Vênus, Terra, Marte, Júpiter, Saturno, Urano, Netuno, características de cada um' }
-            ]
-        };
-
-        // Mostrar/ocultar opções baseadas no tipo de vídeo
-        videoTypeSelect.addEventListener('change', function() {
-            const type = this.value;
-            
-            if (type === 'edit') {
-                editOptionsDiv.style.display = 'block';
-                promotionalOptionsDiv.style.display = 'none';
-            } else {
-                editOptionsDiv.style.display = 'none';
-                promotionalOptionsDiv.style.display = 'block';
-                
-                // Preencher exemplos
-                const typeExamples = examples[type];
-                videoSubjectInput.placeholder = `Ex: ${typeExamples.map(ex => ex.subject).join(', ')}`;
-            }
-        });
-
-        // Gerar avatar IA
-        generateAvatarBtn.addEventListener('click', function() {
-            avatarSection.style.display = 'block';
-            
-            // Simular geração de avatar
-            setTimeout(() => {
-                avatarPreview.innerHTML = '<img src="https://via.placeholder.com/800x450/6e48aa/FFFFFF?text=Avatar+IA" style="width:100%;height:100%;object-fit:cover;">';
-                
-                // Exemplo automático
-                const type = videoTypeSelect.value;
-                if (type === 'promotional' && videoSubjectInput.value.includes('Grendene')) {
-                    avatarDescription.value = examples.promotional[0].avatar;
-                }
-            }, 500);
-        });
-
-        // Gerar roteiro de narração
-        generateScriptBtn.addEventListener('click', function() {
-            scriptSection.style.display = 'block';
-            
-            // Exemplo automático
-            const type = videoTypeSelect.value;
-            const subject = videoSubjectInput.value;
-            
-            if (type === 'promotional' && subject.includes('Grendene')) {
-                scriptPoints.value = examples.promotional[0].script;
-            } else if (type === 'educational' && subject.includes('planet')) {
-                scriptPoints.value = examples.educational[0].script;
-            }
+        // Exemplos rápidos
+        examples.forEach(example => {
+            example.addEventListener('click', function() {
+                videoRequest.value = this.textContent;
+                videoRequest.focus();
+            });
         });
 
         // Gerar vídeo
         generateBtn.addEventListener('click', async function() {
-            const type = videoTypeSelect.value;
-            const subject = videoSubjectInput.value;
+            const request = videoRequest.value.trim();
             
-            if (!subject) {
-                alert('Por favor, insira o assunto do vídeo');
+            if (!request) {
+                alert('Por favor, descreva o vídeo que você quer criar');
                 return;
             }
+            
+            // Mostrar loading
+            generateBtn.innerHTML = '<i class="fas fa-cog"></i> Gerando... <div class="loading"></div>';
+            generateBtn.disabled = true;
             
             // Mostrar progresso
             progressContainer.style.display = 'block';
             progressBar.style.width = '0%';
-            downloadBtn.style.display = 'none';
             
-            // Simular etapas de processamento
-            const steps = [
-                { text: 'Analisando seu pedido...', percent: 10 },
-                { text: 'Coletando material de vídeo...', percent: 25 },
-                { text: type === 'edit' ? 'Selecionando música...' : 'Gerando avatar IA...', percent: 40 },
-                { text: type === 'edit' ? 'Editando cenas...' : 'Criando roteiro...', percent: 60 },
-                { text: 'Renderizando vídeo final...', percent: 85 },
-                { text: 'Otimizando qualidade...', percent: 100 }
-            ];
+            // Simular processamento (etapas variam conforme o pedido)
+            const steps = determineProcessingSteps(request);
             
-            // Processar cada etapa
             for (const step of steps) {
                 progressBar.style.width = `${step.percent}%`;
-                await new Promise(resolve => setTimeout(resolve, 800));
+                await new Promise(resolve => setTimeout(resolve, step.duration));
             }
             
-            // Gerar vídeo de exemplo (na prática seria um vídeo real)
-            const videoBlob = await generateExampleVideo(type, subject);
+            // Gerar vídeo de exemplo baseado no pedido
+            const videoBlob = await generateVideoFromRequest(request);
             const videoUrl = URL.createObjectURL(videoBlob);
             
             // Mostrar resultado
             previewVideo.src = videoUrl;
+            resultCard.style.display = 'block';
             progressContainer.style.display = 'none';
-            downloadBtn.style.display = 'flex';
+            generateBtn.innerHTML = '<i class="fas fa-play"></i> Gerar Vídeo Automático';
+            generateBtn.disabled = false;
             
-            // Mostrar detalhes
-            showVideoDetails(type, subject);
+            // Rolar para mostrar o resultado
+            setTimeout(() => {
+                resultCard.scrollIntoView({ behavior: 'smooth' });
+            }, 500);
         });
 
-        // Função para gerar vídeo de exemplo (simulado)
-        async function generateExampleVideo(type, subject) {
+        // Determinar etapas de processamento baseado no pedido
+        function determineProcessingSteps(request) {
+            const steps = [
+                { text: 'Analisando seu pedido...', percent: 10, duration: 800 },
+                { text: 'Coletando material...', percent: 25, duration: 1000 }
+            ];
+            
+            if (request.includes('Edit') || request.includes('edit')) {
+                steps.push(
+                    { text: 'Selecionando melhores clipes...', percent: 40, duration: 1200 },
+                    { text: 'Sincronizando com a música...', percent: 60, duration: 1500 }
+                );
+            }
+            
+            if (request.includes('modelo') || request.includes('virtual') || request.includes('apresentador')) {
+                steps.push(
+                    { text: 'Gerando apresentador virtual...', percent: 50, duration: 2000 },
+                    { text: 'Criando movimentos realistas...', percent: 70, duration: 1800 }
+                );
+            }
+            
+            if (request.includes('educativo') || request.includes('explicativo')) {
+                steps.push(
+                    { text: 'Gerando roteiro didático...', percent: 45, duration: 1500 },
+                    { text: 'Selecionando imagens ilustrativas...', percent: 65, duration: 1200 }
+                );
+            }
+            
+            steps.push(
+                { text: 'Editando cenas...', percent: 80, duration: 1600 },
+                { text: 'Renderizando vídeo final...', percent: 100, duration: 2000 }
+            );
+            
+            return steps;
+        }
+
+        // Gerar vídeo de exemplo baseado no pedido (simulação)
+        async function generateVideoFromRequest(request) {
             // Criar canvas para gerar vídeo simples
             const canvas = document.createElement('canvas');
             canvas.width = 800;
             canvas.height = 450;
             const ctx = canvas.getContext('2d');
             
-            // Texto do vídeo
-            ctx.fillStyle = '#6e48aa';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = 'white';
-            ctx.font = 'bold 40px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText(subject, canvas.width/2, canvas.height/2);
+            // Fundo baseado no tipo de vídeo
+            if (request.includes('Edit') || request.includes('edit')) {
+                ctx.fillStyle = '#1a1a2e';
+            } else if (request.includes('promocional') || request.includes('produto')) {
+                ctx.fillStyle = '#16213e';
+            } else {
+                ctx.fillStyle = '#0f3460';
+            }
             
-            if (type === 'promotional') {
-                ctx.font = '24px Arial';
-                ctx.fillText('Apresentador Virtual IA', canvas.width/2, canvas.height/2 + 50);
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Texto do vídeo
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 36px Arial';
+            ctx.textAlign = 'center';
+            
+            // Quebrar texto em linhas
+            const lines = wrapText(ctx, request, canvas.width - 40, 36);
+            
+            lines.forEach((line, i) => {
+                ctx.fillText(line, canvas.width/2, canvas.height/2 - (lines.length * 20)/2 + i * 40);
+            });
+            
+            // Adicionar detalhes baseado no tipo
+            ctx.font = '24px Arial';
+            
+            if (request.includes('modelo') || request.includes('virtual')) {
+                ctx.fillText('Modelo Virtual IA', canvas.width/2, canvas.height/2 + 60);
+            } else if (request.includes('educativo')) {
+                ctx.fillText('Conteúdo Educativo', canvas.width/2, canvas.height/2 + 60);
             }
             
             // Converter canvas para blob de vídeo
-            const stream = canvas.captureStream(30);
+            const stream = canvas.captureStream(25);
             const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
             
             return new Promise(resolve => {
@@ -443,33 +456,32 @@
                 recorder.ondataavailable = e => chunks.push(e.data);
                 recorder.onstop = () => resolve(new Blob(chunks, { type: 'video/webm' }));
                 recorder.start();
-                setTimeout(() => recorder.stop(), 3000);
+                setTimeout(() => recorder.stop(), 4000);
             });
         }
 
-        // Mostrar detalhes do vídeo
-        function showVideoDetails(type, subject) {
-            let details = `
-                <h3 style="margin-top: 0;">Detalhes do Vídeo</h3>
-                <p><strong>Tipo:</strong> ${type === 'edit' ? 'Edit Criativo' : type === 'promotional' ? 'Vídeo Promocional' : 'Conteúdo Educativo'}</p>
-                <p><strong>Assunto:</strong> ${subject}</p>
-            `;
+        // Função para quebrar texto em múltiplas linhas
+        function wrapText(context, text, maxWidth, fontSize) {
+            const words = text.split(' ');
+            const lines = [];
+            let currentLine = words[0];
             
-            if (type === 'edit') {
-                details += `
-                    <p><strong>Música:</strong> ${musicTrackInput.value || 'Automática'}</p>
-                    <p><strong>Duração:</strong> ${videoDurationInput.value} segundos</p>
-                `;
-            } else {
-                if (avatarSection.style.display === 'block') {
-                    details += `<p><strong>Apresentador:</strong> ${avatarDescription.value || 'Customizado'}</p>`;
-                }
-                if (scriptSection.style.display === 'block') {
-                    details += `<p><strong>Narração:</strong> Roteiro gerado automaticamente</p>`;
+            context.font = `bold ${fontSize}px Arial`;
+            
+            for (let i = 1; i < words.length; i++) {
+                const word = words[i];
+                const width = context.measureText(currentLine + ' ' + word).width;
+                
+                if (width < maxWidth) {
+                    currentLine += ' ' + word;
+                } else {
+                    lines.push(currentLine);
+                    currentLine = word;
                 }
             }
             
-            videoDetailsDiv.innerHTML = details;
+            lines.push(currentLine);
+            return lines;
         }
 
         // Download do vídeo
@@ -477,7 +489,7 @@
             e.preventDefault();
             const a = document.createElement('a');
             a.href = previewVideo.src;
-            a.download = `mta-ia-video-${new Date().getTime()}.webm`;
+            a.download = `mta-ia-${new Date().getTime()}.webm`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
