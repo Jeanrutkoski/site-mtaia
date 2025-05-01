@@ -1,216 +1,419 @@
-"""
-video_creator_ai.py
+`video_creator_ai.html`
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>IA Criativa para Vídeos Automáticos</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0;
+    background: #f0f3f7;
+    color: #333;
+  }
+  header {
+    background: #2d89ef;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+  }
+  main {
+    max-width: 900px;
+    margin: 2rem auto;
+    background: white;
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgb(0 0 0 /0.1);
+  }
+  h1,h2,h3 {
+    margin-top: 0;
+  }
+  label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+  textarea, input[type=text] {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #bbb;
+    margin-bottom: 1rem;
+    resize: vertical;
+    min-height: 80px;
+  }
+  button {
+    background: #2d89ef;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background: #1b5fbd;
+  }
+  pre {
+    background: #f4f6fa;
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+  }
+  .section {
+    margin-bottom: 2rem;
+  }
+  .scene {
+    border: 1px solid #ccc;
+    padding: 0.6rem 0.8rem;
+    margin-bottom: 0.8rem;
+    border-radius: 4px;
+    background: #fafafa;
+  }
+  .scene img {
+    max-width: 100%;
+    border-radius: 4px;
+  }
+  .prompt {
+    font-style: italic;
+    color: #666;
+  }
+  .output-block {
+    background: #e7f0fd;
+    border-left: 6px solid #2d89ef;
+    padding: 1rem 1.2rem;
+    margin-bottom: 2rem;
+    white-space: pre-wrap;
+  }
+  .hashtags {
+    font-weight: bold;
+    color: #2d89ef;
+  }
+  .video-mockup {
+    background: #222;
+    color: #eee;
+    text-align: center;
+    border-radius: 8px;
+    padding: 1rem;
+    user-select: none;
+  }
+  .video-mockup img {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+  .footer {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #999;
+    margin-top: 2rem;
+  }
+  .loader {
+    display: inline-block;
+    border: 4px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 4px solid #2d89ef;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+    vertical-align: middle;
+    margin-left: 0.5rem;
+  }
+  @keyframes spin {
+    0% {transform: rotate(0deg);}
+    100% {transform: rotate(360deg);}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>IA Criativa para Vídeos Automáticos</h1>
+  <p>Digite seu briefing e veja a inteligência artificial criar o roteiro e storyboard do vídeo.</p>
+</header>
+<main>
+  <section class="section">
+    <label for="briefing-input">Briefing (ex: "Quero um vídeo de 30s sobre tênis esportivo, tom jovem, com foco em durabilidade")</label>
+    <textarea id="briefing-input" placeholder="Digite seu briefing aqui..."></textarea>
+    <button id="generate-btn">Gerar Vídeo Criativo</button>
+    <span id="loading" style="display:none;" aria-live="polite">Processando<span class="loader"></span></span>
+  </section>
 
-Script para automação do fluxo de criação de vídeos a partir de briefing textual,
-utilizando NLP, LLM, geração de imagem, síntese de voz, edição e pós-produção.
+  <section id="keywords-section" class="section" style="display:none;">
+    <h2>1. Palavras-chave extraídas</h2>
+    <pre id="keywords-output"></pre>
+  </section>
 
-Requer APIs externas: OpenAI GPT-4, Stable Diffusion, ElevenLabs, Epidemic Sound,
-FFmpeg, OpenCV etc. Aqui as chamadas são simuladas; substitua pelos SDKs oficiais.
+  <section id="script-section" class="section" style="display:none;">
+    <h2>2. Roteiro Gerado</h2>
+    <pre id="script-output"></pre>
+  </section>
 
-Autor: BLACKBOXAI
-"""
+  <section id="storyboard-section" class="section" style="display:none;">
+    <h2>3. Storyboard - Cenas e Prompts</h2>
+    <div id="scenes-container"></div>
+  </section>
 
-import json
-import re
-import subprocess
-from typing import List, Dict, Any
+  <section id="narration-section" class="section" style="display:none;">
+    <h2>4. Narração (simulada)</h2>
+    <audio id="narration-audio" controls></audio>
+  </section>
 
-# Simulações de chamadas para APIs com placeholders
-def nlp_extract_keywords(text: str) -> Dict[str, str]:
-    """
-    Extrai palavras-chave do briefing usando NLP (simulado).
-    Exemplo de saída:
-    {
-        "produto": "Tênis esportivo X",
-        "tom": "Jovem/descontraído",
-        "público": "Homens 18-30 anos",
-        "duraçao": "30s"
+  <section id="music-section" class="section" style="display:none;">
+    <h2>5. Trilha Sonora (simulada)</h2>
+    <audio id="music-audio" controls></audio>
+  </section>
+
+  <section id="video-section" class="section" style="display:none;">
+    <h2>6. Vídeo Final (mockup)</h2>
+    <div class="video-mockup" tabindex="0" aria-label="Vídeo do produto simulado">
+      <p>[Vídeo automático simulado]</p>
+      <div id="video-scenes-mockup"></div>
+      <p><strong>Narração:</strong></p>
+      <pre id="video-narration-text" style="background:#333;color:#eee;padding:0.5rem;border-radius:4px;"></pre>
+    </div>
+  </section>
+
+  <section id="social-section" class="section" style="display:none;">
+    <h2>7. Versões para Redes Sociais</h2>
+    <p><strong>TikTok:</strong> Vídeo vertical 9:16 com legendas automáticas.</p>
+    <p><strong>Instagram Reels:</strong> Capa personalizada e chamada para ação "Compre agora!".</p>
+    <p><strong>Hashtags sugeridas:</strong> <span id="hashtags-output" class="hashtags"></span></p>
+  </section>
+</main>
+<footer class="footer">
+  Desenvolvido por IA Criativa &nbsp;|&nbsp; Simulação Frontend - Sem backend real
+</footer>
+
+<script>
+  // Função para extrair palavras-chave do briefing (simulação leve)
+  function extractKeywords(text) {
+    let produto = /tênis esportivo|tênis/i.test(text) ? "Tênis esportivo X" : "Produto genérico";
+    let tom = /jovem/i.test(text) ? "Jovem/descontraído" : "Formal";
+    let publicoMatch = text.match(/homens \d{1,2}-\d{1,2} anos/i);
+    let publico = publicoMatch ? publicoMatch[0].charAt(0).toUpperCase() + publicoMatch[0].slice(1) : "Geral";
+    let duracaoMatch = text.match(/(\d+)s/);
+    let duracao = duracaoMatch ? duracaoMatch[1] + "s" : "30s";
+    return { produto, tom, público: publico, duraçao: duracao };
+  }
+
+  // Função para gerar roteiro a partir das keywords (simula GPT-4 expandindo o briefing)
+  function generateScript(keywords) {
+    return (
+      `[Cena 1: Close do ${keywords.produto} com efeito slow-motion, foco na durabilidade.]\n` +
+      `[Cena 2: Jovem usando o tênis em corrida na cidade, sorriso confiante.]\n` +
+      `[Cena 3: Detalhes do tênis, mostrando qualidade dos materiais.]\n` +
+      `[Cena 4: Logo da marca e chamada para ação, tom ${keywords.tom.toLowerCase()} e descontraído.]\n`
+    );
+  }
+
+  // Divide o roteiro em cenas
+  function splitScriptToScenes(script) {
+    return script.trim().split(/\n+/).filter(scene => scene.length > 0);
+  }
+
+  // Gera prompt para imagem baseado na cena e nas keywords
+  function generatePrompt(sceneDesc, keywords) {
+    return (
+      `${keywords.produto} em ação, fundo urbano, estilo 'anúncio Nike', ` +
+      `tom ${keywords.tom.toLowerCase()}, cores vibrantes, 4K, ${sceneDesc.toLowerCase()}`
+    );
+  }
+
+  // Simula geração de imagem - retorna url placeholder
+  function simulateImageGenerating(prompt, index) {
+    // Usar Imagem pública de tênis esportivo como placeholder
+    const images = [
+      "https://images.unsplash.com/photo-1519861150486-5f2569927a2d?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1509228627152-8f3f7cbeb2d4?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1576107089925-2e34b9bbfb50?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1536499639633-1b3a1c352f61?auto=format&fit=crop&w=800&q=80"
+    ];
+    // Usar a imagem do índice, ou repetir a última se maior que 4
+    return images[index] || images[images.length - 1];
+  }
+
+  // Sugerir hashtags com base no roteiro (simples simulação)
+  function suggestHashtags(scriptText) {
+    return ["#esportivo", "#tênis", "#durabilidade", "#jovem"];
+  }
+
+  // Controla a geração passo a passo na interface
+  async function handleGenerate() {
+    const briefingInput = document.getElementById("briefing-input");
+    const generateBtn = document.getElementById("generate-btn");
+    const loadingIndicator = document.getElementById("loading");
+
+    const keywordsSection = document.getElementById("keywords-section");
+    const keywordsOutput = document.getElementById("keywords-output");
+
+    const scriptSection = document.getElementById("script-section");
+    const scriptOutput = document.getElementById("script-output");
+
+    const storyboardSection = document.getElementById("storyboard-section");
+    const scenesContainer = document.getElementById("scenes-container");
+
+    const narrationSection = document.getElementById("narration-section");
+    const narrationAudio = document.getElementById("narration-audio");
+
+    const musicSection = document.getElementById("music-section");
+    const musicAudio = document.getElementById("music-audio");
+
+    const videoSection = document.getElementById("video-section");
+    const videoScenesMockup = document.getElementById("video-scenes-mockup");
+    const videoNarrationText = document.getElementById("video-narration-text");
+
+    const socialSection = document.getElementById("social-section");
+    const hashtagsOutput = document.getElementById("hashtags-output");
+
+    const briefingText = briefingInput.value.trim();
+    if (!briefingText) {
+      alert("Por favor, insira o briefing para continuar.");
+      return;
     }
-    """
-    # Simples regex + heurística para simulação
-    produto = "Tênis esportivo X" if "tênis" in text.lower() else "Produto genérico"
-    tom = "Jovem/descontraído" if "jovem" in text.lower() else "Formal"
-    publicos = re.findall(r'homens \d+-\d+ anos', text.lower())
-    publico = publicos[0] if publicos else "Geral"
-    duracao_match = re.search(r'(\d+)s', text.lower())
-    duracao = duracao_match.group(1) + "s" if duracao_match else "30s"
-    return {
-        "produto": produto,
-        "tom": tom,
-        "público": publico.capitalize(),
-        "duraçao": duracao
+
+    // Reset UI
+    keywordsSection.style.display = "none";
+    scriptSection.style.display = "none";
+    storyboardSection.style.display = "none";
+    narrationSection.style.display = "none";
+    musicSection.style.display = "none";
+    videoSection.style.display = "none";
+    socialSection.style.display = "none";
+
+    scenesContainer.innerHTML = "";
+    videoScenesMockup.innerHTML = "";
+    hashtagsOutput.textContent = "";
+
+    generateBtn.disabled = true;
+    loadingIndicator.style.display = "inline";
+
+    await new Promise(r => setTimeout(r, 800)); // Simular processamento curto
+
+    // 1. Extrair palavras-chave
+    const keywords = extractKeywords(briefingText);
+    keywordsOutput.textContent = JSON.stringify(keywords, null, 2);
+    keywordsSection.style.display = "block";
+
+    await new Promise(r => setTimeout(r, 600)); // Simular delay
+
+    // 2. Gerar roteiro
+    const script = generateScript(keywords);
+    scriptOutput.textContent = script;
+    scriptSection.style.display = "block";
+
+    await new Promise(r => setTimeout(r, 600)); // Simular delay
+
+    // 3. Gerar storyboard
+    const scenes = splitScriptToScenes(script);
+    scenesContainer.innerHTML = "";
+    scenes.forEach((scene, i) => {
+      const prompt = generatePrompt(scene, keywords);
+      const imgUrl = simulateImageGenerating(prompt, i);
+
+      const sceneDiv = document.createElement("div");
+      sceneDiv.className = "scene";
+
+      const sceneTitle = document.createElement("h3");
+      sceneTitle.textContent = `Cena ${i + 1}`;
+      sceneDiv.appendChild(sceneTitle);
+
+      const sceneDescP = document.createElement("p");
+      sceneDescP.textContent = scene.replace(/\[|\]/g, "");
+      sceneDiv.appendChild(sceneDescP);
+
+      const promptP = document.createElement("p");
+      promptP.className = "prompt";
+      promptP.textContent = `Prompt: ${prompt}`;
+      sceneDiv.appendChild(promptP);
+
+      const sceneImg = document.createElement("img");
+      sceneImg.src = imgUrl;
+      sceneImg.alt = `Imagem gerada da cena ${i + 1}`;
+      sceneDiv.appendChild(sceneImg);
+
+      scenesContainer.appendChild(sceneDiv);
+    });
+    storyboardSection.style.display = "block";
+
+    await new Promise(r => setTimeout(r, 600)); // Simular delay
+
+    // 4. Narração (Simulação: usar speech synthesis do navegador)
+    narrationSection.style.display = "block";
+    narrationAudio.src = ""; // limpar
+    narrationAudio.controls = false;
+
+    // Criar botão para sintetizar narração
+    let synthBtn = document.getElementById("synthesize-btn");
+    if (!synthBtn) {
+      synthBtn = document.createElement("button");
+      synthBtn.id = "synthesize-btn";
+      synthBtn.textContent = "Ouvir Narração (Texto para voz)";
+      narrationSection.appendChild(synthBtn);
+
+      synthBtn.addEventListener("click", () => {
+        if ('speechSynthesis' in window) {
+          let utterance = new SpeechSynthesisUtterance(script);
+          // Ajuste tom de voz conforme keywords.tom
+          utterance.rate = 1;
+          utterance.pitch = (keywords.tom.toLowerCase().includes("jovem") ? 1.2 : 1);
+          window.speechSynthesis.speak(utterance);
+        } else {
+          alert("Seu navegador não suporta Speech Synthesis.");
+        }
+      });
     }
 
-def llm_expand_briefing_to_script(keywords: Dict[str, str]) -> str:
-    """
-    Usa GPT-4 (simulado) para expandir briefing em roteiro estruturado.
-    Retorna roteiro como string (descrição de cenas).
-    """
-    # Simulação de roteiro
-    roteiro = (
-        f"[Cena 1: Close do {keywords['produto']} com efeito slow-motion, foco na durabilidade.]\n"
-        "[Cena 2: Jovem usando o tênis em corrida na cidade, sorriso confiante.]\n"
-        "[Cena 3: Detalhes do tênis, mostrando qualidade dos materiais.]\n"
-        "[Cena 4: Logo da marca e chamada para ação, tom jovem e descontraído.]\n"
-    )
-    return roteiro
+    // 5. Música - usar áudio público
+    musicSection.style.display = "block";
+    // URL música royalty-free simulado (pode usar exemplo do freesound)
+    musicAudio.src = "https://cdn.pixabay.com/download/audio/2021/10/06/audio_25bd5ca3c3.mp3?filename=calm-inspiration-111093.mp3";
+    musicAudio.controls = true;
+    musicAudio.load();
 
-def split_script_to_scenes(roteiro: str) -> List[str]:
-    """
-    Divide o roteiro em cenas para geração separada.
-    """
-    cenas = []
-    # Cada linha que começa com [Cena X: ...]
-    lines = roteiro.strip().split("\n")
-    for line in lines:
-        cenas.append(line.strip())
-    return cenas
+    await new Promise(r => setTimeout(r, 600)); // Simular delay
 
-def generate_image_prompt(scene_description: str, keywords: Dict[str, str]) -> str:
-    """
-    Cria prompt para geração da imagem / vídeo da cena para Stable Diffusion ou Midjourney.
-    """
-    # Exemplo geração de prompt
-    prompt = (
-        f"{keywords['produto']} em ação, fundo urbano, estilo 'anúncio Nike', "
-        f"tom {keywords['tom'].lower()}, cores vibrantes, 4K, {scene_description.lower()}"
-    )
-    return prompt
+    // 6. Vídeo final mockup (mostrar as imagens e texto)
+    videoSection.style.display = "block";
+    videoScenesMockup.innerHTML = "";
 
-def generate_image_from_prompt(prompt: str, scene_index: int) -> str:
-    """
-    Gera imagem/vídeo de cena via API Stable Diffusion (simulado).
-    Retorna caminho do arquivo gerado.
-    """
-    # Simular nome do arquivo gerado
-    filename = f"scene_{scene_index+1}.png"
-    print(f"[INFO] Gerando imagem para cena {scene_index+1} com prompt:\n{prompt}")
-    print(f"[SIMULAÇÃO] Arquivo gerado: {filename}")
-    return filename
+    scenes.forEach((scene, i) => {
+      const imgUrl = simulateImageGenerating(generatePrompt(scene, keywords), i);
+      const divScene = document.createElement("div");
+      divScene.style.marginBottom = "1rem";
 
-def generate_narration_audio(text: str, voice_tone: str, output_path: str) -> str:
-    """
-    Gera narração em áudio via ElevenLabs API (simulado).
-    voice_tone: ex: "jovem", "formal"
-    output_path: caminho para salvar áudio gerado
-    """
-    print(f"[INFO] Gerando narração com tom '{voice_tone}' para texto:\n{text}")
-    # Simular geração
-    print(f"[SIMULAÇÃO] Arquivo de áudio gerado: {output_path}")
-    return output_path
+      const img = document.createElement("img");
+      img.src = imgUrl;
+      img.alt = `Cena do vídeo ${i + 1}`;
+      img.style.maxHeight = "200px";
+      img.style.borderRadius = "8px";
+      divScene.appendChild(img);
 
-def download_royalty_free_music(style: str, duration_sec: int) -> str:
-    """
-    Baixa ou seleciona trilha sonora via Epidemic Sound API (simulado).
-    style: estilo da música, ex: 'ação', 'emocional'
-    duration_sec: duração em segundos para corte
-    Retorna caminho do arquivo de música
-    """
-    filename = f"music_{style}_{duration_sec}s.mp3"
-    print(f"[INFO] Selecionando trilha sonora '{style}' para duração {duration_sec}s")
-    print(f"[SIMULAÇÃO] Arquivo de música: {filename}")
-    return filename
+      const p = document.createElement("p");
+      p.textContent = scene.replace(/\[|\]/g, "");
+      divScene.appendChild(p);
 
-def combine_video_audio(images: List[str], narration_audio: str, music_audio: str, output_file: str, transitions: str = "default") -> None:
-    """
-    Combina imagens, narração e música em um vídeo final usando FFmpeg (simulado).
-    transitions: tipo de transição para aplicar.
-    """
-    print(f"[INFO] Combinando {len(images)} cenas, áudio de narração '{narration_audio}' e música '{music_audio}'")
-    print(f"[SIMULAÇÃO] Transições aplicadas: {transitions}")
-    print(f"[SIMULAÇÃO] Vídeo final salvo em: {output_file}")
+      videoScenesMockup.appendChild(divScene);
+    });
 
-def adjust_video_quality(input_video: str, output_video: str) -> None:
-    """
-    Ajusta brilho, contraste e qualidade do vídeo usando OpenCV (simulado).
-    """
-    print(f"[INFO] Ajustando qualidade do vídeo {input_video}")
-    print(f"[SIMULAÇÃO] Vídeo ajustado salvo em: {output_video}")
+    videoNarrationText.textContent = script;
 
-def insert_logo(input_video: str, logo_path: str, position: str, output_video: str) -> None:
-    """
-    Insere logo no vídeo no canto especificado usando FFmpeg (simulado).
-    """
-    print(f"[INFO] Inserindo logo {logo_path} no vídeo {input_video} na posição {position}")
-    print(f"[SIMULAÇÃO] Vídeo com logo salvo em: {output_video}")
+    // 7. Versões para redes sociais e hashtags
+    socialSection.style.display = "block";
+    const hashtags = suggestHashtags(script);
+    hashtagsOutput.textContent = hashtags.join(" ");
 
-def convert_for_social(platform: str, input_video: str, output_video: str) -> None:
-    """
-    Converte vídeo para formato e dimensões específicas da plataforma (TikTok, Instagram).
-    """
-    if platform.lower() == "tiktok":
-        print(f"[INFO] Convertendo vídeo para TikTok vertical 9:16 com legendas")
-    elif platform.lower() == "instagram reels":
-        print(f"[INFO] Convertendo vídeo para Instagram Reels com capa personalizada e CTA")
-    else:
-        print(f"[INFO] Plataforma desconhecida: {platform}, copiando vídeo sem alteração")
-    print(f"[SIMULAÇÃO] Vídeo exportado para {platform} em: {output_video}")
+    // Re-enable button and hide loading
+    generateBtn.disabled = false;
+    loadingIndicator.style.display = "none";
+  }
 
-def suggest_hashtags(text: str) -> List[str]:
-    """
-    Sugere hashtags baseados no texto do roteiro ou briefing (simulado).
-    """
-    return ["#esportivo", "#tênis", "#durabilidade", "#jovem"]
+  document.getElementById("generate-btn").addEventListener("click", handleGenerate);
+</script>
+</body>
+</html>
 
-def main():
-    # Exemplo de briefing recebido
-    briefing_text = "Quero um vídeo de 30s sobre tênis esportivo, tom jovem, com foco em durabilidade"
-    print("[START] Recebendo briefing:")
-    print(briefing_text)
+```
 
-    # 1. NLP: Extrair palavras-chave
-    keywords = nlp_extract_keywords(briefing_text)
-    print("[INFO] Palavras-chave extraídas:")
-    print(json.dumps(keywords, indent=2, ensure_ascii=False))
-
-    # 2. Expandir para roteiro
-    roteiro = llm_expand_briefing_to_script(keywords)
-    print("[INFO] Roteiro gerado pelo LLM:")
-    print(roteiro)
-
-    # 3. Gerar storyboard
-    cenas = split_script_to_scenes(roteiro)
-
-    # 4. Gerar imagens para cada cena
-    imagens = []
-    for i, cena in enumerate(cenas):
-        prompt = generate_image_prompt(cena, keywords)
-        imagem_path = generate_image_from_prompt(prompt, i)
-        imagens.append(imagem_path)
-
-    # 5. Gerar narração do roteiro completo
-    narração_audio_path = "voiceover.mp3"
-    generate_narration_audio(roteiro, keywords["tom"], narração_audio_path)
-
-    # 6. Selecionar trilha sonora royalty-free
-    duration_sec = int(keywords["duraçao"].replace("s", ""))
-    music_style = "ação" if "ação" in briefing_text.lower() else "descontraído"
-    music_file = download_royalty_free_music(music_style, duration_sec)
-
-    # 7. Editar vídeo combinando elementos
-    output_video = "video_final.mp4"
-    combine_video_audio(imagens, narração_audio_path, music_file, output_video, transitions="rápidas" if music_style=="ação" else "lentas")
-
-    # 8. Pós-produção: ajustes de qualidade e logo
-    adjusted_video = "video_final_adjusted.mp4"
-    adjust_video_quality(output_video, adjusted_video)
-    logo_path = "logo_cliente.png"  # Suponha logo disponível
-    video_com_logo = "video_final_logo.mp4"
-    insert_logo(adjusted_video, logo_path, position="bottom-right", output_video=video_com_logo)
-
-    # 9. Criar versões para redes sociais
-    tiktok_video = "video_tiktok.mp4"
-    convert_for_social("TikTok", video_com_logo, tiktok_video)
-
-    instagram_video = "video_instagram_reels.mp4"
-    convert_for_social("Instagram Reels", video_com_logo, instagram_video)
-
-    # 10. Sugerir hashtags para TikTok e Instagram
-    hashtags = suggest_hashtags(roteiro)
-    print("[INFO] Hashtags sugeridas:")
-    print(" ".join(hashtags))
-
-    print("[COMPLETE] Pipeline de criação de vídeo finalizado com sucesso.")
-
-if __name__ == "__main__":
-    main()
