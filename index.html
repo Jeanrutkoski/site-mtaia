@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VidGenius PRO - Plataforma Completa de Criação com IA</title>
+    <title>MTA.IA - Gerador Automático de Edits</title>
     <style>
         :root {
             --primary: #6e48aa;
@@ -14,179 +14,84 @@
             --success: #28a745;
             --warning: #ffc107;
             --danger: #dc3545;
-            --gray: #6c757d;
         }
         
         body {
-            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f5f7fa;
-            color: var(--dark);
+            color: #333;
             line-height: 1.6;
             margin: 0;
             padding: 0;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 800px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 20px;
         }
         
         header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            padding: 2rem 0;
+            padding: 30px 0;
             text-align: center;
-            border-radius: 0 0 25px 25px;
+            border-radius: 0 0 20px 20px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        header::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, var(--accent), #ff6b6b);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
         h1, h2, h3 {
             margin: 0 0 15px;
         }
         
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 30px;
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
         }
         
-        .chat-container {
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .input-container {
             background: white;
             border-radius: 15px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.08);
-            overflow: hidden;
-        }
-        
-        .chat-header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 15px 20px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .chat-header-left {
-            display: flex;
-            align-items: center;
-        }
-        
-        .ai-status {
-            display: flex;
-            align-items: center;
-            font-size: 0.9rem;
-            font-weight: normal;
-        }
-        
-        .ai-status-indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #4caf50;
-            margin-right: 8px;
-            animation: pulse 1.5s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-        
-        .chat-messages {
-            height: 500px;
-            overflow-y: auto;
             padding: 20px;
-            background: #fafafa;
-            scroll-behavior: smooth;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
         }
         
-        .message {
-            margin-bottom: 20px;
-            max-width: 80%;
-            padding: 15px 20px;
-            border-radius: 20px;
-            position: relative;
-            animation: fadeIn 0.4s ease;
-            line-height: 1.5;
-            font-size: 15px;
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: var(--primary);
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .ai-message {
-            background: white;
-            border: 1px solid #eee;
-            border-radius: 20px 20px 20px 5px;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-        }
-        
-        .user-message {
-            background: var(--accent);
-            color: white;
-            margin-left: auto;
-            border-radius: 20px 20px 5px 20px;
-        }
-        
-        .input-area {
-            display: flex;
+        input[type="text"] {
+            width: 100%;
             padding: 15px;
-            background: white;
-            border-top: 1px solid #eee;
-            position: relative;
-        }
-        
-        input[type="text"],
-        input[type="number"] {
-            flex: 1;
-            padding: 14px 20px;
-            border: 1px solid #ddd;
-            border-radius: 30px;
-            font-size: 15px;
-            outline: none;
-            transition: all 0.3s;
-            background: #f9f9f9;
-        }
-        
-        input[type="text"]:focus,
-        input[type="number"]:focus {
-            border-color: var(--accent);
-            background: white;
-            box-shadow: 0 0 0 3px rgba(71, 118, 230, 0.1);
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 15px;
         }
         
         button {
             background: var(--accent);
             color: white;
             border: none;
-            border-radius: 30px;
-            padding: 0 25px;
-            margin-left: 12px;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 80px;
+            font-weight: bold;
+            display: block;
+            width: 100%;
         }
         
         button:hover {
@@ -194,144 +99,50 @@
             transform: translateY(-2px);
         }
         
-        button:active {
-            transform: translateY(0);
-        }
-        
-        .options-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .option-btn {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            padding: 10px 18px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .option-btn i {
-            margin-right: 8px;
-            font-size: 0.9em;
-        }
-        
-        .option-btn:hover {
-            background: #f0f4ff;
-            border-color: var(--accent);
-            color: var(--accent);
-            transform: translateY(-2px);
-        }
-        
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-        
-        .info-card {
+        .result-container {
+            display: none;
             background: white;
             border-radius: 15px;
             padding: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-        
-        .info-card h3 {
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .info-card h3 i {
-            margin-right: 10px;
-        }
-        
-        .video-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        
-        .detail-item {
-            margin-bottom: 15px;
-        }
-        
-        .detail-label {
-            font-size: 0.8rem;
-            color: var(--gray);
-            margin-bottom: 5px;
-            display: block;
-        }
-        
-        .detail-value {
-            font-weight: 500;
-            word-break: break-word;
-        }
-        
-        .video-preview-container {
-            position: relative;
-            background: #000;
-            border-radius: 10px;
-            overflow: hidden;
-            aspect-ratio: 16/9;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
         }
         
         .video-preview {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            background: #000;
         }
         
-        .video-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s;
+        .video-preview video {
+            width: 100%;
+            display: block;
         }
         
-        .video-preview-container:hover .video-overlay {
-            opacity: 1;
+        .download-btn {
+            background: var(--success);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            display: block;
+            font-weight: bold;
+            transition: all 0.3s;
         }
         
-        .play-btn {
-            width: 60px;
-            height: 60px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(5px);
-            border: 2px solid white;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-        
-        .play-btn:hover {
-            transform: scale(1.1);
+        .download-btn:hover {
+            background: #218838;
         }
         
         .progress-container {
-            height: 8px;
+            height: 10px;
             background: #eee;
-            border-radius: 4px;
+            border-radius: 5px;
             margin: 20px 0;
             overflow: hidden;
-            position: relative;
         }
         
         .progress-bar {
@@ -339,44 +150,6 @@
             background: linear-gradient(90deg, var(--primary), var(--accent));
             width: 0%;
             transition: width 0.5s ease;
-            border-radius: 4px;
-        }
-        
-        .progress-text {
-            position: absolute;
-            right: 0;
-            top: -20px;
-            font-size: 0.8rem;
-            color: var(--gray);
-        }
-        
-        .download-section {
-            text-align: center;
-            margin-top: 30px;
-            display: none;
-        }
-        
-        .download-btn {
-            background: var(--success);
-            color: white;
-            padding: 15px 35px;
-            border-radius: 30px;
-            font-size: 16px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-        }
-        
-        .download-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
-        }
-        
-        .download-btn i {
-            margin-right: 10px;
         }
         
         .loading {
@@ -394,118 +167,27 @@
             to { transform: rotate(360deg); }
         }
         
-        .typing-indicator {
-            display: flex;
-            padding: 10px 15px;
-            background: white;
-            border-radius: 20px;
-            border: 1px solid #eee;
-            width: fit-content;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        
-        .typing-dot {
-            width: 8px;
-            height: 8px;
-            background: #ccc;
-            border-radius: 50%;
-            margin: 0 3px;
-            animation: typingAnimation 1.4s infinite ease-in-out;
-        }
-        
-        .typing-dot:nth-child(1) { animation-delay: 0s; }
-        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-        
-        @keyframes typingAnimation {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-5px); background: var(--accent); }
-        }
-        
-        .time-inputs {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 10px 0;
-        }
-        
-        .time-inputs input {
-            width: 80px;
-            text-align: center;
-        }
-        
-        .time-separator {
-            font-weight: bold;
-        }
-        
-        .ai-avatar-container {
-            position: relative;
-            margin: 15px 0;
-        }
-        
-        .ai-avatar-preview {
-            width: 100%;
-            border-radius: 10px;
-            border: 2px dashed #ddd;
-            aspect-ratio: 16/9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f9f9f9;
-            overflow: hidden;
-        }
-        
-        .ai-avatar-preview img {
-            max-width: 100%;
-            max-height: 100%;
-            display: none;
-        }
-        
-        .avatar-options {
+        .edit-examples {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             gap: 10px;
             margin-top: 15px;
         }
         
-        .avatar-option {
-            border: 2px solid #eee;
+        .example-btn {
+            background: white;
+            border: 1px solid #ddd;
             border-radius: 8px;
-            overflow: hidden;
+            padding: 8px;
             cursor: pointer;
             transition: all 0.3s;
+            font-size: 0.9rem;
+            text-align: center;
         }
         
-        .avatar-option:hover {
+        .example-btn:hover {
             border-color: var(--accent);
-            transform: translateY(-3px);
-        }
-        
-        .avatar-option img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-        
-        .script-preview {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid #eee;
-        }
-        
-        @media (max-width: 768px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .chat-messages {
-                height: 400px;
-            }
+            color: var(--accent);
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -513,700 +195,192 @@
 <body>
     <header>
         <div class="container">
-            <h1><i class="fas fa-star"></i> VidGenius PRO</h1>
-            <p>Plataforma Completa de Criação de Vídeos com IA</p>
+            <div class="logo">MTA.IA</div>
+            <div class="subtitle">Gerador Automático de Edits Profissionais</div>
         </div>
     </header>
     
     <div class="container">
-        <div class="main-grid">
-            <div class="chat-container">
-                <div class="chat-header">
-                    <div class="chat-header-left">
-                        <i class="fas fa-robot"></i>
-                        <span style="margin-left: 10px;">Assistente de Criação</span>
-                    </div>
-                    <div class="ai-status">
-                        <span class="ai-status-indicator"></span>
-                        <span>Online</span>
-                    </div>
-                </div>
-                <div class="chat-messages" id="chat-messages">
-                    <!-- Mensagens serão adicionadas aqui dinamicamente -->
-                </div>
-                <div class="input-area">
-                    <input type="text" id="user-input" placeholder="Digite sua mensagem..." autocomplete="off">
-                    <button id="send-btn">
-                        <i class="fas fa-paper-plane" style="margin-right: 8px;"></i> Enviar
-                    </button>
+        <div class="input-container">
+            <label for="edit-request">O que você quer editar?</label>
+            <input type="text" id="edit-request" placeholder="Ex: edit do Messi, edit da música Sunflower, edit de skate...">
+            
+            <div style="margin: 15px 0;">
+                <label>Exemplos rápidos:</label>
+                <div class="edit-examples">
+                    <div class="example-btn">Edit do Messi</div>
+                    <div class="example-btn">Edit do Neymar</div>
+                    <div class="example-btn">Edit de F1</div>
+                    <div class="example-btn">Edit de Sunflower</div>
+                    <div class="example-btn">Edit de Skate</div>
+                    <div class="example-btn">Edit de Basquete</div>
                 </div>
             </div>
             
-            <div class="sidebar">
-                <div class="info-card">
-                    <h3><i class="fas fa-info-circle"></i> Detalhes do Projeto</h3>
-                    <div class="video-details" id="video-details">
-                        <!-- Detalhes serão preenchidos dinamicamente -->
-                    </div>
-                </div>
-                
-                <div class="info-card">
-                    <h3><i class="fas fa-video"></i> Pré-visualização</h3>
-                    <div class="video-preview-container">
-                        <video class="video-preview" id="preview-video" poster="https://via.placeholder.com/800x450/6e48aa/FFFFFF?text=Preview+do+V%C3%ADdeo">
-                            Seu navegador não suporta o elemento de vídeo.
-                        </video>
-                        <div class="video-overlay">
-                            <div class="play-btn">
-                                <i class="fas fa-play" style="color: white; font-size: 1.5rem; margin-left: 3px;"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="progress-container" id="progress-container" style="display: none;">
-                        <div class="progress-text" id="progress-text">Processando...</div>
-                        <div class="progress-bar" id="progress-bar"></div>
-                    </div>
-                    
-                    <div class="download-section" id="download-section">
-                        <a href="#" class="download-btn" id="download-btn">
-                            <i class="fas fa-download"></i> Baixar Vídeo
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="info-card" id="advanced-options" style="display: none;">
-                    <h3><i class="fas fa-cogs"></i> Opções Avançadas</h3>
-                    <div id="avatar-section">
-                        <!-- Seção de IA de rosto/corpo será adicionada dinamicamente -->
-                    </div>
-                    <div id="voice-section">
-                        <!-- Seção de IA de voz será adicionada dinamicamente -->
-                    </div>
-                </div>
+            <button id="generate-btn">
+                <i class="fas fa-magic"></i> Gerar Edit Automático
+            </button>
+        </div>
+        
+        <div class="progress-container" id="progress-container" style="display: none;">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="result-container" id="result-container">
+            <h3 style="text-align: center;">Seu Edit Está Pronto!</h3>
+            <div class="video-preview">
+                <video controls id="preview-video">
+                    Seu navegador não suporta o elemento de vídeo.
+                </video>
             </div>
+            <a href="#" class="download-btn" id="download-btn">
+                <i class="fas fa-download"></i> Baixar Edit
+            </a>
         </div>
     </div>
 
     <script>
-        // Estado avançado do sistema
-        const state = {
-            currentStep: 0,
-            videoType: '',
-            videoData: {
-                subject: '',
-                platform: '',
-                music: '',
-                musicStart: '',
-                musicEnd: '',
-                duration: '',
-                style: '',
-                purpose: '',
-                avatarNeeded: false,
-                avatarDescription: '',
-                voiceoverNeeded: false,
-                scriptPoints: [],
-                sources: []
+        // Configuração dos tipos de edit
+        const editTemplates = {
+            'messi': {
+                title: 'Edit do Messi - Melhores Momentos',
+                music: 'Trap Royalty Free',
+                style: 'dinâmico com transições rápidas',
+                duration: 45,
+                hashtags: ['#messi', '#futebol', '#skills', '#goat']
             },
-            editing: false,
-            processing: false
-        };
-        
-        // Banco de dados de avatares IA
-        const aiAvatars = [
-            { id: 1, name: "Ana - Executiva", image: "https://via.placeholder.com/300x450/6e48aa/FFFFFF?text=Ana+Exec", voice: "feminina-profissional" },
-            { id: 2, name: "Carlos - Esportivo", image: "https://via.placeholder.com/300x450/9d50bb/FFFFFF?text=Carlos+Esp", voice: "masculina-energetica" },
-            { id: 3, name: "Julia - Influencer", image: "https://via.placeholder.com/300x450/4776E6/FFFFFF?text=Julia+Inf", voice: "feminina-jovem" },
-            { id: 4, name: "Customizado", image: "https://via.placeholder.com/300x450/28a745/FFFFFF?text=Customizado", voice: "personalizada" }
-        ];
-        
-        // Fluxo de perguntas inteligentes da IA
-        const questions = [
-            {
-                question: "👋 Olá! Sou o VidGenius PRO, sua IA de criação de vídeos completa. Que tipo de vídeo você gostaria de criar hoje?",
-                field: 'videoType',
-                options: [
-                    {text: 'Edit criativo (esportes, memes)', icon: 'fas fa-fire'},
-                    {text: 'Vídeo promocional (produtos, marcas)', icon: 'fas fa-ad'},
-                    {text: 'Conteúdo educativo (YouTube, cursos)', icon: 'fas fa-graduation-cap'},
-                    {text: 'Vídeo institucional (empresas)', icon: 'fas fa-building'},
-                    {text: 'Outro tipo de vídeo', icon: 'fas fa-video'}
-                ],
-                followUp: null
+            'neymar': {
+                title: 'Edit do Neymar - Jogadas Incríveis',
+                music: 'Funk BR',
+                style: 'estilo hype brasileiro',
+                duration: 50,
+                hashtags: ['#neymar', '#futebol', '#skills', '#brasil']
             },
-            {
-                question: "🎯 Qual é o assunto principal do seu vídeo? (Seja específico, ex: 'Sandália Grendene Summer 2024', 'Os 5 maiores planetas do sistema solar')",
-                field: 'subject',
-                options: null,
-                followUp: null
+            'f1': {
+                title: 'Edit de F1 - Emoção nas Pistas',
+                music: 'Eletrônica Energética',
+                style: 'rápido e intenso',
+                duration: 60,
+                hashtags: ['#f1', '#corrida', '#velocidade', '#formula1']
             },
-            {
-                question: "📱 Para qual plataforma será esse vídeo? (Isso afeta o formato e estilo)",
-                field: 'platform',
-                options: [
-                    {text: 'TikTok', icon: 'fab fa-tiktok'},
-                    {text: 'YouTube', icon: 'fab fa-youtube'},
-                    {text: 'Instagram', icon: 'fab fa-instagram'},
-                    {text: 'Facebook', icon: 'fab fa-facebook'},
-                    {text: 'Site/Landing Page', icon: 'fas fa-globe'}
-                ],
-                followUp: null
+            'sunflower': {
+                title: 'Edit na Música Sunflower',
+                music: 'Sunflower - Post Malone',
+                style: 'transições suaves',
+                duration: 30,
+                hashtags: ['#sunflower', '#postmalone', '#edit', '#viral']
             },
-            {
-                question: "⏱️ Qual a duração EXATA que você deseja para o vídeo? (Em segundos, ex: 45)",
-                field: 'duration',
-                options: null,
-                followUp: null,
-                inputType: 'number'
+            'skate': {
+                title: 'Edit de Skate - Manobras Radicais',
+                music: 'Rock Alternativo',
+                style: 'edição radical',
+                duration: 55,
+                hashtags: ['#skate', '#manobras', '#esporte', '#radical']
             },
-            {
-                question: "🎵 Você gostaria de usar música no vídeo? Se sim, me informe o nome da música e os minutos EXATOS que devem ser usados (ex: 'Sunflower 1:02 até 2:18')",
-                field: 'music',
-                options: [
-                    {text: 'Não quero música', icon: 'fas fa-times'},
-                    {text: 'Surpreenda-me com uma música', icon: 'fas fa-magic'}
-                ],
-                followUp: null
-            },
-            {
-                question: "🎬 Qual o propósito principal deste vídeo? (Isso ajuda a definir o estilo)",
-                field: 'purpose',
-                options: [
-                    {text: 'Divulgar um produto', icon: 'fas fa-shopping-bag'},
-                    {text: 'Educar/explicar', icon: 'fas fa-book'},
-                    {text: 'Entreter', icon: 'fas fa-laugh'},
-                    {text: 'Promover uma marca', icon: 'fas fa-tag'},
-                    {text: 'Vender algo', icon: 'fas fa-dollar-sign'}
-                ],
-                followUp: null
-            },
-            {
-                question: "🤖 Você precisa que eu crie um apresentador/personagem em IA para este vídeo? (Posso gerar pessoas realistas apresentando produtos, por exemplo)",
-                field: 'avatarNeeded',
-                options: [
-                    {text: 'Sim, crie um personagem IA', icon: 'fas fa-robot'},
-                    {text: 'Não, vou usar imagens reais', icon: 'fas fa-user'}
-                ],
-                followUp: {
-                    'Sim, crie um personagem IA': "Ótimo! Vou te mostrar opções de avatares em seguida."
-                }
-            },
-            {
-                question: "🗣️ Você quer que eu gere uma narração profissional em IA para o vídeo? (Posso criar vozes realistas com o roteiro perfeito)",
-                field: 'voiceoverNeeded',
-                options: [
-                    {text: 'Sim, crie uma narração IA', icon: 'fas fa-microphone'},
-                    {text: 'Não, não preciso de narração', icon: 'fas fa-microphone-slash'}
-                ],
-                followUp: {
-                    'Sim, crie uma narração IA': "Perfeito! Vou te perguntar alguns detalhes para criar o roteiro ideal."
-                }
+            'basquete': {
+                title: 'Edit de Basquete - Enterradas Incríveis',
+                music: 'Hip Hop Motivacional',
+                style: 'dinâmico com câmera lenta',
+                duration: 40,
+                hashtags: ['#basquete', '#nba', '#enterradas', '#esporte']
             }
-        ];
+        };
         
         // Elementos do DOM
-        const chatMessages = document.getElementById('chat-messages');
-        const userInput = document.getElementById('user-input');
-        const sendBtn = document.getElementById('send-btn');
-        const videoDetails = document.getElementById('video-details');
-        const previewVideo = document.getElementById('preview-video');
+        const editRequestInput = document.getElementById('edit-request');
+        const generateBtn = document.getElementById('generate-btn');
         const progressContainer = document.getElementById('progress-container');
         const progressBar = document.getElementById('progress-bar');
-        const progressText = document.getElementById('progress-text');
-        const downloadSection = document.getElementById('download-section');
+        const resultContainer = document.getElementById('result-container');
+        const previewVideo = document.getElementById('preview-video');
         const downloadBtn = document.getElementById('download-btn');
-        const advancedOptions = document.getElementById('advanced-options');
-        const avatarSection = document.getElementById('avatar-section');
-        const voiceSection = document.getElementById('voice-section');
+        const exampleBtns = document.querySelectorAll('.example-btn');
         
-        // Inicia o chat
-        window.onload = function() {
-            addMessage('ai', questions[0].question, questions[0].options);
-            updateVideoDetails();
-        };
-        
-        // Envia mensagem quando o botão é clicado ou Enter é pressionado
-        sendBtn.addEventListener('click', sendMessage);
-        userInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') sendMessage();
+        // Exemplos rápidos
+        exampleBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                editRequestInput.value = this.textContent;
+            });
         });
         
-        function sendMessage() {
-            const message = userInput.value.trim();
-            if (message === '' || state.processing) return;
+        // Gerar edit
+        generateBtn.addEventListener('click', function() {
+            const request = editRequestInput.value.trim().toLowerCase();
+            if (!request) return;
             
-            addMessage('user', message);
-            userInput.value = '';
-            
-            // Processa a resposta do usuário
-            processUserResponse(message);
-        }
-        
-        function addMessage(sender, text, options = null) {
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message');
-            messageDiv.classList.add(sender === 'ai' ? 'ai-message' : 'user-message');
-            messageDiv.innerHTML = text;
-            
-            chatMessages.appendChild(messageDiv);
-            
-            if (options && sender === 'ai') {
-                const optionsContainer = document.createElement('div');
-                optionsContainer.classList.add('options-container');
-                
-                options.forEach(option => {
-                    const optionText = typeof option === 'object' ? option.text : option;
-                    const optionIcon = typeof option === 'object' ? option.icon : null;
-                    
-                    const optionBtn = document.createElement('div');
-                    optionBtn.classList.add('option-btn');
-                    
-                    if (optionIcon) {
-                        optionBtn.innerHTML = `<i class="${optionIcon}"></i> ${optionText}`;
-                    } else {
-                        optionBtn.textContent = optionText;
-                    }
-                    
-                    optionBtn.addEventListener('click', function() {
-                        userInput.value = optionText;
-                        sendMessage();
-                    });
-                    
-                    optionsContainer.appendChild(optionBtn);
-                });
-                
-                chatMessages.appendChild(optionsContainer);
-            }
-            
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-        
-        function showTypingIndicator() {
-            const typingDiv = document.createElement('div');
-            typingDiv.classList.add('typing-indicator');
-            typingDiv.id = 'typing-indicator';
-            typingDiv.innerHTML = `
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-            `;
-            
-            chatMessages.appendChild(typingDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-        
-        function hideTypingIndicator() {
-            const typingIndicator = document.getElementById('typing-indicator');
-            if (typingIndicator) {
-                typingIndicator.remove();
-            }
-        }
-        
-        function processUserResponse(response) {
-            if (state.editing || state.processing) return;
-            
-            // Armazena a resposta no estado
-            if (state.currentStep < questions.length) {
-                const currentQuestion = questions[state.currentStep];
-                
-                // Limpa a resposta para armazenar apenas o texto principal se for uma opção com ícone
-                const cleanResponse = currentQuestion.options 
-                    ? currentQuestion.options.find(opt => opt.text === response)?.text || response
-                    : response;
-                
-                // Processamento especial para campos específicos
-                if (currentQuestion.field === 'music' && cleanResponse.includes('até')) {
-                    const parts = cleanResponse.split('até');
-                    state.videoData.music = parts[0].trim();
-                    
-                    // Extrai minutos e segundos
-                    const timeParts = parts[1].trim().split(':');
-                    if (timeParts.length === 2) {
-                        state.videoData.musicEnd = `${parseInt(timeParts[0]) * 60 + parseInt(timeParts[1])}`;
-                    }
-                } else {
-                    state.videoData[currentQuestion.field] = cleanResponse;
-                }
-                
-                updateVideoDetails();
-                
-                // Mostra follow-up se existir para esta resposta
-                if (currentQuestion.followUp && currentQuestion.followUp[cleanResponse]) {
-                    addMessage('ai', currentQuestion.followUp[cleanResponse]);
-                }
-                
-                // Avança para a próxima pergunta ou mostra seções especiais
-                if (currentQuestion.field === 'avatarNeeded' && cleanResponse === 'Sim, crie um personagem IA') {
-                    showAvatarSelection();
-                    return;
-                } else if (currentQuestion.field === 'voiceoverNeeded' && cleanResponse === 'Sim, crie uma narração IA') {
-                    showVoiceoverOptions();
-                    return;
-                }
-                
-                // Verifica se todas as perguntas foram respondidas
-                state.currentStep++;
-                
-                if (state.currentStep < questions.length) {
-                    showTypingIndicator();
-                    setTimeout(() => {
-                        hideTypingIndicator();
-                        
-                        // Mostra input especial para duração
-                        if (questions[state.currentStep].inputType === 'number') {
-                            const inputMsg = document.createElement('div');
-                            inputMsg.classList.add('message', 'ai-message');
-                            inputMsg.innerHTML = questions[state.currentStep].question;
-                            
-                            const inputDiv = document.createElement('div');
-                            inputDiv.style.marginTop = '10px';
-                            inputDiv.innerHTML = `
-                                <input type="number" id="special-input" placeholder="Digite o número em segundos" style="width: 100%; padding: 12px; border-radius: 20px; border: 1px solid #ddd;">
-                                <button id="special-submit" style="margin-top: 10px; padding: 10px 20px; background: var(--accent); color: white; border: none; border-radius: 20px; cursor: pointer;">
-                                    Enviar
-                                </button>
-                            `;
-                            
-                            chatMessages.appendChild(inputMsg);
-                            chatMessages.appendChild(inputDiv);
-                            chatMessages.scrollTop = chatMessages.scrollHeight;
-                            
-                            document.getElementById('special-submit').addEventListener('click', function() {
-                                const value = document.getElementById('special-input').value;
-                                if (value) {
-                                    state.videoData[questions[state.currentStep].field] = value;
-                                    updateVideoDetails();
-                                    
-                                    // Remove os elementos especiais
-                                    inputMsg.remove();
-                                    inputDiv.remove();
-                                    
-                                    // Continua o fluxo
-                                    state.currentStep++;
-                                    if (state.currentStep < questions.length) {
-                                        addMessage('ai', questions[state.currentStep].question, questions[state.currentStep].options);
-                                    } else {
-                                        startEditing();
-                                    }
-                                }
-                            });
-                        } else {
-                            addMessage('ai', questions[state.currentStep].question, questions[state.currentStep].options);
-                        }
-                    }, 1500);
-                } else {
-                    // Todas as perguntas foram respondidas, iniciar edição
-                    startEditing();
-                }
-            }
-        }
-        
-        function showAvatarSelection() {
-            advancedOptions.style.display = 'block';
-            avatarSection.innerHTML = `
-                <h4 style="margin-bottom: 15px;"><i class="fas fa-user-astronaut"></i> Criação de Personagem IA</h4>
-                <p>Selecione um dos nossos avatares profissionais ou descreva um customizado:</p>
-                
-                <div class="avatar-options">
-                    ${aiAvatars.map(avatar => `
-                        <div class="avatar-option" data-id="${avatar.id}">
-                            <img src="${avatar.image}" alt="${avatar.name}">
-                            <div style="padding: 8px; text-align: center; font-size: 0.8rem;">${avatar.name}</div>
-                        </div>
-                    `).join('')}
-                </div>
-                
-                <div style="margin-top: 15px;">
-                    <p>Ou descreva exatamente como quer seu personagem:</p>
-                    <textarea id="avatar-description" placeholder="Ex: Mulher 30 anos, cabelos castanhos, usando sandália Grendene, sorrindo..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; min-height: 80px;"></textarea>
-                    <button id="generate-avatar" style="margin-top: 10px; padding: 10px 15px; background: var(--primary); color: white; border: none; border-radius: 20px; cursor: pointer;">
-                        <i class="fas fa-magic"></i> Gerar Personagem
-                    </button>
-                </div>
-                
-                <div class="ai-avatar-container">
-                    <p style="margin: 15px 0 5px;">Pré-visualização:</p>
-                    <div class="ai-avatar-preview">
-                        <img id="avatar-preview-img" src="" alt="Pré-visualização do avatar">
-                        <span id="avatar-placeholder">Nenhum avatar selecionado</span>
-                    </div>
-                </div>
-            `;
-            
-            // Adiciona eventos aos avatares
-            document.querySelectorAll('.avatar-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    const avatarId = this.getAttribute('data-id');
-                    const avatar = aiAvatars.find(a => a.id == avatarId);
-                    
-                    document.getElementById('avatar-preview-img').src = avatar.image;
-                    document.getElementById('avatar-preview-img').style.display = 'block';
-                    document.getElementById('avatar-placeholder').style.display = 'none';
-                    
-                    state.videoData.avatarDescription = avatar.name;
-                    updateVideoDetails();
-                    
-                    // Continua para a próxima pergunta
-                    continueAfterSpecialSection();
-                });
-            });
-            
-            // Botão para gerar avatar customizado
-            document.getElementById('generate-avatar').addEventListener('click', function() {
-                const description = document.getElementById('avatar-description').value.trim();
-                if (description) {
-                    state.videoData.avatarDescription = description;
-                    updateVideoDetails();
-                    
-                    // Simula geração do avatar
-                    document.getElementById('avatar-preview-img').src = "https://via.placeholder.com/300x450/6e48aa/FFFFFF?text=Avatar+Customizado";
-                    document.getElementById('avatar-preview-img').style.display = 'block';
-                    document.getElementById('avatar-placeholder').style.display = 'none';
-                    
-                    // Continua para a próxima pergunta
-                    continueAfterSpecialSection();
-                }
-            });
-        }
-        
-        function showVoiceoverOptions() {
-            voiceSection.innerHTML = `
-                <h4 style="margin-bottom: 15px;"><i class="fas fa-microphone-alt"></i> Narração por IA</h4>
-                <p>Vamos criar o roteiro perfeito para sua narração. Quais pontos principais devem ser mencionados?</p>
-                
-                <div id="script-points" style="margin: 15px 0;">
-                    <div class="form-group">
-                        <input type="text" id="new-script-point" placeholder="Ex: Conforto da sandália, resistência, design moderno..." style="width: 100%; padding: 10px; border-radius: 20px; border: 1px solid #ddd;">
-                        <button id="add-script-point" style="margin-top: 5px; padding: 8px 15px; background: var(--primary); color: white; border: none; border-radius: 20px; cursor: pointer;">
-                            <i class="fas fa-plus"></i> Adicionar Ponto
-                        </button>
-                    </div>
-                    
-                    <div id="points-list" style="margin-top: 10px;"></div>
-                </div>
-                
-                <div class="script-preview" id="script-preview">
-                    <p style="color: var(--gray); font-style: italic;">Seu roteiro aparecerá aqui...</p>
-                </div>
-                
-                <button id="generate-voiceover" style="margin-top: 15px; padding: 12px 20px; background: var(--primary); color: white; border: none; border-radius: 20px; cursor: pointer; width: 100%;">
-                    <i class="fas fa-microphone"></i> Gerar Narração
-                </button>
-            `;
-            
-            // Adiciona pontos ao roteiro
-            document.getElementById('add-script-point').addEventListener('click', function() {
-                const point = document.getElementById('new-script-point').value.trim();
-                if (point) {
-                    state.videoData.scriptPoints.push(point);
-                    updateScriptPoints();
-                    document.getElementById('new-script-point').value = '';
-                }
-            });
-            
-            // Gera a narração
-            document.getElementById('generate-voiceover').addEventListener('click', function() {
-                if (state.videoData.scriptPoints.length > 0) {
-                    generateScript();
-                    continueAfterSpecialSection();
-                }
-            });
-        }
-        
-        function updateScriptPoints() {
-            const pointsList = document.getElementById('points-list');
-            pointsList.innerHTML = '';
-            
-            state.videoData.scriptPoints.forEach((point, index) => {
-                const pointDiv = document.createElement('div');
-                pointDiv.style.display = 'flex';
-                pointDiv.style.alignItems = 'center';
-                pointDiv.style.marginBottom = '5px';
-                pointDiv.style.padding = '8px';
-                pointDiv.style.background = '#f5f5f5';
-                pointDiv.style.borderRadius = '8px';
-                
-                pointDiv.innerHTML = `
-                    <span style="flex: 1;">${point}</span>
-                    <button class="delete-point" data-index="${index}" style="background: none; border: none; color: var(--danger); cursor: pointer;">
-                        <i class="fas fa-times"></i>
-                    </button>
-                `;
-                
-                pointsList.appendChild(pointDiv);
-            });
-            
-            // Adiciona eventos aos botões de deletar
-            document.querySelectorAll('.delete-point').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const index = this.getAttribute('data-index');
-                    state.videoData.scriptPoints.splice(index, 1);
-                    updateScriptPoints();
-                });
-            });
-        }
-        
-        function generateScript() {
-            // Simulação de geração de roteiro pela IA
-            let script = `Roteiro gerado para ${state.videoData.subject}:\n\n`;
-            
-            script += "Introdução:\n";
-            script += `"Olá! Hoje vamos falar sobre ${state.videoData.subject.split(' ')[0]} que vai revolucionar seu verão!"\n\n`;
-            
-            script += "Tópicos principais:\n";
-            state.videoData.scriptPoints.forEach((point, i) => {
-                script += `${i+1}. "${point.charAt(0).toUpperCase() + point.slice(1)} - uma característica que diferencia nossa marca!"\n`;
-            });
-            
-            script += "\nConclusão:\n";
-            script += `"Não perca tempo, adquira já seu ${state.videoData.subject.split(' ')[0]} e experimente a diferença!"`;
-            
-            document.getElementById('script-preview').innerHTML = script.replace(/\n/g, '<br>');
-            state.videoData.generatedScript = script;
-        }
-        
-        function continueAfterSpecialSection() {
-            state.currentStep++;
-            if (state.currentStep < questions.length) {
-                addMessage('ai', questions[state.currentStep].question, questions[state.currentStep].options);
-            } else {
-                startEditing();
-            }
-        }
-        
-        function updateVideoDetails() {
-            videoDetails.innerHTML = '';
-            
-            for (const [key, value] of Object.entries(state.videoData)) {
-                if (value && typeof value !== 'object') {
-                    let displayValue = value;
-                    let icon = 'fas fa-info-circle';
-                    
-                    // Ícones específicos para cada campo
-                    switch(key) {
-                        case 'videoType': icon = 'fas fa-film'; break;
-                        case 'subject': icon = 'fas fa-comment'; break;
-                        case 'platform': icon = 'fas fa-mobile-screen'; break;
-                        case 'duration': 
-                            icon = 'fas fa-clock';
-                            displayValue = `${value} segundos`;
-                            break;
-                        case 'music': 
-                            icon = 'fas fa-music';
-                            if (state.videoData.musicStart && state.videoData.musicEnd) {
-                                displayValue = `${value} (${state.videoData.musicStart}s até ${state.videoData.musicEnd}s)`;
-                            }
-                            break;
-                        case 'purpose': icon = 'fas fa-bullseye'; break;
-                        case 'avatarDescription': icon = 'fas fa-robot'; break;
-                    }
-                    
-                    if (value !== 'false' && value !== 'true') {
-                        const itemDiv = document.createElement('div');
-                        itemDiv.classList.add('detail-item');
-                        itemDiv.innerHTML = `
-                            <div class="detail-label"><i class="${icon}"></i> ${key.charAt(0).toUpperCase() + key.slice(1)}</div>
-                            <div class="detail-value">${displayValue}</div>
-                        `;
-                        videoDetails.appendChild(itemDiv);
-                    }
-                }
-            }
-        }
-        
-        function startEditing() {
-            state.editing = true;
-            state.processing = true;
-            
-            // Mostra mensagem de processamento
-            addMessage('ai', `🎬 Iniciando criação do seu vídeo profissional sobre <strong>${state.videoData.subject}</strong>...`);
-            
-            // Simula o processo de edição
-            simulateEditingProcess();
-        }
-        
-        function simulateEditingProcess() {
+            // Mostra progresso
             progressContainer.style.display = 'block';
+            resultContainer.style.display = 'none';
             
-            // Etapas do processo de edição com base no tipo de vídeo
-            let steps = [];
+            // Simula o processo de geração
+            simulateEditGeneration(request);
+        });
+        
+        function simulateEditGeneration(request) {
+            // Determina o tipo de edit
+            let editType = 'custom';
+            let editData = {
+                title: `Edit de ${request}`,
+                music: 'Música Automática',
+                style: 'edição profissional',
+                duration: 45,
+                hashtags: ['#edit', '#viral', '#trending']
+            };
             
-            if (state.videoData.avatarNeeded === 'Sim, crie um personagem IA') {
-                steps.push({text: 'Criando personagem IA realista...', duration: 30});
+            // Verifica se é um template conhecido
+            for (const [key, template] of Object.entries(editTemplates)) {
+                if (request.includes(key)) {
+                    editType = key;
+                    editData = template;
+                    break;
+                }
             }
             
-            if (state.videoData.voiceoverNeeded === 'Sim, crie uma narração IA') {
-                steps.push(
-                    {text: 'Otimizando roteiro para conversão...', duration: 20},
-                    {text: 'Gerando narração com voz humana IA...', duration: 25}
-                );
-            }
-            
-            steps.push(
-                {text: 'Buscando conteúdo relevante online...', duration: 25},
-                {text: 'Selecionando os melhores clipes...', duration: 20},
-                {text: 'Editando com técnicas profissionais...', duration: 35},
-                {text: 'Sincronizando áudio e vídeo...', duration: 20},
-                {text: 'Aplicando efeitos visuais...', duration: 25},
-                {text: 'Otimizando para a plataforma...', duration: 15},
-                {text: 'Renderizando vídeo final...', duration: 30}
-            );
+            // Atualiza a interface durante o processamento
+            let progress = 0;
+            const steps = [
+                {text: 'Analisando seu pedido...', percent: 10},
+                {text: 'Buscando os melhores clipes...', percent: 25},
+                {text: 'Selecionando música ideal...', percent: 40},
+                {text: 'Editando com técnicas profissionais...', percent: 65},
+                {text: 'Aplicando efeitos visuais...', percent: 85},
+                {text: 'Renderizando vídeo final...', percent: 100}
+            ];
             
             let currentStep = 0;
-            let totalDuration = steps.reduce((sum, step) => sum + step.duration, 0);
-            let elapsed = 0;
             
             function processNextStep() {
                 if (currentStep >= steps.length) {
-                    // Processo completo
-                    progressText.textContent = 'Processo completo!';
-                    progressBar.style.width = '100%';
+                    // Processo completo - mostra o resultado
+                    progressContainer.style.display = 'none';
+                    resultContainer.style.display = 'block';
                     
-                    // Mostra mensagem de conclusão
+                    // Atualiza o vídeo de pré-visualização (simulado)
+                    previewVideo.poster = `https://via.placeholder.com/800x450/6e48aa/FFFFFF?text=${encodeURIComponent(editData.title)}`;
+                    
+                    // Rola a página para mostrar o resultado
                     setTimeout(() => {
-                        addMessage('ai', '✅ Seu vídeo profissional está pronto! Visualize ao lado e faça o download quando quiser.');
-                        
-                        // Mostra o vídeo (simulado)
-                        previewVideo.poster = 'https://via.placeholder.com/800x450/6e48aa/FFFFFF?text=Video+Pronto';
-                        downloadSection.style.display = 'block';
-                        
-                        state.processing = false;
-                    }, 1000);
+                        resultContainer.scrollIntoView({ behavior: 'smooth' });
+                    }, 500);
+                    
                     return;
                 }
                 
                 const step = steps[currentStep];
-                progressText.textContent = step.text;
+                progress = step.percent;
+                progressBar.style.width = `${progress}%`;
                 
-                // Simula progresso para esta etapa
-                simulateStepProgress(step.duration, () => {
-                    elapsed += step.duration;
-                    const progressPercent = (elapsed / totalDuration) * 100;
-                    progressBar.style.width = `${progressPercent}%`;
-                    
-                    // Adiciona mensagem de progresso
-                    addMessage('ai', `✓ ${step.text}`);
-                    
+                // Simula tempo de processamento para cada etapa
+                setTimeout(() => {
                     currentStep++;
                     processNextStep();
-                });
+                }, 800);
             }
             
             processNextStep();
         }
         
-        function simulateStepProgress(duration, callback) {
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 1;
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    callback();
-                }
-            }, duration * 10);
-        }
-        
-        // Simula o download do vídeo
+        // Simula o download
         downloadBtn.addEventListener('click', function(e) {
             e.preventDefault();
             const originalText = this.innerHTML;
@@ -1218,11 +392,6 @@
                     this.innerHTML = originalText;
                 }, 2000);
             }, 3000);
-        });
-        
-        // Play button no preview
-        document.querySelector('.play-btn').addEventListener('click', function() {
-            alert('Simulação: O vídeo começaria a tocar aqui');
         });
     </script>
 </body>
