@@ -425,4 +425,101 @@
         }
     </script>
 </body>
+    /**
+ * Backend Node.js Express básico para plataforma MTA.IA
+ * Rotas:
+ *  - /api/upload (POST): receber arquivos de mídia
+ *  - /api/generate (POST): receber configuração para gerar vídeo (simulado)
+ *  - /api/status/:id (GET): status da renderização (simulado)
+ * 
+ * Em produção: integrar processamento real, filas, FFmpeg, APIs IA.
+ */
+
+const express = require('express');
+const fileUpload = require('express-fileupload');
+const cors = require('cors');
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(fileUpload({
+  createParentPath: true,
+  limits: { fileSize: 500 * 1024 * 1024 }, // 500MB
+}));
+
+// Simula armazenamento em memória
+const videos = new Map();
+
+// Rota para upload de mídias
+app.post('/api/upload', async (req, res) => {
+  try {
+    if(!req.files || !req.files.media) {
+      return res.status(400).json({ error: 'Nenhum arquivo enviado' });
+    }
+    let files = req.files.media;
+    if(!Array.isArray(files)) {
+      files = [files];
+    }
+
+    // Salvar arquivos no servidor - simulado só nomes aqui
+    const savedFiles = files.map(file => {
+      // em real salvar e retornar caminho
+      return { name: file.name, mimetype: file.mimetype, size: file.size };
+    });
+
+    // Responder com infos dos arquivos salvos
+    res.json({ message: 'Arquivos recebidos com sucesso', files: savedFiles });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erro no upload' });
+  }
+});
+
+// Rota para iniciar geração de vídeo (simulado)
+app.post('/api/generate', (req, res) => {
+  const { description, music, duration, style } = req.body;
+  if(!description) return res.status(400).json({ error: 'Descrição obrigatória' });
+
+  // Simular criação de tarefa
+  const id = Math.random().toString(36).substr(2, 9);
+  videos.set(id, {
+    status: 'processing',
+    progress: 0,
+    description,
+    music,
+    duration,
+    style,
+    resultUrl: null
+  });
+
+  // Simular processamento async
+  setTimeout(() => {
+    videos.set(id, {
+      status: 'done',
+      progress: 100,
+      description,
+      music,
+      duration,
+      style,
+      // URL fictícia para vídeo gerado
+      resultUrl: 'https://interactive-examples.mdn.mozilla.net/media/examples/flower.webm'
+    });
+  }, 15000); // 15s simulado
+
+  res.json({ jobId: id, message: 'Geração iniciada' });
+});
+
+// Rota para checar status da geração
+app.get('/api/status/:id', (req, res) => {
+  const id = req.params.id;
+  if(!videos.has(id)) return res.status(404).json({ error: 'Job não encontrado' });
+  res.json(videos.get(id));
+});
+
+app.listen(PORT, () => {
+  console.log(\`Servidor rodando na porta \${PORT}\`);
+});
+
 </html>
