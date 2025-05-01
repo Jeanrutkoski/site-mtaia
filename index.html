@@ -1,11 +1,11 @@
-`video_creator_ai.html`
+`video_editor_system.html`
 ```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>IA Criativa para Vídeos Automáticos - Versão Aprimorada</title>
+<title>Editor de Vídeo com Upload, Busca e IA Criativa</title>
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -35,7 +35,7 @@
     display: block;
     margin-bottom: 0.3rem;
   }
-  textarea, select {
+  textarea, select, input[type=text] {
     width: 100%;
     font-size: 1rem;
     padding: 0.5rem;
@@ -63,6 +63,7 @@
     padding: 1rem;
     border-radius: 4px;
     overflow-x: auto;
+    white-space: pre-wrap;
   }
   .section {
     margin-bottom: 2rem;
@@ -87,7 +88,6 @@
     border-left: 6px solid #2d89ef;
     padding: 1rem 1.2rem;
     margin-bottom: 2rem;
-    white-space: pre-wrap;
   }
   .hashtags {
     font-weight: bold;
@@ -126,35 +126,25 @@
     0% {transform: rotate(0deg);}
     100% {transform: rotate(360deg);}
   }
-  /* Caption for generated cover */
   .cover-caption {
     text-align: center;
     font-weight: bold;
     margin-top: 0.5rem;
     color: #2d89ef;
   }
-  .animated-caption {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #2d89ef;
-    margin-bottom: 1rem;
-    animation: pulse 2s infinite alternate;
-  }
-  @keyframes pulse {
-    0% {opacity: 1; transform: scale(1);}
-    100% {opacity: 0.6; transform: scale(1.05);}
-  }
 </style>
 </head>
 <body>
 <header>
-  <h1>IA Criativa para Vídeos Automáticos - Versão Aprimorada</h1>
-  <p>Digite seu briefing e personalize o estilo do vídeo para resultados consistentes e impactantes.</p>
+  <h1>Editor de Vídeo com Upload, Busca e IA Criativa</h1>
+  <p>Envie suas imagens e vídeos, ou solicite buscas na internet e gere vídeos automáticos.</p>
 </header>
 <main>
-  <section class="section">
-    <label for="briefing-input">Briefing (ex: "Quero um vídeo de 30s sobre tênis esportivo, tom jovem, com foco em durabilidade")</label>
-    <textarea id="briefing-input" placeholder="Digite seu briefing aqui..."></textarea>
+
+  <!-- Briefing + estilo -->
+  <section class="section" aria-label="Briefing e estilo">
+    <label for="briefing-input">Descreva o vídeo que você quer criar (ex: vídeo de chinelo Melissa, tom jovem, 30s)</label>
+    <textarea id="briefing-input" placeholder="Digite seu briefing aqui..." aria-required="true"></textarea>
 
     <label for="style-select">Selecione o estilo visual do vídeo</label>
     <select id="style-select" aria-label="Seleção do estilo visual">
@@ -165,43 +155,61 @@
       <option value="clean">Estilo Limpo (minimalista e direto)</option>
     </select>
 
-    <button id="generate-btn">Gerar Vídeo Criativo</button>
+    <button id="generate-btn">Iniciar Criação do Vídeo</button>
     <span id="loading" style="display:none;" aria-live="polite">Processando<span class="loader"></span></span>
   </section>
 
-  <section id="keywords-section" class="section" style="display:none;">
+  <!-- Upload de mídia -->
+  <section class="section" aria-label="Upload de fotos e vídeos">
+    <label for="upload-input">Envie suas fotos ou vídeos (opcional):</label>
+    <input type="file" id="upload-input" multiple accept="image/*,video/*" aria-describedby="upload-help"/>
+    <small id="upload-help">Você pode enviar imagens e vídeos que quer incluir no vídeo final.</small>
+    <div id="uploaded-media"><h3>Mídias enviadas:</h3></div>
+  </section>
+
+  <!-- Busca vídeo (simulada no frontend) -->
+  <section class="section" aria-label="Busca vídeo na internet">
+    <label for="search-query">Busca vídeos na internet (ex: Neymar, futebol, Highlights)</label>
+    <input type="text" id="search-query" placeholder="Digite o tema para busca de vídeos" aria-describedby="search-help"/>
+    <small id="search-help">Será simulada a busca na internet com vídeos do YouTube (backend necessário para real)</small>
+    <button id="buscar-btn">Buscar vídeos na internet (simulado)</button>
+    <div id="search-results"><h3>Resultados da busca (simulada):</h3></div>
+  </section>
+
+  <!-- Resultados da IA (roteiro, storyboard, capa, narração, música, vídeo mockup) -->
+  <section id="keywords-section" class="section" style="display:none;" aria-label="Palavras-chave extraídas">
     <h2>1. Palavras-chave extraídas</h2>
     <pre id="keywords-output"></pre>
   </section>
 
-  <section id="script-section" class="section" style="display:none;">
-    <h2>2. Roteiro Gerado (Consistente com o tom selecionado)</h2>
+  <section id="script-section" class="section" style="display:none;" aria-label="Roteiro gerado">
+    <h2>2. Roteiro Gerado (consistente com o tom selecionado)</h2>
     <pre id="script-output"></pre>
   </section>
 
-  <section id="storyboard-section" class="section" style="display:none;">
+  <section id="storyboard-section" class="section" style="display:none;" aria-label="Storyboard gerado">
     <h2>3. Storyboard - Cenas, Prompts e Estilo Visual</h2>
     <div id="scenes-container"></div>
   </section>
 
-  <section id="cover-section" class="section" style="display:none;">
+  <section id="cover-section" class="section" style="display:none;" aria-label="Capa Clickbait">
     <h2>4. Capa Clickbait gerada</h2>
     <img id="cover-image" alt="Imagem de capa clickbait gerada" style="max-width:100%;border-radius:8px;"/>
     <div class="cover-caption" id="cover-caption"></div>
   </section>
 
-  <section id="narration-section" class="section" style="display:none;">
+  <section id="narration-section" class="section" style="display:none;" aria-label="Narração gerada">
     <h2>5. Narração (simulada)</h2>
     <button id="synthesize-btn" aria-label="Ouvir narração do roteiro">Ouvir Narração (Texto para voz)</button>
   </section>
 
-  <section id="music-section" class="section" style="display:none;">
+  <section id="music-section" class="section" style="display:none;" aria-label="Trilha sonora">
     <h2>6. Trilha Sonora (simulada)</h2>
     <audio id="music-audio" controls></audio>
   </section>
 
-  <section id="video-section" class="section" style="display:none;">
-    <h2>7. Vídeo Final (mockup)</h2>
+  <section id="video-section" class="section" style="display:none;" aria-label="Vídeo final simulado">
+    <h2>7. Vídeo Final (mockup simulado)</h2>
     <div class="video-mockup" tabindex="0" aria-label="Vídeo do produto simulado com cenas e narração">
       <p><em>[Vídeo automático simulado]</em></p>
       <div id="video-scenes-mockup"></div>
@@ -210,42 +218,40 @@
     </div>
   </section>
 
-  <section id="social-section" class="section" style="display:none;">
+  <section id="social-section" class="section" style="display:none;" aria-label="Versões para redes sociais">
     <h2>8. Versões para Redes Sociais e Estratégia</h2>
     <p><strong>TikTok:</strong> Vídeo vertical 9:16 com legendas animadas.</p>
     <p><strong>Instagram Reels:</strong> Capa personalizada e chamada para ação "Compre agora!"</p>
     <p><strong>Hashtags estratégicas:</strong> <span id="hashtags-output" class="hashtags"></span></p>
   </section>
+
 </main>
 <footer class="footer">
-  Desenvolvido por IA Criativa &nbsp;|&nbsp; Simulação Frontend - Sem backend real
+  Desenvolvido por IA Criativa &nbsp;|&nbsp; Protótipo Frontend - Backend necessário para funcionalidade completa
 </footer>
 
 <script>
-  // Aprimorado: Sistema de extração de entidades nomeadas personalizado para produto
+  // ----- Extração de produto personalizada -----
   function extractProduct(text) {
-    // Dicionário simples de produtos comuns - você pode expandir
     const produtosConhecidos = [
       "tênis esportivo", "tênis", "sapato", "sneaker", "relógio", "smartphone",
-      "fones de ouvido", "mochila", "jaqueta"
+      "fones de ouvido", "mochila", "jaqueta", "chinelo melissa", "chinelo", "melissa"
     ];
     const lower = text.toLowerCase();
     for (let prod of produtosConhecidos) {
       if (lower.includes(prod)) {
-        // Capitalizar inicial de cada palavra
-        return prod.split(" ").map(w => w[0].toUpperCase()+w.slice(1)).join(" ");
+        return prod.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
       }
     }
-    // Se não encontrou, tentar extrair de "sobre X", "produto X", "vídeo X"
     const regexProduto = /sobre ([\w\s\-]+)/i;
     const match = text.match(regexProduto);
     if (match && match[1]) {
-      return match[1].trim().split(" ").map(w => w[0].toUpperCase()+w.slice(1)).join(" ");
+      return match[1].trim().split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
     }
     return "Produto Genérico";
   }
 
-  // Extração do tom aprimorado, classificação simples (formal, jovem, descontraído, emocional)
+  // ----- Extração de tom aprimorada -----
   function extractTone(text) {
     const lower = text.toLowerCase();
     if (/jovem|descontraído|divertido|animado|alegre/.test(lower)) return "Jovem/Descontraído";
@@ -254,7 +260,7 @@
     return "Neutro";
   }
 
-  // Aprimorada extração das palavras-chave
+  // ----- Extração completa de palavras-chave -----
   function extractKeywords(text) {
     const produto = extractProduct(text);
     const tom = extractTone(text);
@@ -266,20 +272,16 @@
     return { produto, tom, público: publico, duraçao: duracao };
   }
 
-  // Sistema de consistência de roteiro baseado no tom
+  // ----- Consistência de roteiro baseada no tom -----
   function generateScript(keywords) {
-    // Tom ajustado para legenda e frames
     const tone = keywords.tom.toLowerCase();
 
-    // Textos com ênfase consistente no tom
     let frasesCenas = [
       `[Cena 1: Close do ${keywords.produto} com efeito slow-motion, destaque na durabilidade e qualidade premium.]`,
       `[Cena 2: Pessoa jovem e vibrante usando o ${keywords.produto} em movimento pela cidade.]`,
       `[Cena 3: Detalhes em foco do ${keywords.produto}, ressaltando material e design sofisticado.]`,
       `[Cena 4: Logo da marca aparece com chamada para ação impactante, tom ${tone}, convidativo e cativante.]`
     ];
-
-    // Ajustes para tom emocional
     if (tone.includes("emocional")) {
       frasesCenas = [
         `[Cena 1: Close emotivo do ${keywords.produto}, com luz suave e foco na história por trás dele.]`,
@@ -288,7 +290,6 @@
         `[Cena 4: Logo da marca com frase inspiradora, tom sentimental e motivador.]`
       ];
     }
-
     if (tone.includes("formal")) {
       frasesCenas = [
         `[Cena 1: Imagem limpa do ${keywords.produto}, com foco na eficiência e tecnologia.]`,
@@ -297,11 +298,10 @@
         `[Cena 4: Logo da marca com mensagem institucional, elegante e séria.]`
       ];
     }
-
     return frasesCenas.join("\n");
   }
 
-  // Sistema de estilos visuais/presets que impactam os prompts para imagem
+  // ----- Estilos visuais para prompts de imagem -----
   const stylePrompts = {
     nike: "estilo Nike, moderno, energético, dinâmico, cores vibrantes",
     adidas: "estilo Adidas, esportivo, energizante, urbano, cores saturadas",
@@ -310,12 +310,10 @@
     clean: "estilo Limpo, minimalista, fundo branco, foco no produto",
   };
 
-  // Radiografia gerador de prompt
   function generatePrompt(sceneDesc, keywords, styleKey) {
     const stylePrompt = stylePrompts[styleKey] || stylePrompts.clean;
     const tone = keywords.tom.toLowerCase();
 
-    // Tom no prompt para coerência visual
     let toneDescriptor = "";
     if (tone.includes("jovem") || tone.includes("descontraído")) toneDescriptor = "alegre e vibrante";
     else if (tone.includes("emocional")) toneDescriptor = "suave e emocional";
@@ -325,64 +323,59 @@
     return `${keywords.produto} em ação, ${stylePrompt}, tom ${toneDescriptor}, ${sceneDesc.toLowerCase()}, 4K, alta qualidade`;
   }
 
-  // Simula geração de imagem com placeholders temáticos dinamicamente baseados no estilo
+  // Simula gerar imagens para cenas baseado no estilo
+  const styleImages = {
+    nike: [
+      "https://images.unsplash.com/photo-1519861150486-5f2569927a2d?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1509228627152-8f3f7cbeb2d4?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1576107089925-2e34b9bbfb50?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1536499639633-1b3a1c352f61?auto=format&fit=crop&w=800&q=80"
+    ],
+    adidas: [
+      "https://images.unsplash.com/photo-1520975696033-28e7374d304f?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1471357674240-e1a485acb3e1?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1524878722524-d7b36a4bb7ed?auto=format&fit=crop&w=800&q=80"
+    ],
+    luxury: [
+      "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1531281397-5cfcf5ac629b?auto=format&fit=crop&w=800&q=80"
+    ],
+    urban: [
+      "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1468071174046-657d9d351a40?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1494523451017-a5a0b1f49ded?auto=format&fit=crop&w=800&q=80"
+    ],
+    clean: [
+      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1523264696888-3c4ecb3ade07?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1502764613149-7f1d229e230f?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?auto=format&fit=crop&w=800&q=80"
+    ]
+  };
   function simulateImageGenerating(styleKey, index) {
-    // URLs placeholders temáticos para cada estilo
-    const styleImages = {
-      nike: [
-        "https://images.unsplash.com/photo-1519861150486-5f2569927a2d?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1509228627152-8f3f7cbeb2d4?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1576107089925-2e34b9bbfb50?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1536499639633-1b3a1c352f61?auto=format&fit=crop&w=800&q=80"
-      ],
-      adidas: [
-        "https://images.unsplash.com/photo-1520975696033-28e7374d304f?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1471357674240-e1a485acb3e1?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1524878722524-d7b36a4bb7ed?auto=format&fit=crop&w=800&q=80"
-      ],
-      luxury: [
-        "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1531281397-5cfcf5ac629b?auto=format&fit=crop&w=800&q=80"
-      ],
-      urban: [
-        "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1468071174046-657d9d351a40?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1494523451017-a5a0b1f49ded?auto=format&fit=crop&w=800&q=80"
-      ],
-      clean: [
-        "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1523264696888-3c4ecb3ade07?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1502764613149-7f1d229e230f?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?auto=format&fit=crop&w=800&q=80"
-      ]
-    };
     const imagesArray = styleImages[styleKey] || styleImages.clean;
     return imagesArray[index] || imagesArray[imagesArray.length - 1];
   }
 
-  // Sugerir hashtags estratégicos baseados no produto e tom
+  // Hashtags estratégicas
   function suggestHashtags(keywords) {
     const baseTags = {
       "Tênis esportivo": ["#Esporte", "#Tênis", "#Performance", "#Durabilidade", "#Estilo"],
-      "Produto Genérico": ["#Novo", "#Lançamento", "#Oferta", "#Promoção", "#Imperdível"]
+      "Produto Genérico": ["#Novo", "#Lançamento", "#Oferta", "#Promoção", "#Imperdível"],
+      "Chinelo Melissa": ["#Melissa", "#Chinelo", "#Estilo", "#Moda", "#Conforto"]
     };
     let hashtags = baseTags[keywords.produto] || ["#Produto", "#Inovação", "#Qualidade", "#VídeoCriativo"];
-    // Ajustar hashtags conforme tom
-    if (keywords.tom.toLowerCase().includes("emocional")) {
-      hashtags.push("#Motivação", "#Inspiração", "#Conexão");
-    } else if (keywords.tom.toLowerCase().includes("formal")) {
-      hashtags.push("#Profissional", "#Excelência", "#Soluções");
-    } else if (keywords.tom.toLowerCase().includes("jovem")) {
-      hashtags.push("#Juventude", "#Energia", "#Tendência");
-    }
+    if (keywords.tom.toLowerCase().includes("emocional")) hashtags.push("#Motivação", "#Inspiração", "#Conexão");
+    else if (keywords.tom.toLowerCase().includes("formal")) hashtags.push("#Profissional", "#Excelência", "#Soluções");
+    else if (keywords.tom.toLowerCase().includes("jovem")) hashtags.push("#Juventude", "#Energia", "#Tendência");
     return hashtags;
   }
 
-  // Gerar capa clickbait dinâmica - simples texto + imagem baseada no estilo
+  // Capa clickbait dinâmica
   function generateCover(keywords, styleKey) {
     const captions = [
       `Descubra o poder do ${keywords.produto}!`,
@@ -396,15 +389,7 @@
     return { caption, coverImage };
   }
 
-  // Função para dividir texto em legendas animadas simples simuladas
-  function generateAnimatedCaptions(script) {
-    const lines = script.match(/\[Cena \d: ([^\]]+)\]/g) || [];
-    // Remove tags [Cena X: ...]
-    const captions = lines.map(line => line.replace(/\[Cena \d: (.+)\]/, "$1"));
-    return captions;
-  }
-
-  // Função principal de geração controlada
+  // ----- Função de geração geral -----
   async function handleGenerate() {
     const briefingInput = document.getElementById("briefing-input");
     const styleSelect = document.getElementById("style-select");
@@ -437,8 +422,7 @@
     const socialSection = document.getElementById("social-section");
     const hashtagsOutput = document.getElementById("hashtags-output");
 
-    // Clear previous synth listener so we avoid duplicates
-    if (synthButton) synthButton.replaceWith(synthButton.cloneNode(true));
+    if (synthButton) synthButton.replaceWith(synthButton.cloneNode(true)); // limpar listeners
 
     const briefingText = briefingInput.value.trim();
     if (!briefingText) {
@@ -446,7 +430,7 @@
       return;
     }
 
-    // Reset UI - esconder seções e limpar conteúdo
+    // Reset UI
     keywordsSection.style.display = "none";
     scriptSection.style.display = "none";
     storyboardSection.style.display = "none";
@@ -466,30 +450,29 @@
     generateBtn.disabled = true;
     loadingIndicator.style.display = "inline";
 
-    await new Promise(r => setTimeout(r, 800)); // Simular processamento
+    await new Promise(r => setTimeout(r, 800));
 
-    // 1. Extrair palavras-chave
+    // Extrair palavras-chave
     const keywords = extractKeywords(briefingText);
     keywordsOutput.textContent = JSON.stringify(keywords, null, 2);
     keywordsSection.style.display = "block";
 
     await new Promise(r => setTimeout(r, 600));
 
-    // 2. Gerar roteiro consistente
+    // Gerar roteiro coerente
     const script = generateScript(keywords);
     scriptOutput.textContent = script;
     scriptSection.style.display = "block";
 
     await new Promise(r => setTimeout(r, 600));
 
-    // 3. Gerar storyboard com prompts detalhados e imagens estilares
+    // Gerar storyboard com estilo selecionado
     const styleKey = styleSelect.value;
     const scenes = script.trim().split(/\n+/).filter(s => s.length > 0);
     scenesContainer.innerHTML = "";
     scenes.forEach((scene, i) => {
       const prompt = generatePrompt(scene, keywords, styleKey);
       const imgUrl = simulateImageGenerating(styleKey, i);
-
       const sceneDiv = document.createElement("div");
       sceneDiv.className = "scene";
 
@@ -508,7 +491,7 @@
 
       const img = document.createElement("img");
       img.src = imgUrl;
-      img.alt = `Imagem gerada da cena ${i+1}`;
+      img.alt = `Imagem da cena ${i+1}`;
       sceneDiv.appendChild(img);
 
       scenesContainer.appendChild(sceneDiv);
@@ -517,7 +500,7 @@
 
     await new Promise(r => setTimeout(r, 600));
 
-    // 4. Gerar capa clickbait
+    // Gerar capa clickbait
     const cover = generateCover(keywords, styleKey);
     coverImageEl.src = cover.coverImage;
     coverCaptionEl.textContent = cover.caption;
@@ -525,24 +508,24 @@
 
     await new Promise(r => setTimeout(r, 600));
 
-    // 5. Narração (Speech Synthesis)
+    // Narração - preparar botão para sintetizar
     narrationSection.style.display = "block";
     const synthBtn = document.getElementById("synthesize-btn");
     synthBtn.onclick = () => {
       if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel(); // Cancelar fala anterior
+        window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(script);
         utterance.rate = 1.0;
         utterance.pitch = (keywords.tom.toLowerCase().includes("jovem") ? 1.2 : 1.0);
         window.speechSynthesis.speak(utterance);
       } else {
-        alert("Seu navegador não suporta síntese de voz.");
+        alert("Síntese de voz não suportada no seu navegador.");
       }
     };
 
     await new Promise(r => setTimeout(r, 600));
 
-    // 6. Trilha sonora (exemplo royalty-free) - ajustar estilo e duração simulada
+    // Trilha sonora simulada
     musicSection.style.display = "block";
     musicAudio.src = "https://cdn.pixabay.com/download/audio/2021/10/06/audio_25bd5ca3c3.mp3?filename=calm-inspiration-111093.mp3";
     musicAudio.controls = true;
@@ -550,7 +533,7 @@
 
     await new Promise(r => setTimeout(r, 600));
 
-    // 7. Vídeo final mockup com cenas e narração
+    // Vídeo mockup
     videoSection.style.display = "block";
     videoScenesMockup.innerHTML = "";
     scenes.forEach((scene, i) => {
@@ -573,25 +556,82 @@
     });
     videoNarrationText.textContent = script;
 
-    // 8. Versões para redes sociais e hashtags
+    // Versões para redes sociais e hashtags
     socialSection.style.display = "block";
     const hashtags = suggestHashtags(keywords);
     hashtagsOutput.textContent = hashtags.join(" ");
 
-    // Habilitar botão e esconder loader
     generateBtn.disabled = false;
     loadingIndicator.style.display = "none";
   }
 
-  // Gera prompt estilar para capas clickbait (mockup visual animado)
-  function generateAnimatedCaptions(script) {
-    const lines = script.match(/\[Cena \d: ([^\]]+)\]/g) || [];
-    const captions = lines.map(line => line.replace(/\[Cena \d: (.+)\]/, "$1"));
-    return captions;
-  }
+  // ----- Uploads tratamento e exibição -----
+  const uploadInput = document.getElementById('upload-input');
+  const uploadedMediaDiv = document.getElementById('uploaded-media');
+
+  uploadInput.addEventListener('change', () => {
+    uploadedMediaDiv.innerHTML = '<h3>Mídias enviadas:</h3>';
+    for (const file of uploadInput.files) {
+      const mediaDiv = document.createElement('div');
+      mediaDiv.className = 'media-item';
+
+      if (file.type.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.alt = file.name;
+        mediaDiv.appendChild(img);
+        mediaDiv.appendChild(document.createTextNode(file.name));
+      } else if (file.type.startsWith('video/')) {
+        const video = document.createElement('video');
+        video.src = URL.createObjectURL(file);
+        video.controls = true;
+        video.style.maxWidth = "100%";
+        mediaDiv.appendChild(video);
+        mediaDiv.appendChild(document.createTextNode(file.name));
+      } else {
+        mediaDiv.textContent = `${file.name} - tipo não suportado`;
+      }
+      uploadedMediaDiv.appendChild(mediaDiv);
+    }
+  });
+
+  // ----- Busca vídeos internet (simulada) -----
+  const searchBtn = document.getElementById('buscar-btn');
+  const searchResultsDiv = document.getElementById('search-results');
+  const searchQueryInput = document.getElementById('search-query');
+
+  searchBtn.addEventListener('click', () => {
+    const query = searchQueryInput.value.trim();
+    if(!query) {
+      alert('Por favor, digite um termo para busca.');
+      return;
+    }
+    searchResultsDiv.innerHTML = `<h3>Resultados da busca para "${query}" (simulado):</h3>`;
+
+    // Resultados simulados - videos do YouTube embed responsivo
+    // Para implementação real backend + YouTube Data API + download são necessários
+
+    const fakeResults = [
+      {title: `Corte do ${query} em jogo 1`, videoId: 'dQw4w9WgXcQ'},
+      {title: `Melhores momentos de ${query}`, videoId: 'V-_O7nl0Ii0'},
+      {title: `${query} em ação`, videoId: '3JZ_D3ELwOQ'}
+    ];
+
+    fakeResults.forEach(result => {
+      const div = document.createElement('div');
+      div.className = 'media-item';
+      div.style.marginBottom = '1.2rem';
+      div.innerHTML = `<strong>${result.title}</strong><br>
+        <iframe width="350" height="197" src="https://www.youtube.com/embed/${result.videoId}" 
+          frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen></iframe>`;
+      searchResultsDiv.appendChild(div);
+    });
+  });
 
   document.getElementById("generate-btn").addEventListener("click", handleGenerate);
 </script>
+
 </body>
 </html>
 
