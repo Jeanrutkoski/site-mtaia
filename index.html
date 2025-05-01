@@ -1,178 +1,216 @@
 """
-video_creator_ai_pro.py
+video_creator_ai.py
 
-Pipeline completo para criação automática de vídeos a partir de briefing textual.
-Usa APIs reais com tratamento de erros, paralelização e configuração modular.
+Script para automação do fluxo de criação de vídeos a partir de briefing textual,
+utilizando NLP, LLM, geração de imagem, síntese de voz, edição e pós-produção.
 
-Requer:
-- OpenAI API key (GPT-4)
-- Stable Diffusion API (ou local com GPU)
-- ElevenLabs API (voz)
-- FFmpeg instalado (edição)
+Requer APIs externas: OpenAI GPT-4, Stable Diffusion, ElevenLabs, Epidemic Sound,
+FFmpeg, OpenCV etc. Aqui as chamadas são simuladas; substitua pelos SDKs oficiais.
 
 Autor: BLACKBOXAI
-Versão: 2.0
 """
 
-import os
 import json
 import re
-import requests
-import concurrent.futures
+import subprocess
 from typing import List, Dict, Any
-from pathlib import Path
-from openai import OpenAI
-from elevenlabs import generate, set_api_key
-import cv2  # OpenCV
-import numpy as np
 
-# Configurações (substitua com suas chaves)
-CONFIG = {
-    "openai_key": "sua-chave-openai",
-    "elevenlabs_key": "sua-chave-elevenlabs",
-    "stablediffusion_url": "https://api.stablediffusion.com/v1",
-    "output_dir": "videos_gerados",
-    "default_voice": "Marcos",  # ElevenLabs voice ID
-    "ffmpeg_path": "ffmpeg"  # Ou caminho completo se não estiver no PATH
-}
-
-# Clientes das APIs
-client_openai = OpenAI(api_key=CONFIG["openai_key"])
-set_api_key(CONFIG["elevenlabs_key"])
-
-# --- Funções Principais ---
-def generate_with_retry(api_func, max_retries=3, **kwargs):
-    """Tenta chamar uma API com retry automático."""
-    for _ in range(max_retries):
-        try:
-            return api_func(**kwargs)
-        except Exception as e:
-            print(f"Erro na API ({api_func.__name__}): {e}. Retrying...")
-    raise Exception(f"Falha após {max_retries} tentativas.")
-
-def nlp_extract_keywords(briefing: str) -> Dict[str, str]:
-    """Extrai palavras-chave usando GPT-4 para maior precisão."""
-    prompt = (
-        f"Extraia do briefing abaixo as seguintes informações em JSON:\n"
-        f"- produto (string)\n- tom (string)\n- público (string)\n- duração (string)\n"
-        f"Briefing: \"{briefing}\"\n\nExemplo de saída:\n"
-        "{\"produto\": \"Tênis X\", \"tom\": \"descontraído\", ...}"
-    )
-    
-    response = generate_with_retry(
-        client_openai.chat.completions.create,
-        model="gpt-4",
-        messages=[{"role": "user", "content": prompt}],
-        response_format={"type": "json_object"}
-    )
-    return json.loads(response.choices[0].message.content)
-
-def llm_generate_script(keywords: Dict[str, str]) -> str:
-    """Gera roteiro detalhado com GPT-4."""
-    prompt = (
-        f"Crie um roteiro de vídeo de {keywords['duração']} com:\n"
-        f"Produto: {keywords['produto']}\nTom: {keywords['tom']}\n"
-        f"Público: {keywords['público']}\n\n"
-        "Formato: [Cena X: Descrição da cena...]"
-    )
-    
-    response = generate_with_retry(
-        client_openai.chat.completions.create,
-        model="gpt-4",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.7
-    )
-    return response.choices[0].message.content
-
-def generate_scene_image(prompt: str, output_path: str) -> None:
-    """Gera imagem via Stable Diffusion API."""
-    headers = {"Authorization": f"Bearer {CONFIG['stablediffusion_key']}"}
-    data = {
-        "prompt": prompt,
-        "negative_prompt": "blurry, low quality",
-        "width": 1024,
-        "height": 768
+# Simulações de chamadas para APIs com placeholders
+def nlp_extract_keywords(text: str) -> Dict[str, str]:
+    """
+    Extrai palavras-chave do briefing usando NLP (simulado).
+    Exemplo de saída:
+    {
+        "produto": "Tênis esportivo X",
+        "tom": "Jovem/descontraído",
+        "público": "Homens 18-30 anos",
+        "duraçao": "30s"
     }
-    
-    response = generate_with_retry(
-        requests.post,
-        url=f"{CONFIG['stablediffusion_url']}/generate",
-        headers=headers,
-        json=data
-    )
-    with open(output_path, "wb") as f:
-        f.write(response.content)
-
-def generate_voiceover(text: str, output_path: str) -> None:
-    """Gera narração com ElevenLabs."""
-    audio = generate_with_retry(
-        generate,
-        text=text,
-        voice=CONFIG["default_voice"],
-        model="eleven_monolingual_v2"
-    )
-    with open(output_path, "wb") as f:
-        audio.write_to_file(output_path)
-
-def combine_assets(scene_images: List[str], voiceover_path: str, output_path: str) -> None:
-    """Combina imagens e áudio em vídeo com FFmpeg."""
-    # Cria lista de arquivos para FFmpeg
-    with open("temp_filelist.txt", "w") as f:
-        for img in scene_images:
-            f.write(f"file '{img}'\nduration 5\n")  # 5s por cena
-    
-    cmd = [
-        CONFIG["ffmpeg_path"],
-        "-f", "concat",
-        "-i", "temp_filelist.txt",
-        "-i", voiceover_path,
-        "-c:v", "libx264",
-        "-pix_fmt", "yuv420p",
-        "-vf", "fps=30",
-        "-shortest",
-        output_path
-    ]
-    subprocess.run(cmd, check=True)
-
-# --- Pipeline Principal ---
-def run_pipeline(briefing: str) -> Dict[str, str]:
-    """Executa todo o fluxo e retorna paths dos vídeos gerados."""
-    Path(CONFIG["output_dir"]).mkdir(exist_ok=True)
-    
-    # 1. Análise do briefing
-    keywords = nlp_extract_keywords(briefing)
-    script = llm_generate_script(keywords)
-    
-    # 2. Geração paralela de assets
-    scenes = split_script_to_scenes(script)
-    scene_images = []
-    
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        # Gera imagens em paralelo
-        futures = []
-        for i, scene in enumerate(scenes):
-            prompt = generate_image_prompt(scene, keywords)
-            img_path = f"{CONFIG['output_dir']}/scene_{i+1}.png"
-            futures.append(executor.submit(generate_scene_image, prompt, img_path))
-        
-        for future in concurrent.futures.as_completed(futures):
-            scene_images.append(future.result())
-    
-    # 3. Gera voz e combina
-    voice_path = f"{CONFIG['output_dir']}/voiceover.mp3"
-    generate_voiceover(script, voice_path)
-    
-    output_video = f"{CONFIG['output_dir']}/final_video.mp4"
-    combine_assets(scene_images, voice_path, output_video)
-    
+    """
+    # Simples regex + heurística para simulação
+    produto = "Tênis esportivo X" if "tênis" in text.lower() else "Produto genérico"
+    tom = "Jovem/descontraído" if "jovem" in text.lower() else "Formal"
+    publicos = re.findall(r'homens \d+-\d+ anos', text.lower())
+    publico = publicos[0] if publicos else "Geral"
+    duracao_match = re.search(r'(\d+)s', text.lower())
+    duracao = duracao_match.group(1) + "s" if duracao_match else "30s"
     return {
-        "video": output_video,
-        "scenes": scene_images,
-        "script": script
+        "produto": produto,
+        "tom": tom,
+        "público": publico.capitalize(),
+        "duraçao": duracao
     }
+
+def llm_expand_briefing_to_script(keywords: Dict[str, str]) -> str:
+    """
+    Usa GPT-4 (simulado) para expandir briefing em roteiro estruturado.
+    Retorna roteiro como string (descrição de cenas).
+    """
+    # Simulação de roteiro
+    roteiro = (
+        f"[Cena 1: Close do {keywords['produto']} com efeito slow-motion, foco na durabilidade.]\n"
+        "[Cena 2: Jovem usando o tênis em corrida na cidade, sorriso confiante.]\n"
+        "[Cena 3: Detalhes do tênis, mostrando qualidade dos materiais.]\n"
+        "[Cena 4: Logo da marca e chamada para ação, tom jovem e descontraído.]\n"
+    )
+    return roteiro
+
+def split_script_to_scenes(roteiro: str) -> List[str]:
+    """
+    Divide o roteiro em cenas para geração separada.
+    """
+    cenas = []
+    # Cada linha que começa com [Cena X: ...]
+    lines = roteiro.strip().split("\n")
+    for line in lines:
+        cenas.append(line.strip())
+    return cenas
+
+def generate_image_prompt(scene_description: str, keywords: Dict[str, str]) -> str:
+    """
+    Cria prompt para geração da imagem / vídeo da cena para Stable Diffusion ou Midjourney.
+    """
+    # Exemplo geração de prompt
+    prompt = (
+        f"{keywords['produto']} em ação, fundo urbano, estilo 'anúncio Nike', "
+        f"tom {keywords['tom'].lower()}, cores vibrantes, 4K, {scene_description.lower()}"
+    )
+    return prompt
+
+def generate_image_from_prompt(prompt: str, scene_index: int) -> str:
+    """
+    Gera imagem/vídeo de cena via API Stable Diffusion (simulado).
+    Retorna caminho do arquivo gerado.
+    """
+    # Simular nome do arquivo gerado
+    filename = f"scene_{scene_index+1}.png"
+    print(f"[INFO] Gerando imagem para cena {scene_index+1} com prompt:\n{prompt}")
+    print(f"[SIMULAÇÃO] Arquivo gerado: {filename}")
+    return filename
+
+def generate_narration_audio(text: str, voice_tone: str, output_path: str) -> str:
+    """
+    Gera narração em áudio via ElevenLabs API (simulado).
+    voice_tone: ex: "jovem", "formal"
+    output_path: caminho para salvar áudio gerado
+    """
+    print(f"[INFO] Gerando narração com tom '{voice_tone}' para texto:\n{text}")
+    # Simular geração
+    print(f"[SIMULAÇÃO] Arquivo de áudio gerado: {output_path}")
+    return output_path
+
+def download_royalty_free_music(style: str, duration_sec: int) -> str:
+    """
+    Baixa ou seleciona trilha sonora via Epidemic Sound API (simulado).
+    style: estilo da música, ex: 'ação', 'emocional'
+    duration_sec: duração em segundos para corte
+    Retorna caminho do arquivo de música
+    """
+    filename = f"music_{style}_{duration_sec}s.mp3"
+    print(f"[INFO] Selecionando trilha sonora '{style}' para duração {duration_sec}s")
+    print(f"[SIMULAÇÃO] Arquivo de música: {filename}")
+    return filename
+
+def combine_video_audio(images: List[str], narration_audio: str, music_audio: str, output_file: str, transitions: str = "default") -> None:
+    """
+    Combina imagens, narração e música em um vídeo final usando FFmpeg (simulado).
+    transitions: tipo de transição para aplicar.
+    """
+    print(f"[INFO] Combinando {len(images)} cenas, áudio de narração '{narration_audio}' e música '{music_audio}'")
+    print(f"[SIMULAÇÃO] Transições aplicadas: {transitions}")
+    print(f"[SIMULAÇÃO] Vídeo final salvo em: {output_file}")
+
+def adjust_video_quality(input_video: str, output_video: str) -> None:
+    """
+    Ajusta brilho, contraste e qualidade do vídeo usando OpenCV (simulado).
+    """
+    print(f"[INFO] Ajustando qualidade do vídeo {input_video}")
+    print(f"[SIMULAÇÃO] Vídeo ajustado salvo em: {output_video}")
+
+def insert_logo(input_video: str, logo_path: str, position: str, output_video: str) -> None:
+    """
+    Insere logo no vídeo no canto especificado usando FFmpeg (simulado).
+    """
+    print(f"[INFO] Inserindo logo {logo_path} no vídeo {input_video} na posição {position}")
+    print(f"[SIMULAÇÃO] Vídeo com logo salvo em: {output_video}")
+
+def convert_for_social(platform: str, input_video: str, output_video: str) -> None:
+    """
+    Converte vídeo para formato e dimensões específicas da plataforma (TikTok, Instagram).
+    """
+    if platform.lower() == "tiktok":
+        print(f"[INFO] Convertendo vídeo para TikTok vertical 9:16 com legendas")
+    elif platform.lower() == "instagram reels":
+        print(f"[INFO] Convertendo vídeo para Instagram Reels com capa personalizada e CTA")
+    else:
+        print(f"[INFO] Plataforma desconhecida: {platform}, copiando vídeo sem alteração")
+    print(f"[SIMULAÇÃO] Vídeo exportado para {platform} em: {output_video}")
+
+def suggest_hashtags(text: str) -> List[str]:
+    """
+    Sugere hashtags baseados no texto do roteiro ou briefing (simulado).
+    """
+    return ["#esportivo", "#tênis", "#durabilidade", "#jovem"]
+
+def main():
+    # Exemplo de briefing recebido
+    briefing_text = "Quero um vídeo de 30s sobre tênis esportivo, tom jovem, com foco em durabilidade"
+    print("[START] Recebendo briefing:")
+    print(briefing_text)
+
+    # 1. NLP: Extrair palavras-chave
+    keywords = nlp_extract_keywords(briefing_text)
+    print("[INFO] Palavras-chave extraídas:")
+    print(json.dumps(keywords, indent=2, ensure_ascii=False))
+
+    # 2. Expandir para roteiro
+    roteiro = llm_expand_briefing_to_script(keywords)
+    print("[INFO] Roteiro gerado pelo LLM:")
+    print(roteiro)
+
+    # 3. Gerar storyboard
+    cenas = split_script_to_scenes(roteiro)
+
+    # 4. Gerar imagens para cada cena
+    imagens = []
+    for i, cena in enumerate(cenas):
+        prompt = generate_image_prompt(cena, keywords)
+        imagem_path = generate_image_from_prompt(prompt, i)
+        imagens.append(imagem_path)
+
+    # 5. Gerar narração do roteiro completo
+    narração_audio_path = "voiceover.mp3"
+    generate_narration_audio(roteiro, keywords["tom"], narração_audio_path)
+
+    # 6. Selecionar trilha sonora royalty-free
+    duration_sec = int(keywords["duraçao"].replace("s", ""))
+    music_style = "ação" if "ação" in briefing_text.lower() else "descontraído"
+    music_file = download_royalty_free_music(music_style, duration_sec)
+
+    # 7. Editar vídeo combinando elementos
+    output_video = "video_final.mp4"
+    combine_video_audio(imagens, narração_audio_path, music_file, output_video, transitions="rápidas" if music_style=="ação" else "lentas")
+
+    # 8. Pós-produção: ajustes de qualidade e logo
+    adjusted_video = "video_final_adjusted.mp4"
+    adjust_video_quality(output_video, adjusted_video)
+    logo_path = "logo_cliente.png"  # Suponha logo disponível
+    video_com_logo = "video_final_logo.mp4"
+    insert_logo(adjusted_video, logo_path, position="bottom-right", output_video=video_com_logo)
+
+    # 9. Criar versões para redes sociais
+    tiktok_video = "video_tiktok.mp4"
+    convert_for_social("TikTok", video_com_logo, tiktok_video)
+
+    instagram_video = "video_instagram_reels.mp4"
+    convert_for_social("Instagram Reels", video_com_logo, instagram_video)
+
+    # 10. Sugerir hashtags para TikTok e Instagram
+    hashtags = suggest_hashtags(roteiro)
+    print("[INFO] Hashtags sugeridas:")
+    print(" ".join(hashtags))
+
+    print("[COMPLETE] Pipeline de criação de vídeo finalizado com sucesso.")
 
 if __name__ == "__main__":
-    briefing = "Quero um vídeo de 30s sobre tênis esportivo, tom jovem, foco em durabilidade"
-    result = run_pipeline(briefing)
-    print(f"Vídeo gerado em: {result['video']}")
-  
+    main()
