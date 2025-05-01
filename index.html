@@ -523,3 +523,455 @@ app.listen(PORT, () => {
 });
 
 </html>
+/**
+ * Backend Node.js Express básico para plataforma MTA.IA
+ * Rotas:
+ *  - /api/upload (POST): receber arquivos de mídia
+ *  - /api/generate (POST): receber configuração para gerar vídeo (simulado)
+ *  - /api/status/:id (GET): status da renderização (simulado)
+ * 
+ * Em produção: integrar processamento real, filas, FFmpeg, APIs IA.
+ */
+
+const express = require('express');
+const fileUpload = require('express-fileupload');
+const cors = require('cors');
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(fileUpload({
+  createParentPath: true,
+  limits: { fileSize: 500 * 1024 * 1024 }, // 500MB
+}));
+
+// Simula armazenamento em memória
+const videos = new Map();
+
+// Rota para upload de mídias
+app.post('/api/upload', async (req, res) => {
+  try {
+    if(!req.files || !req.files.media) {
+      return res.status(400).json({ error: 'Nenhum arquivo enviado' });
+    }
+    let files = req.files.media;
+    if(!Array.isArray(files)) {
+      files = [files];
+    }
+
+    // Salvar arquivos no servidor - simulado só nomes aqui
+    const savedFiles = files.map(file => {
+      // em real salvar e retornar caminho
+      return { name: file.name, mimetype: file.mimetype, size: file.size };
+    });
+
+    // Responder com infos dos arquivos salvos
+    res.json({ message: 'Arquivos recebidos com sucesso', files: savedFiles });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erro no upload' });
+  }
+});
+
+// Rota para iniciar geração de vídeo (simulado)
+app.post('/api/generate', (req, res) => {
+  const { description, music, duration, style } = req.body;
+  if(!description) return res.status(400).json({ error: 'Descrição obrigatória' });
+
+  // Simular criação de tarefa
+  const id = Math.random().toString(36).substr(2, 9);
+  videos.set(id, {
+    status: 'processing',
+    progress: 0,
+    description,
+    music,
+    duration,
+    style,
+    resultUrl: null
+  });
+
+  // Simular processamento async
+  setTimeout(() => {
+    videos.set(id, {
+      status: 'done',
+      progress: 100,
+      description,
+      music,
+      duration,
+      style,
+      // URL fictícia para vídeo gerado
+      resultUrl: 'https://interactive-examples.mdn.mozilla.net/media/examples/flower.webm'
+    });
+  }, 15000); // 15s simulado
+
+  res.json({ jobId: id, message: 'Geração iniciada' });
+});
+
+// Rota para checar status da geração
+app.get('/api/status/:id', (req, res) => {
+  const id = req.params.id;
+  if(!videos.has(id)) return res.status(404).json({ error: 'Job não encontrado' });
+  res.json(videos.get(id));
+});
+
+app.listen(PORT, () => {
+  console.log(\`Servidor rodando na porta \${PORT}\`);
+});
+`server.js`
+```js
+/**
+ * Backend Node.js Express básico para plataforma MTA.IA
+ * Rotas:
+ *  - /api/upload (POST): receber arquivos de mídia
+ *  - /api/generate (POST): receber configuração para gerar vídeo (simulado)
+ *  - /api/status/:id (GET): status da renderização (simulado)
+ * 
+ * Em produção: integrar processamento real, filas, FFmpeg, APIs IA.
+ */
+
+const express = require('express');
+const fileUpload = require('express-fileupload');
+const cors = require('cors');
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(fileUpload({
+  createParentPath: true,
+  limits: { fileSize: 500 * 1024 * 1024 }, // 500MB
+}));
+
+// Simula armazenamento em memória
+const videos = new Map();
+
+// Rota para upload de mídias
+app.post('/api/upload', async (req, res) => {
+  try {
+    if(!req.files || !req.files.media) {
+      return res.status(400).json({ error: 'Nenhum arquivo enviado' });
+    }
+    let files = req.files.media;
+    if(!Array.isArray(files)) {
+      files = [files];
+    }
+
+    // Salvar arquivos no servidor - simulado só nomes aqui
+    const savedFiles = files.map(file => {
+      // em real salvar e retornar caminho
+      return { name: file.name, mimetype: file.mimetype, size: file.size };
+    });
+
+    // Responder com infos dos arquivos salvos
+    res.json({ message: 'Arquivos recebidos com sucesso', files: savedFiles });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erro no upload' });
+  }
+});
+
+// Rota para iniciar geração de vídeo (simulado)
+app.post('/api/generate', (req, res) => {
+  const { description, music, duration, style } = req.body;
+  if(!description) return res.status(400).json({ error: 'Descrição obrigatória' });
+
+  // Simular criação de tarefa
+  const id = Math.random().toString(36).substr(2, 9);
+  videos.set(id, {
+    status: 'processing',
+    progress: 0,
+    description,
+    music,
+    duration,
+    style,
+    resultUrl: null
+  });
+
+  // Simular processamento async
+  setTimeout(() => {
+    videos.set(id, {
+      status: 'done',
+      progress: 100,
+      description,
+      music,
+      duration,
+      style,
+      // URL fictícia para vídeo gerado
+      resultUrl: 'https://interactive-examples.mdn.mozilla.net/media/examples/flower.webm'
+    });
+  }, 15000); // 15s simulado
+
+  res.json({ jobId: id, message: 'Geração iniciada' });
+});
+
+// Rota para checar status da geração
+app.get('/api/status/:id', (req, res) => {
+  const id = req.params.id;
+  if(!videos.has(id)) return res.status(404).json({ error: 'Job não encontrado' });
+  res.json(videos.get(id));
+});
+
+app.listen(PORT, () => {
+  console.log(\`Servidor rodando na porta \${PORT}\`);
+});
+
+```
+
+
+
+`index.html`
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MTA.IA - Plataforma Completa de Edição com IA</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+<style>
+  /* Manter seu estilo customizado mínimo aqui se desejar */
+  #progressBar {
+    transition: width 0.5s ease;
+  }
+</style>
+</head>
+<body class="bg-gray-50">
+
+<header class="gradient-bg text-white shadow-xl">
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <i class="fas fa-robot text-4xl wave"></i>
+        <h1 class="text-3xl font-bold">MTA.IA</h1>
+      </div>
+      <nav>
+        <ul class="flex space-x-6">
+          <li><a href="#" class="hover:underline">Projetos</a></li>
+          <li><a href="#" class="hover:underline">Templates</a></li>
+          <li><a href="#" class="hover:underline">Ajuda</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="mt-12 text-center">
+      <h2 class="text-4xl font-bold mb-4">Crie vídeos incríveis com IA</h2>
+      <p class="text-xl opacity-90">Digite o que você quer e nosso sistema faz todo o trabalho pesado</p>
+    </div>
+  </div>
+</header>
+
+<main class="container mx-auto px-4 py-12">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    <div class="lg:col-span-2 bg-white rounded-xl shadow-lg p-6">
+      <h3 class="text-2xl font-semibold mb-6 text-purple-800">
+        <i class="fas fa-magic mr-2"></i> Configuração do Vídeo
+      </h3>
+
+      <div class="mb-8">
+        <label class="block text-gray-700 mb-2 font-medium">Descreva seu vídeo:</label>
+        <textarea id="videoDescription" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" rows="3" placeholder="Ex: 'Edit do Messi com música eletrônica, 45 segundos, estilo dinâmico'"></textarea>
+      </div>
+
+      <!-- Upload mídia -->
+      <div class="mb-6">
+        <label class="block text-gray-700 mb-2 font-medium">Upload de arquivos (imagens, vídeos)</label>
+        <input type="file" id="mediaUpload" class="w-full border border-gray-300 rounded-lg p-2" multiple accept="video/*,image/*" />
+        <small class="text-gray-500">Você pode enviar múltiplos arquivos. Tamanho máximo por arquivo: 500MB</small>
+      </div>
+
+      <button id="generateButton" class="w-full py-4 gradient-bg text-white rounded-lg font-bold hover:shadow-lg transition-all mt-6">
+        <i class="fas fa-play mr-2"></i> GERAR VÍDEO
+      </button>
+
+      <div class="progress-container hidden mt-6">
+        <div class="flex justify-between text-sm text-gray-600 mb-1">
+          <span id="progressMessage">Processando...</span>
+          <span id="progressPercent">0%</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-2.5">
+          <div id="progressBar" class="gradient-bg h-2.5 rounded-full" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-lg p-6">
+      <h3 class="text-2xl font-semibold mb-6 text-purple-800">
+        <i class="fas fa-play-circle mr-2"></i> Pré-visualização
+      </h3>
+
+      <div class="video-container w-full bg-black rounded-lg overflow-hidden mb-4 aspect-video">
+        <video id="videoPreview" controls class="w-full h-full">
+          Seu navegador não suporta vídeos HTML5.
+        </video>
+      </div>
+
+      <div id="resultOptions" class="hidden flex space-x-3 mb-4">
+        <button id="btnRestart" class="flex-1 py-2 bg-blue-50 text-blue-600 rounded-lg border border-blue-100 hover:bg-blue-100">
+          <i class="fas fa-redo mr-1"></i> Refazer
+        </button>
+        <a id="btnDownload" class="flex-1 py-2 bg-green-50 text-green-600 rounded-lg border border-green-100 hover:bg-green-100 inline-flex justify-center items-center" download="video.mp4" href="#">
+          <i class="fas fa-download mr-1"></i> Baixar
+        </a>
+      </div>
+
+      <div id="emptyState" class="text-center py-8">
+        <i class="fas fa-video text-4xl text-gray-300 mb-3"></i>
+        <p class="text-gray-500">Seu vídeo aparecerá aqui</p>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="bg-gray-800 text-white py-8 mt-12">
+  <div class="container mx-auto px-4 text-center text-gray-400">
+    &copy; 2023 MTA.IA - Todos os direitos reservados
+  </div>
+</footer>
+
+<script>
+  const videoDescriptionInput = document.getElementById('videoDescription');
+  const mediaUploadInput = document.getElementById('mediaUpload');
+  const generateButton = document.getElementById('generateButton');
+  const progressContainer = document.querySelector('.progress-container');
+  const progressBar = document.getElementById('progressBar');
+  const progressPercent = document.getElementById('progressPercent');
+  const progressMessage = document.getElementById('progressMessage');
+  const videoPreview = document.getElementById('videoPreview');
+  const resultOptions = document.getElementById('resultOptions');
+  const emptyState = document.getElementById('emptyState');
+  const btnRestart = document.getElementById('btnRestart');
+  const btnDownload = document.getElementById('btnDownload');
+
+  let jobId = null;
+  let pollingInterval = null;
+
+  generateButton.addEventListener('click', async () => {
+    if (!videoDescriptionInput.value.trim()) {
+      alert('Por favor, descreva seu vídeo.');
+      return;
+    }
+    
+    generateButton.disabled = true;
+    progressContainer.classList.remove('hidden');
+    progressBar.style.width = '0%';
+    progressPercent.textContent = '0%';
+    progressMessage.textContent = 'Preparando upload...';
+    resultOptions.classList.add('hidden');
+    emptyState.classList.add('hidden');
+    videoPreview.src = '';
+
+    try {
+      // Upload arquivos
+      const mediaFiles = mediaUploadInput.files;
+      let mediaFormData = new FormData();
+      for (let file of mediaFiles) {
+        mediaFormData.append('media', file, file.name);
+      }
+      progressMessage.textContent = 'Enviando arquivos...';
+
+      const uploadResponse = mediaFiles.length > 0 ? await fetch('http://localhost:5000/api/upload', {
+        method: 'POST',
+        body: mediaFormData
+      }) : { json: async () => ({ files: [] }) };
+
+      const uploadResult = await uploadResponse.json();
+
+      if (uploadResult.error) {
+        alert('Erro no upload: ' + uploadResult.error);
+        throw new Error(uploadResult.error);
+      }
+
+      // Iniciar geração de vídeo
+      const postData = {
+        description: videoDescriptionInput.value.trim(),
+        music: '', // para demo, vazio - poderia coletar do usuário
+        duration: '', // idem
+        style: ''  // idem
+      };
+
+      progressMessage.textContent = 'Solicitando geração de vídeo...';
+
+      const genResponse = await fetch('http://localhost:5000/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(postData)
+      });
+
+      const genResult = await genResponse.json();
+
+      if (genResult.error) {
+        alert('Erro ao iniciar geração: ' + genResult.error);
+        throw new Error(genResult.error);
+      }
+      jobId = genResult.jobId;
+      progressMessage.textContent = 'Processando vídeo...';
+
+      // Começar polling para status
+      pollingInterval = setInterval(checkStatus, 2000);
+    } catch (error) {
+      alert('Ocorreu erro: ' + error.message);
+      resetUI();
+    }
+  });
+
+  async function checkStatus() {
+    if (!jobId) return;
+
+    const statusResponse = await fetch(\`http://localhost:5000/api/status/\${jobId}\`);
+    const statusResult = await statusResponse.json();
+
+    if(statusResult.error) {
+      alert('Erro ao consultar status: ' + statusResult.error);
+      clearInterval(pollingInterval);
+      resetUI();
+      return;
+    }
+
+    progressBar.style.width = statusResult.progress + '%';
+    progressPercent.textContent = statusResult.progress + '%';
+
+    if(statusResult.status === 'done') {
+      clearInterval(pollingInterval);
+      progressMessage.textContent = 'Concluído!';
+      videoPreview.src = statusResult.resultUrl;
+      resultOptions.classList.remove('hidden');
+    }    
+  }
+
+  // Botão refazer
+  btnRestart.addEventListener('click', () => {
+    resetUI();
+  });
+
+  function resetUI() {
+    generateButton.disabled = false;
+    progressContainer.classList.add('hidden');
+    progressBar.style.width = '0%';
+    progressPercent.textContent = '0%';
+    progressMessage.textContent = '';
+    videoPreview.src = '';
+    emptyState.classList.remove('hidden');
+    resultOptions.classList.add('hidden');
+    jobId = null;
+    if (pollingInterval) clearInterval(pollingInterval);
+  }
+
+  // Botão baixar
+  btnDownload.addEventListener('click', () => {
+    if(videoPreview.src) {
+      btnDownload.href = videoPreview.src;
+    }
+  });
+
+</script>
+
+</body>
+</html>
+
+```
+
