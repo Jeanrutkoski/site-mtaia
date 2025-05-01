@@ -1,929 +1,527 @@
-`video_editor_system.html`
-```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Editor de Vídeo com Upload, Busca e IA Criativa</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0; padding: 0;
-    background: #f0f3f7;
-    color: #333;
-  }
-  header {
-    background: #2d89ef;
-    color: white;
-    padding: 1rem;
-    text-align: center;
-  }
-  main {
-    max-width: 920px;
-    margin: 2rem auto;
-    background: white;
-    padding: 1.5rem 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgb(0 0 0 /0.1);
-  }
-  h1,h2,h3 {
-    margin-top: 0;
-  }
-  label {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 0.3rem;
-  }
-  textarea, select, input[type=text] {
-    width: 100%;
-    font-size: 1rem;
-    padding: 0.5rem;
-    border-radius: 4px;
-    border: 1px solid #bbb;
-    margin-bottom: 1rem;
-    resize: vertical;
-    min-height: 80px;
-  }
-  button {
-    background: #2d89ef;
-    color: white;
-    padding: 0.6rem 1.2rem;
-    font-size: 1rem;
-    border: none;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-  }
-  button:hover {
-    background: #1b5fbd;
-  }
-  pre {
-    background: #f4f6fa;
-    padding: 1rem;
-    border-radius: 4px;
-    overflow-x: auto;
-    white-space: pre-wrap;
-  }
-  .section {
-    margin-bottom: 2rem;
-  }
-  .scene {
-    border: 1px solid #ccc;
-    padding: 0.6rem 0.8rem;
-    margin-bottom: 0.8rem;
-    border-radius: 4px;
-    background: #fafafa;
-  }
-  .scene img {
-    max-width: 100%;
-    border-radius: 4px;
-  }
-  .prompt {
-    font-style: italic;
-    color: #666;
-  }
-  .output-block {
-    background: #e7f0fd;
-    border-left: 6px solid #2d89ef;
-    padding: 1rem 1.2rem;
-    margin-bottom: 2rem;
-  }
-  .hashtags {
-    font-weight: bold;
-    color: #2d89ef;
-  }
-  .video-mockup {
-    background: #222;
-    color: #eee;
-    text-align: center;
-    border-radius: 8px;
-    padding: 1rem;
-    user-select: none;
-  }
-  .video-mockup img {
-    max-width: 100%;
-    border-radius: 8px;
-  }
-  .footer {
-    text-align: center;
-    font-size: 0.9rem;
-    color: #999;
-    margin-top: 2rem;
-  }
-  .loader {
-    display: inline-block;
-    border: 4px solid #f3f3f3;
-    border-radius: 50%;
-    border-top: 4px solid #2d89ef;
-    width: 24px;
-    height: 24px;
-    animation: spin 1s linear infinite;
-    vertical-align: middle;
-    margin-left: 0.5rem;
-  }
-  @keyframes spin {
-    0% {transform: rotate(0deg);}
-    100% {transform: rotate(360deg);}
-  }
-  .cover-caption {
-    text-align: center;
-    font-weight: bold;
-    margin-top: 0.5rem;
-    color: #2d89ef;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudioVid AI - Editor de Vídeo Inteligente</title>
+    <style>
+        :root {
+            --primary: #4a6bff;
+            --secondary: #6e48aa;
+            --accent: #ff6b6b;
+            --dark: #2c3e50;
+            --light: #f8f9fa;
+            --success: #20c997;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --gray: #6c757d;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-icon {
+            margin-right: 10px;
+            font-size: 2rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+        
+        nav ul li a:hover {
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+            margin: 2rem 0;
+        }
+        
+        .sidebar {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            height: fit-content;
+        }
+        
+        .editor-container {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--light);
+            color: var(--primary);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        input[type="text"],
+        input[type="file"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #3a5bd9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .btn-icon {
+            margin-right: 8px;
+        }
+        
+        .video-preview {
+            width: 100%;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        
+        .video-preview video {
+            width: 100%;
+            display: block;
+        }
+        
+        .timeline {
+            background: #f1f3f5;
+            height: 100px;
+            border-radius: 6px;
+            margin: 1.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .timeline-clip {
+            position: absolute;
+            height: 80px;
+            top: 10px;
+            background: var(--primary);
+            border-radius: 4px;
+            cursor: move;
+        }
+        
+        .assets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 1.5rem 0;
+        }
+        
+        .asset-card {
+            border: 1px solid #eee;
+            border-radius: 6px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .asset-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .asset-thumbnail {
+            height: 80px;
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .asset-thumbnail img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        .asset-info {
+            padding: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .ai-suggestions {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .suggestion-item {
+            padding: 0.8rem;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .suggestion-item:hover {
+            background: #e9ecef;
+        }
+        
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .tool-btn {
+            padding: 0.6rem 1rem;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .tool-btn:hover {
+            background: #f1f3f5;
+            border-color: #bbb;
+        }
+        
+        .progress-container {
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 1rem;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                margin: 0 0.5rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-<header>
-  <h1>Editor de Vídeo com Upload, Busca e IA Criativa</h1>
-  <p>Envie suas imagens e vídeos, ou solicite buscas na internet e gere vídeos automáticos.</p>
-</header>
-<main>
-
-  <!-- Briefing + estilo -->
-  <section class="section" aria-label="Briefing e estilo">
-    <label for="briefing-input">Descreva o vídeo que você quer criar (ex: vídeo de chinelo Melissa, tom jovem, 30s)</label>
-    <textarea id="briefing-input" placeholder="Digite seu briefing aqui..." aria-required="true"></textarea>
-
-    <label for="style-select">Selecione o estilo visual do vídeo</label>
-    <select id="style-select" aria-label="Seleção do estilo visual">
-      <option value="nike">Estilo Nike (moderno e dinâmico)</option>
-      <option value="adidas">Estilo Adidas (esportivo e energizante)</option>
-      <option value="luxury">Estilo Luxo (sofisticado e elegante)</option>
-      <option value="urban">Estilo Urbano (descolado e jovem)</option>
-      <option value="clean">Estilo Limpo (minimalista e direto)</option>
-    </select>
-
-    <button id="generate-btn">Iniciar Criação do Vídeo</button>
-    <span id="loading" style="display:none;" aria-live="polite">Processando<span class="loader"></span></span>
-  </section>
-
-  <!-- Upload de mídia -->
-  <section class="section" aria-label="Upload de fotos e vídeos">
-    <label for="upload-input">Envie suas fotos ou vídeos (opcional):</label>
-    <input type="file" id="upload-input" multiple accept="image/*,video/*" aria-describedby="upload-help"/>
-    <small id="upload-help">Você pode enviar imagens e vídeos que quer incluir no vídeo final.</small>
-    <div id="uploaded-media"><h3>Mídias enviadas:</h3></div>
-  </section>
-
-  <!-- Busca vídeo (simulada no frontend) -->
-  <section class="section" aria-label="Busca vídeo na internet">
-    <label for="search-query">Busca vídeos na internet (ex: Neymar, futebol, Highlights)</label>
-    <input type="text" id="search-query" placeholder="Digite o tema para busca de vídeos" aria-describedby="search-help"/>
-    <small id="search-help">Será simulada a busca na internet com vídeos do YouTube (backend necessário para real)</small>
-    <button id="buscar-btn">Buscar vídeos na internet (simulado)</button>
-    <div id="search-results"><h3>Resultados da busca (simulada):</h3></div>
-  </section>
-
-  <!-- Resultados da IA (roteiro, storyboard, capa, narração, música, vídeo mockup) -->
-  <section id="keywords-section" class="section" style="display:none;" aria-label="Palavras-chave extraídas">
-    <h2>1. Palavras-chave extraídas</h2>
-    <pre id="keywords-output"></pre>
-  </section>
-
-  <section id="script-section" class="section" style="display:none;" aria-label="Roteiro gerado">
-    <h2>2. Roteiro Gerado (consistente com o tom selecionado)</h2>
-    <pre id="script-output"></pre>
-  </section>
-
-  <section id="storyboard-section" class="section" style="display:none;" aria-label="Storyboard gerado">
-    <h2>3. Storyboard - Cenas, Prompts e Estilo Visual</h2>
-    <div id="scenes-container"></div>
-  </section>
-
-  <section id="cover-section" class="section" style="display:none;" aria-label="Capa Clickbait">
-    <h2>4. Capa Clickbait gerada</h2>
-    <img id="cover-image" alt="Imagem de capa clickbait gerada" style="max-width:100%;border-radius:8px;"/>
-    <div class="cover-caption" id="cover-caption"></div>
-  </section>
-
-  <section id="narration-section" class="section" style="display:none;" aria-label="Narração gerada">
-    <h2>5. Narração (simulada)</h2>
-    <button id="synthesize-btn" aria-label="Ouvir narração do roteiro">Ouvir Narração (Texto para voz)</button>
-  </section>
-
-  <section id="music-section" class="section" style="display:none;" aria-label="Trilha sonora">
-    <h2>6. Trilha Sonora (simulada)</h2>
-    <audio id="music-audio" controls></audio>
-  </section>
-
-  <section id="video-section" class="section" style="display:none;" aria-label="Vídeo final simulado">
-    <h2>7. Vídeo Final (mockup simulado)</h2>
-    <div class="video-mockup" tabindex="0" aria-label="Vídeo do produto simulado com cenas e narração">
-      <p><em>[Vídeo automático simulado]</em></p>
-      <div id="video-scenes-mockup"></div>
-      <p><strong>Narração:</strong></p>
-      <pre id="video-narration-text" style="background:#333;color:#eee;padding:0.5rem;border-radius:4px;"></pre>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon"><i class="fas fa-video"></i></span>
+                    <span>StudioVid AI</span>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-home"></i> Início</a></li>
+                        <li><a href="#"><i class="fas fa-project-diagram"></i> Projetos</a></li>
+                        <li><a href="#"><i class="fas fa-cog"></i> Configurações</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="main-content">
+            <aside class="sidebar">
+                <h3 class="section-title"><i class="fas fa-folder-open btn-icon"></i> Projeto Atual</h3>
+                <div class="form-group">
+                    <label for="project-name">Nome do Projeto</label>
+                    <input type="text" id="project-name" value="Meu Vídeo Promocional">
+                </div>
+                
+                <h3 class="section-title"><i class="fas fa-upload btn-icon"></i> Importar Mídia</h3>
+                <div class="form-group">
+                    <button class="btn btn-primary" style="width: 100%;">
+                        <i class="fas fa-cloud-upload-alt btn-icon"></i> Upload de Arquivos
+                    </button>
+                </div>
+                
+                <div class="form-group">
+                    <label for="media-search">Buscar Stock</label>
+                    <div style="display: flex;">
+                        <input type="text" id="media-search" placeholder="Buscar vídeos, imagens...">
+                        <button class="btn btn-secondary" style="margin-left: 5px;">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <h3 class="section-title"><i class="fas fa-boxes btn-icon"></i> Biblioteca</h3>
+                <div class="assets-grid">
+                    <div class="asset-card">
+                        <div class="asset-thumbnail">
+                            <i class="fas fa-image" style="font-size: 2rem; color: var(--gray);"></i>
+                        </div>
+                        <div class="asset-info">Cena 1.jpg</div>
+                    </div>
+                    <div class="asset-card">
+                        <div class="asset-thumbnail">
+                            <i class="fas fa-video" style="font-size: 2rem; color: var(--gray);"></i>
+                        </div>
+                        <div class="asset-info">Entrevista.mp4</div>
+                    </div>
+                    <div class="asset-card">
+                        <div class="asset-thumbnail">
+                            <i class="fas fa-music" style="font-size: 2rem; color: var(--gray);"></i>
+                        </div>
+                        <div class="asset-info">Trilha.wav</div>
+                    </div>
+                </div>
+                
+                <h3 class="section-title"><i class="fas fa-robot btn-icon"></i> Sugestões de IA</h3>
+                <div class="ai-suggestions">
+                    <div class="suggestion-item">
+                        <strong>Transição recomendada:</strong> Dissolve entre cenas 1 e 2
+                    </div>
+                    <div class="suggestion-item">
+                        <strong>Música sugerida:</strong> Upbeat Corporate
+                    </div>
+                    <div class="suggestion-item">
+                        <strong>Legenda automática:</strong> "Durabilidade incomparável"
+                    </div>
+                </div>
+            </aside>
+            
+            <main class="editor-container">
+                <h2 class="section-title"><i class="fas fa-edit btn-icon"></i> Editor de Vídeo</h2>
+                
+                <div class="video-preview">
+                    <video controls>
+                        <source src="#" type="video/mp4">
+                        Seu navegador não suporta o elemento de vídeo.
+                    </video>
+                </div>
+                
+                <div class="toolbar">
+                    <button class="tool-btn"><i class="fas fa-cut"></i> Cortar</button>
+                    <button class="tool-btn"><i class="fas fa-text-height"></i> Texto</button>
+                    <button class="tool-btn"><i class="fas fa-music"></i> Áudio</button>
+                    <button class="tool-btn"><i class="fas fa-exchange-alt"></i> Transições</button>
+                    <button class="tool-btn"><i class="fas fa-magic"></i> Efeitos</button>
+                    <button class="tool-btn"><i class="fas fa-robot"></i> IA Criativa</button>
+                </div>
+                
+                <div class="timeline">
+                    <div class="timeline-clip" style="left: 10px; width: 100px;"></div>
+                    <div class="timeline-clip" style="left: 130px; width: 80px;"></div>
+                    <div class="timeline-clip" style="left: 230px; width: 120px;"></div>
+                </div>
+                
+                <h3 class="section-title"><i class="fas fa-comment-alt btn-icon"></i> Detalhes do Projeto</h3>
+                <div class="form-group">
+                    <label for="video-title">Título do Vídeo</label>
+                    <input type="text" id="video-title" placeholder="Digite o título do vídeo">
+                </div>
+                
+                <div class="form-group">
+                    <label for="video-desc">Descrição</label>
+                    <textarea id="video-desc" placeholder="Descreva o conteúdo do vídeo..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="video-style">Estilo do Vídeo</label>
+                    <select id="video-style">
+                        <option value="corporate">Corporate</option>
+                        <option value="cinematic">Cinematográfico</option>
+                        <option value="social">Mídias Sociais</option>
+                        <option value="youtube">YouTube</option>
+                    </select>
+                </div>
+                
+                <h3 class="section-title"><i class="fas fa-bolt btn-icon"></i> Melhorias com IA</h3>
+                <div class="form-group">
+                    <label for="ai-prompt">Prompt Criativo</label>
+                    <textarea id="ai-prompt" placeholder="Ex: Crie um vídeo dinâmico com transições suaves e tom profissional..."></textarea>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-magic btn-icon"></i> Gerar com IA
+                    </button>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 2rem;">
+                    <button class="btn">
+                        <i class="fas fa-save btn-icon"></i> Salvar Rascunho
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-file-export btn-icon"></i> Exportar Vídeo
+                    </button>
+                </div>
+            </main>
+        </div>
     </div>
-  </section>
 
-  <section id="social-section" class="section" style="display:none;" aria-label="Versões para redes sociais">
-    <h2>8. Versões para Redes Sociais e Estratégia</h2>
-    <p><strong>TikTok:</strong> Vídeo vertical 9:16 com legendas animadas.</p>
-    <p><strong>Instagram Reels:</strong> Capa personalizada e chamada para ação "Compre agora!"</p>
-    <p><strong>Hashtags estratégicas:</strong> <span id="hashtags-output" class="hashtags"></span></p>
-  </section>
-
-</main>
-<footer class="footer">
-  Desenvolvido por IA Criativa &nbsp;|&nbsp; Protótipo Frontend - Backend necessário para funcionalidade completa
-</footer>
-
-<script>
-  // ----- Extração de produto personalizada -----
-  function extractProduct(text) {
-    const produtosConhecidos = [
-      "tênis esportivo", "tênis", "sapato", "sneaker", "relógio", "smartphone",
-      "fones de ouvido", "mochila", "jaqueta", "chinelo melissa", "chinelo", "melissa"
-    ];
-    const lower = text.toLowerCase();
-    for (let prod of produtosConhecidos) {
-      if (lower.includes(prod)) {
-        return prod.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
-      }
-    }
-    const regexProduto = /sobre ([\w\s\-]+)/i;
-    const match = text.match(regexProduto);
-    if (match && match[1]) {
-      return match[1].trim().split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
-    }
-    return "Produto Genérico";
-  }
-
-  // ----- Extração de tom aprimorada -----
-  function extractTone(text) {
-    const lower = text.toLowerCase();
-    if (/jovem|descontraído|divertido|animado|alegre/.test(lower)) return "Jovem/Descontraído";
-    if (/emocional|sentimental|inspirador/.test(lower)) return "Emocional";
-    if (/formal|sério|profissional/.test(lower)) return "Formal";
-    return "Neutro";
-  }
-
-  // ----- Extração completa de palavras-chave -----
-  function extractKeywords(text) {
-    const produto = extractProduct(text);
-    const tom = extractTone(text);
-    const publicoMatch = text.match(/homens \d{1,2}-\d{1,2} anos/i);
-    const publico = publicoMatch ? publicoMatch[0].charAt(0).toUpperCase() + publicoMatch[0].slice(1) : "Geral";
-    const duracaoMatch = text.match(/(\d+)s/);
-    const duracao = duracaoMatch ? duracaoMatch[1] + "s" : "30s";
-
-    return { produto, tom, público: publico, duraçao: duracao };
-  }
-
-  // ----- Consistência de roteiro baseada no tom -----
-  function generateScript(keywords) {
-    const tone = keywords.tom.toLowerCase();
-
-    let frasesCenas = [
-      `[Cena 1: Close do ${keywords.produto} com efeito slow-motion, destaque na durabilidade e qualidade premium.]`,
-      `[Cena 2: Pessoa jovem e vibrante usando o ${keywords.produto} em movimento pela cidade.]`,
-      `[Cena 3: Detalhes em foco do ${keywords.produto}, ressaltando material e design sofisticado.]`,
-      `[Cena 4: Logo da marca aparece com chamada para ação impactante, tom ${tone}, convidativo e cativante.]`
-    ];
-    if (tone.includes("emocional")) {
-      frasesCenas = [
-        `[Cena 1: Close emotivo do ${keywords.produto}, com luz suave e foco na história por trás dele.]`,
-        `[Cena 2: Pessoa conectada sentimentalmente ao ${keywords.produto}, momentos memoráveis.]`,
-        `[Cena 3: Detalhes do produto que despertam emoções e conexões profundas.]`,
-        `[Cena 4: Logo da marca com frase inspiradora, tom sentimental e motivador.]`
-      ];
-    }
-    if (tone.includes("formal")) {
-      frasesCenas = [
-        `[Cena 1: Imagem limpa do ${keywords.produto}, com foco na eficiência e tecnologia.]`,
-        `[Cena 2: Profissional usando o ${keywords.produto} em ambiente corporativo.]`,
-        `[Cena 3: Detalhes técnicos e benefícios do produto bem destacados.]`,
-        `[Cena 4: Logo da marca com mensagem institucional, elegante e séria.]`
-      ];
-    }
-    return frasesCenas.join("\n");
-  }
-
-  // ----- Estilos visuais para prompts de imagem -----
-  const stylePrompts = {
-    nike: "estilo Nike, moderno, energético, dinâmico, cores vibrantes",
-    adidas: "estilo Adidas, esportivo, energizante, urbano, cores saturadas",
-    luxury: "estilo Luxo, elegante, sofisticado, minimalista, iluminação suave",
-    urban: "estilo Urbano, descolado, jovem, grafite, luz natural",
-    clean: "estilo Limpo, minimalista, fundo branco, foco no produto",
-  };
-
-  function generatePrompt(sceneDesc, keywords, styleKey) {
-    const stylePrompt = stylePrompts[styleKey] || stylePrompts.clean;
-    const tone = keywords.tom.toLowerCase();
-
-    let toneDescriptor = "";
-    if (tone.includes("jovem") || tone.includes("descontraído")) toneDescriptor = "alegre e vibrante";
-    else if (tone.includes("emocional")) toneDescriptor = "suave e emocional";
-    else if (tone.includes("formal")) toneDescriptor = "profissional e sofisticado";
-    else toneDescriptor = "neutro e moderno";
-
-    return `${keywords.produto} em ação, ${stylePrompt}, tom ${toneDescriptor}, ${sceneDesc.toLowerCase()}, 4K, alta qualidade`;
-  }
-
-  // Simula gerar imagens para cenas baseado no estilo
-  const styleImages = {
-    nike: [
-      "https://images.unsplash.com/photo-1519861150486-5f2569927a2d?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1509228627152-8f3f7cbeb2d4?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1576107089925-2e34b9bbfb50?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1536499639633-1b3a1c352f61?auto=format&fit=crop&w=800&q=80"
-    ],
-    adidas: [
-      "https://images.unsplash.com/photo-1520975696033-28e7374d304f?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1471357674240-e1a485acb3e1?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1524878722524-d7b36a4bb7ed?auto=format&fit=crop&w=800&q=80"
-    ],
-    luxury: [
-      "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1531281397-5cfcf5ac629b?auto=format&fit=crop&w=800&q=80"
-    ],
-    urban: [
-      "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1468071174046-657d9d351a40?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1494523451017-a5a0b1f49ded?auto=format&fit=crop&w=800&q=80"
-    ],
-    clean: [
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1523264696888-3c4ecb3ade07?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1502764613149-7f1d229e230f?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?auto=format&fit=crop&w=800&q=80"
-    ]
-  };
-  function simulateImageGenerating(styleKey, index) {
-    const imagesArray = styleImages[styleKey] || styleImages.clean;
-    return imagesArray[index] || imagesArray[imagesArray.length - 1];
-  }
-
-  // Hashtags estratégicas
-  function suggestHashtags(keywords) {
-    const baseTags = {
-      "Tênis esportivo": ["#Esporte", "#Tênis", "#Performance", "#Durabilidade", "#Estilo"],
-      "Produto Genérico": ["#Novo", "#Lançamento", "#Oferta", "#Promoção", "#Imperdível"],
-      "Chinelo Melissa": ["#Melissa", "#Chinelo", "#Estilo", "#Moda", "#Conforto"]
-    };
-    let hashtags = baseTags[keywords.produto] || ["#Produto", "#Inovação", "#Qualidade", "#VídeoCriativo"];
-    if (keywords.tom.toLowerCase().includes("emocional")) hashtags.push("#Motivação", "#Inspiração", "#Conexão");
-    else if (keywords.tom.toLowerCase().includes("formal")) hashtags.push("#Profissional", "#Excelência", "#Soluções");
-    else if (keywords.tom.toLowerCase().includes("jovem")) hashtags.push("#Juventude", "#Energia", "#Tendência");
-    return hashtags;
-  }
-
-  // Capa clickbait dinâmica
-  function generateCover(keywords, styleKey) {
-    const captions = [
-      `Descubra o poder do ${keywords.produto}!`,
-      `Você nunca viu nada assim do ${keywords.produto}!`,
-      `${keywords.produto}: qualidade e estilo em 30 segundos!`,
-      `O vídeo que vai transformar sua visão sobre ${keywords.produto}`,
-      `${keywords.produto} - Um novo patamar de desempenho!`
-    ];
-    const caption = captions[Math.floor(Math.random()*captions.length)];
-    const coverImage = simulateImageGenerating(styleKey, 0);
-    return { caption, coverImage };
-  }
-
-  // ----- Função de geração geral -----
-  async function handleGenerate() {
-    const briefingInput = document.getElementById("briefing-input");
-    const styleSelect = document.getElementById("style-select");
-    const generateBtn = document.getElementById("generate-btn");
-    const loadingIndicator = document.getElementById("loading");
-
-    const keywordsSection = document.getElementById("keywords-section");
-    const keywordsOutput = document.getElementById("keywords-output");
-
-    const scriptSection = document.getElementById("script-section");
-    const scriptOutput = document.getElementById("script-output");
-
-    const storyboardSection = document.getElementById("storyboard-section");
-    const scenesContainer = document.getElementById("scenes-container");
-
-    const coverSection = document.getElementById("cover-section");
-    const coverImageEl = document.getElementById("cover-image");
-    const coverCaptionEl = document.getElementById("cover-caption");
-
-    const narrationSection = document.getElementById("narration-section");
-    const synthButton = document.getElementById("synthesize-btn");
-
-    const musicSection = document.getElementById("music-section");
-    const musicAudio = document.getElementById("music-audio");
-
-    const videoSection = document.getElementById("video-section");
-    const videoScenesMockup = document.getElementById("video-scenes-mockup");
-    const videoNarrationText = document.getElementById("video-narration-text");
-
-    const socialSection = document.getElementById("social-section");
-    const hashtagsOutput = document.getElementById("hashtags-output");
-
-    if (synthButton) synthButton.replaceWith(synthButton.cloneNode(true)); // limpar listeners
-
-    const briefingText = briefingInput.value.trim();
-    if (!briefingText) {
-      alert("Por favor, insira o briefing para continuar.");
-      return;
-    }
-
-    // Reset UI
-    keywordsSection.style.display = "none";
-    scriptSection.style.display = "none";
-    storyboardSection.style.display = "none";
-    coverSection.style.display = "none";
-    narrationSection.style.display = "none";
-    musicSection.style.display = "none";
-    videoSection.style.display = "none";
-    socialSection.style.display = "none";
-
-    scenesContainer.innerHTML = "";
-    coverImageEl.src = "";
-    coverCaptionEl.textContent = "";
-    videoScenesMockup.innerHTML = "";
-    videoNarrationText.textContent = "";
-    hashtagsOutput.textContent = "";
-
-    generateBtn.disabled = true;
-    loadingIndicator.style.display = "inline";
-
-    await new Promise(r => setTimeout(r, 800));
-
-    // Extrair palavras-chave
-    const keywords = extractKeywords(briefingText);
-    keywordsOutput.textContent = JSON.stringify(keywords, null, 2);
-    keywordsSection.style.display = "block";
-
-    await new Promise(r => setTimeout(r, 600));
-
-    // Gerar roteiro coerente
-    const script = generateScript(keywords);
-    scriptOutput.textContent = script;
-    scriptSection.style.display = "block";
-
-    await new Promise(r => setTimeout(r, 600));
-
-    // Gerar storyboard com estilo selecionado
-    const styleKey = styleSelect.value;
-    const scenes = script.trim().split(/\n+/).filter(s => s.length > 0);
-    scenesContainer.innerHTML = "";
-    scenes.forEach((scene, i) => {
-      const prompt = generatePrompt(scene, keywords, styleKey);
-      const imgUrl = simulateImageGenerating(styleKey, i);
-      const sceneDiv = document.createElement("div");
-      sceneDiv.className = "scene";
-
-      const title = document.createElement("h3");
-      title.textContent = `Cena ${i+1}`;
-      sceneDiv.appendChild(title);
-
-      const description = document.createElement("p");
-      description.textContent = scene.replace(/\[|\]/g, "");
-      sceneDiv.appendChild(description);
-
-      const promptP = document.createElement("p");
-      promptP.className = "prompt";
-      promptP.textContent = `Prompt: ${prompt}`;
-      sceneDiv.appendChild(promptP);
-
-      const img = document.createElement("img");
-      img.src = imgUrl;
-      img.alt = `Imagem da cena ${i+1}`;
-      sceneDiv.appendChild(img);
-
-      scenesContainer.appendChild(sceneDiv);
-    });
-    storyboardSection.style.display = "block";
-
-    await new Promise(r => setTimeout(r, 600));
-
-    // Gerar capa clickbait
-    const cover = generateCover(keywords, styleKey);
-    coverImageEl.src = cover.coverImage;
-    coverCaptionEl.textContent = cover.caption;
-    coverSection.style.display = "block";
-
-    await new Promise(r => setTimeout(r, 600));
-
-    // Narração - preparar botão para sintetizar
-    narrationSection.style.display = "block";
-    const synthBtn = document.getElementById("synthesize-btn");
-    synthBtn.onclick = () => {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(script);
-        utterance.rate = 1.0;
-        utterance.pitch = (keywords.tom.toLowerCase().includes("jovem") ? 1.2 : 1.0);
-        window.speechSynthesis.speak(utterance);
-      } else {
-        alert("Síntese de voz não suportada no seu navegador.");
-      }
-    };
-
-    await new Promise(r => setTimeout(r, 600));
-
-    // Trilha sonora simulada
-    musicSection.style.display = "block";
-    musicAudio.src = "https://cdn.pixabay.com/download/audio/2021/10/06/audio_25bd5ca3c3.mp3?filename=calm-inspiration-111093.mp3";
-    musicAudio.controls = true;
-    musicAudio.load();
-
-    await new Promise(r => setTimeout(r, 600));
-
-    // Vídeo mockup
-    videoSection.style.display = "block";
-    videoScenesMockup.innerHTML = "";
-    scenes.forEach((scene, i) => {
-      const imgUrl = simulateImageGenerating(styleKey, i);
-      const container = document.createElement("div");
-      container.style.marginBottom = "1rem";
-
-      const img = document.createElement("img");
-      img.src = imgUrl;
-      img.alt = `Cena do vídeo ${i + 1}`;
-      img.style.maxHeight = "200px";
-      img.style.borderRadius = "8px";
-      container.appendChild(img);
-
-      const p = document.createElement("p");
-      p.textContent = scene.replace(/\[|\]/g, "");
-      container.appendChild(p);
-
-      videoScenesMockup.appendChild(container);
-    });
-    videoNarrationText.textContent = script;
-
-    // Versões para redes sociais e hashtags
-    socialSection.style.display = "block";
-    const hashtags = suggestHashtags(keywords);
-    hashtagsOutput.textContent = hashtags.join(" ");
-
-    generateBtn.disabled = false;
-    loadingIndicator.style.display = "none";
-  }
-
-  // ----- Uploads tratamento e exibição -----
-  const uploadInput = document.getElementById('upload-input');
-  const uploadedMediaDiv = document.getElementById('uploaded-media');
-
-  uploadInput.addEventListener('change', () => {
-    uploadedMediaDiv.innerHTML = '<h3>Mídias enviadas:</h3>';
-    for (const file of uploadInput.files) {
-      const mediaDiv = document.createElement('div');
-      mediaDiv.className = 'media-item';
-
-      if (file.type.startsWith('image/')) {
-        const img = document.createElement('img');
-        img.src = URL.createObjectURL(file);
-        img.alt = file.name;
-        mediaDiv.appendChild(img);
-        mediaDiv.appendChild(document.createTextNode(file.name));
-      } else if (file.type.startsWith('video/')) {
-        const video = document.createElement('video');
-        video.src = URL.createObjectURL(file);
-        video.controls = true;
-        video.style.maxWidth = "100%";
-        mediaDiv.appendChild(video);
-        mediaDiv.appendChild(document.createTextNode(file.name));
-      } else {
-        mediaDiv.textContent = `${file.name} - tipo não suportado`;
-      }
-      uploadedMediaDiv.appendChild(mediaDiv);
-    }
-  });
-
-  // ----- Busca vídeos internet (simulada) -----
-  const searchBtn = document.getElementById('buscar-btn');
-  const searchResultsDiv = document.getElementById('search-results');
-  const searchQueryInput = document.getElementById('search-query');
-
-  searchBtn.addEventListener('click', () => {
-    const query = searchQueryInput.value.trim();
-    if(!query) {
-      alert('Por favor, digite um termo para busca.');
-      return;
-    }
-    searchResultsDiv.innerHTML = `<h3>Resultados da busca para "${query}" (simulado):</h3>`;
-
-    // Resultados simulados - videos do YouTube embed responsivo
-    // Para implementação real backend + YouTube Data API + download são necessários
-
-    const fakeResults = [
-      {title: `Corte do ${query} em jogo 1`, videoId: 'dQw4w9WgXcQ'},
-      {title: `Melhores momentos de ${query}`, videoId: 'V-_O7nl0Ii0'},
-      {title: `${query} em ação`, videoId: '3JZ_D3ELwOQ'}
-    ];
-
-    fakeResults.forEach(result => {
-      const div = document.createElement('div');
-      div.className = 'media-item';
-      div.style.marginBottom = '1.2rem';
-      div.innerHTML = `<strong>${result.title}</strong><br>
-        <iframe width="350" height="197" src="https://www.youtube.com/embed/${result.videoId}" 
-          frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-          allowfullscreen></iframe>`;
-      searchResultsDiv.appendChild(div);
-    });
-  });
-
-  document.getElementById("generate-btn").addEventListener("click", handleGenerate);
-</script>
-
+    <script>
+        // Simulação de progresso ao usar IA
+        document.querySelector('#ai-prompt + button').addEventListener('click', function() {
+            const progressBar = document.getElementById('progress-bar');
+            progressBar.style.width = '0%';
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                progressBar.style.width = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    alert('Vídeo gerado com sucesso pela IA!');
+                }
+            }, 200);
+        });
+        
+        // Drag and drop para timeline (simplificado)
+        const clips = document.querySelectorAll('.timeline-clip');
+        clips.forEach(clip => {
+            clip.addEventListener('mousedown', function(e) {
+                const startX = e.clientX;
+                const startLeft = parseInt(clip.style.left) || 0;
+                
+                function moveClip(e) {
+                    const newLeft = startLeft + e.clientX - startX;
+                    clip.style.left = Math.max(0, newLeft) + 'px';
+                }
+                
+                function stopDrag() {
+                    document.removeEventListener('mousemove', moveClip);
+                    document.removeEventListener('mouseup', stopDrag);
+                }
+                
+                document.addEventListener('mousemove', moveClip);
+                document.addEventListener('mouseup', stopDrag);
+            });
+        });
+        
+        // Simulação de upload
+        document.querySelector('.btn-primary[style*="width: 100%"]').addEventListener('click', function() {
+            alert('Selecione os arquivos para upload');
+        });
+    </script>
 </body>
 </html>
-`interactive_video_creator.html`
-```html
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Assistente Interativo para Criação de Vídeo</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #f0f3f7;
-    margin: 0; padding: 1rem;
-    color: #333;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  header {
-    text-align: center;
-    padding-bottom: 1rem;
-  }
-  h1 {
-    margin-bottom: 0;
-  }
-  #chat-container {
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background: white;
-    height: 400px;
-    overflow-y: auto;
-    padding: 1rem;
-    box-sizing: border-box;
-    margin-bottom: 1rem;
-  }
-  .message {
-    margin-bottom: 1rem;
-    display: flex;
-  }
-  .message.client {
-    justify-content: flex-end;
-  }
-  .message.ia {
-    justify-content: flex-start;
-  }
-  .message .bubble {
-    max-width: 70%;
-    padding: 0.6rem 1rem;
-    border-radius: 16px;
-    font-size: 1rem;
-    line-height: 1.3;
-  }
-  .message.client .bubble {
-    background-color: #2d89ef;
-    color: white;
-    border-bottom-right-radius: 0;
-  }
-  .message.ia .bubble {
-    background-color: #e7f0fd;
-    color: #2d89ef;
-    border-bottom-left-radius: 0;
-  }
-  #input-area {
-    display: flex;
-    gap: 0.5rem;
-  }
-  #user-input {
-    flex: 1;
-    padding: 0.6rem 1rem;
-    border-radius: 24px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-  }
-  #send-btn {
-    padding: 0 1rem;
-    background: #2d89ef;
-    border: none;
-    color: white;
-    font-weight: bold;
-    border-radius: 24px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  #send-btn:hover {
-    background: #1b5fbd;
-  }
-  #video-output {
-    text-align: center;
-    margin-top: 1rem;
-  }
-  video {
-    max-width: 100%;
-    border-radius: 10px;
-  }
-  /* Loader animation */
-  #loader {
-    display: none;
-    margin-left: 0.5rem;
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid #2d89ef;
-    border-radius: 50%;
-    width: 16px;
-    height: 16px;
-    animation: spin 1s linear infinite;
-  }
-  @keyframes spin {
-    0% { transform: rotate(0deg);}
-    100% { transform: rotate(360deg);}
-  }
-</style>
-</head>
-<body>
-<header>
-  <h1>Assistente Interativo para Criação de Vídeo</h1>
-  <p>Converse com a IA para criar seu vídeo passo a passo.</p>
-</header>
-
-<div id="chat-container" aria-live="polite" aria-label="Chat de interação com a IA"></div>
-
-<div id="input-area">
-  <input id="user-input" type="text" aria-label="Digite sua mensagem aqui" placeholder="Digite aqui..." autocomplete="off" />
-  <button id="send-btn" aria-label="Enviar mensagem">Enviar</button>
-  <div id="loader" aria-hidden="true"></div>
-</div>
-
-<div id="video-output" aria-live="polite"></div>
-
-<script>
-  // Estado do diálogo
-  const chatContainer = document.getElementById('chat-container');
-  const userInput = document.getElementById('user-input');
-  const sendBtn = document.getElementById('send-btn');
-  const videoOutput = document.getElementById('video-output');
-  const loader = document.getElementById('loader');
-
-  let conversation = [];
-  let step = 0;
-  let videoData = {
-    briefing: '',
-    music: '',
-    duration: '',
-    mediaUploads: []
-  };
-
-  // Função para adicionar mensagem ao chat
-  function addMessage(text, author = 'ia') {
-    const msgDiv = document.createElement('div');
-    msgDiv.className = 'message ' + (author === 'client' ? 'client' : 'ia');
-    const bubble = document.createElement('div');
-    bubble.className = 'bubble';
-    bubble.textContent = text;
-    msgDiv.appendChild(bubble);
-    chatContainer.appendChild(msgDiv);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-  }
-
-  // Função para a IA responder conforme step e input
-  async function handleUserInput(input) {
-    addMessage(input, 'client');
-
-    // Processa diálogo passo a passo
-    switch(step) {
-      case 0:
-        videoData.briefing = input;
-        addMessage("Ótimo! Você quer essa edit com qual música? Por favor, informe o nome da música.");
-        step = 1;
-        break;
-
-      case 1:
-        videoData.music = input;
-        addMessage("Ok, agora me fala qual a duração desejada do vídeo (exemplo: 30s, 1min).");
-        step = 2;
-        break;
-
-      case 2:
-        videoData.duration = input;
-        addMessage("Perfeito! Agora envie imagens ou vídeos que deseja incluir (clique no botão abaixo para enviar arquivos).");
-        addFileUploadInput();
-        step = 3;
-        break;
-
-      case 3:
-        addMessage("Por favor, envie os arquivos usando o botão de upload. Quando terminar, escreva 'pronto' para gerar o vídeo.");
-        if(input.toLowerCase() === 'pronto') {
-          addMessage("Gerando seu vídeo, por favor aguarde...");
-          await generateVideoMock();
-          step = 4;
-        }
-        break;
-
-      case 4:
-        addMessage("O vídeo foi gerado! Se quiser criar outro, escreva 'reiniciar'.");
-        if(input.toLowerCase() === 'reiniciar') {
-          resetConversation();
-        }
-        break;
-
-      default:
-        addMessage("Desculpe, não entendi. Para reiniciar escreva 'reiniciar'.");
-        if(input.toLowerCase() === 'reiniciar') {
-          resetConversation();
-        }
-        break;
-    }
-  }
-
-  // Adiciona input para upload de arquivos na conversa
-  function addFileUploadInput() {
-    if(document.getElementById('file-upload')) return; // já existe
-
-    const inputArea = document.getElementById('input-area');
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.id = 'file-upload';
-    fileInput.multiple = true;
-    fileInput.accept = "image/*,video/*";
-    fileInput.style.marginLeft = '8px';
-    fileInput.setAttribute('aria-label', 'Upload de fotos e vídeos');
-    inputArea.insertBefore(fileInput, loader);
-
-    fileInput.addEventListener('change', e => {
-      const files = e.target.files;
-      for (let file of files) {
-        videoData.mediaUploads.push(file);
-      }
-      addMessage(`${files.length} arquivo(s) adicionados ao vídeo.`,"ia");
-    });
-  }
-
-  // Simula a geração do vídeo com base nos dados coletados
-  async function generateVideoMock() {
-    showLoader(true);
-    // Simular delay de geração
-    await new Promise(r => setTimeout(r, 2500));
-    showLoader(false);
-
-    // Exibir resumo e vídeo mockup
-    videoOutput.innerHTML = `
-      <h2>Vídeo Criado!</h2>
-      <p><strong>Briefing:</strong> ${videoData.briefing}</p>
-      <p><strong>Música:</strong> ${videoData.music}</p>
-      <p><strong>Duração:</strong> ${videoData.duration}</p>
-      <p><strong>Arquivos enviados:</strong> ${videoData.mediaUploads.length}</p>
-      <video controls autoplay muted loop>
-        <source src="https://interactive-examples.mdn.mozilla.net/media/examples/flower.webm" type="video/webm" />
-        <source src="https://interactive-examples.mdn.mozilla.net/media/examples/flower.mp4" type="video/mp4" />
-        Seu navegador não suporta vídeo.
-      </video>
-      <p>Observação: esta é uma simulação. O vídeo real seria processado no backend.</p>
-    `;
-  }
-
-  function showLoader(show) {
-    loader.style.display = show ? "inline-block" : "none";
-  }
-
-  function resetConversation() {
-    conversation = [];
-    step = 0;
-    videoData = { briefing: '', music: '', duration: '', mediaUploads: []};
-    chatContainer.innerHTML = '';
-    videoOutput.innerHTML = '';
-    const fileInput = document.getElementById('file-upload');
-    if(fileInput) fileInput.remove();
-    addMessage("Olá! Me diga o que você quer no seu vídeo.");
-  }
-
-  // Inicializa conversa
-  resetConversation();
-
-  // Eventos
-  sendBtn.addEventListener('click', () => {
-    const text = userInput.value.trim();
-    if(text === '') return;
-    userInput.value = '';
-    handleUserInput(text);
-  });
-
-  userInput.addEventListener('keypress', e => {
-    if(e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendBtn.click();
-    }
-  });
-</script>
-</body>
-</html>
-
-```
-
-
-```
-
