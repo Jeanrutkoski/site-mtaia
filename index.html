@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MTA.IA - Gerador Automático de Edits</title>
+    <title>MTA.IA - Plataforma Completa de Edição</title>
     <style>
         :root {
             --primary: #6e48aa;
@@ -26,7 +26,7 @@
         }
         
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -34,15 +34,11 @@
         header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            padding: 30px 0;
+            padding: 2rem 0;
             text-align: center;
-            border-radius: 0 0 20px 20px;
+            border-radius: 0 0 25px 25px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        
-        h1, h2, h3 {
-            margin: 0 0 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         }
         
         .logo {
@@ -51,47 +47,60 @@
             margin-bottom: 10px;
         }
         
-        .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
         }
         
-        .input-container {
+        .creation-panel {
             background: white;
             border-radius: 15px;
-            padding: 20px;
+            padding: 25px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+        }
+        
+        .result-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin-top: 0;
         }
         
         label {
             display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
-            color: var(--primary);
+            margin-bottom: 8px;
+            font-weight: 500;
         }
         
-        input[type="text"] {
+        input[type="text"], textarea, select {
             width: 100%;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 1rem;
-            margin-bottom: 15px;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 16px;
         }
         
         button {
             background: var(--accent);
             color: white;
             border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 1rem;
+            padding: 14px 25px;
+            border-radius: 8px;
+            font-size: 16px;
             cursor: pointer;
             transition: all 0.3s;
-            font-weight: bold;
-            display: block;
-            width: 100%;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
         }
         
         button:hover {
@@ -99,48 +108,28 @@
             transform: translateY(-2px);
         }
         
-        .result-container {
-            display: none;
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+        button i {
+            margin-right: 10px;
         }
         
-        .video-preview {
+        .video-container {
             width: 100%;
+            background: #000;
             border-radius: 10px;
             overflow: hidden;
             margin-bottom: 20px;
-            background: #000;
+            aspect-ratio: 16/9;
         }
         
-        .video-preview video {
+        video {
             width: 100%;
             display: block;
         }
         
-        .download-btn {
-            background: var(--success);
-            color: white;
-            text-align: center;
-            padding: 15px;
-            border-radius: 10px;
-            text-decoration: none;
-            display: block;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-        
-        .download-btn:hover {
-            background: #218838;
-        }
-        
         .progress-container {
-            height: 10px;
+            height: 8px;
             background: #eee;
-            border-radius: 5px;
+            border-radius: 4px;
             margin: 20px 0;
             overflow: hidden;
         }
@@ -150,6 +139,19 @@
             background: linear-gradient(90deg, var(--primary), var(--accent));
             width: 0%;
             transition: width 0.5s ease;
+        }
+        
+        .avatar-preview {
+            width: 100%;
+            border-radius: 8px;
+            border: 2px dashed #ddd;
+            margin: 15px 0;
+            aspect-ratio: 16/9;
+            background: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
         }
         
         .loading {
@@ -167,27 +169,28 @@
             to { transform: rotate(360deg); }
         }
         
-        .edit-examples {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .example-btn {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 0.9rem;
+        .download-btn {
+            background: var(--success);
+            color: white;
             text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-top: auto;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
-        .example-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
+        .download-btn:hover {
+            background: #218838;
+        }
+        
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -196,202 +199,288 @@
     <header>
         <div class="container">
             <div class="logo">MTA.IA</div>
-            <div class="subtitle">Gerador Automático de Edits Profissionais</div>
+            <p>Plataforma Completa de Edição com Inteligência Artificial</p>
         </div>
     </header>
     
     <div class="container">
-        <div class="input-container">
-            <label for="edit-request">O que você quer editar?</label>
-            <input type="text" id="edit-request" placeholder="Ex: edit do Messi, edit da música Sunflower, edit de skate...">
-            
-            <div style="margin: 15px 0;">
-                <label>Exemplos rápidos:</label>
-                <div class="edit-examples">
-                    <div class="example-btn">Edit do Messi</div>
-                    <div class="example-btn">Edit do Neymar</div>
-                    <div class="example-btn">Edit de F1</div>
-                    <div class="example-btn">Edit de Sunflower</div>
-                    <div class="example-btn">Edit de Skate</div>
-                    <div class="example-btn">Edit de Basquete</div>
+        <div class="main-grid">
+            <div class="creation-panel">
+                <h2><i class="fas fa-magic"></i> Criar Novo Vídeo</h2>
+                
+                <label for="video-type">Tipo de Vídeo:</label>
+                <select id="video-type">
+                    <option value="edit">Edit Criativo</option>
+                    <option value="promotional">Vídeo Promocional</option>
+                    <option value="educational">Conteúdo Educativo</option>
+                </select>
+                
+                <label for="video-subject">Assunto do Vídeo:</label>
+                <input type="text" id="video-subject" placeholder="Ex: Edit do Messi, Sandália Grendene, Astronomia...">
+                
+                <div id="edit-options">
+                    <label for="music-track">Música (opcional):</label>
+                    <input type="text" id="music-track" placeholder="Ex: Sunflower 1:02 até 2:18">
+                    
+                    <label for="video-duration">Duração (segundos):</label>
+                    <input type="number" id="video-duration" placeholder="Ex: 45" value="45">
+                </div>
+                
+                <div id="promotional-options" style="display: none;">
+                    <label>Precisa de um apresentador virtual?</label>
+                    <div style="margin-bottom: 20px;">
+                        <button id="generate-avatar-btn" style="background: var(--secondary);">
+                            <i class="fas fa-robot"></i> Criar Apresentador IA
+                        </button>
+                    </div>
+                    
+                    <div id="avatar-section" style="display: none;">
+                        <label>Descrição do Apresentador:</label>
+                        <textarea id="avatar-description" placeholder="Ex: Mulher 30 anos, cabelos castanhos, usando sandália Grendene..."></textarea>
+                        
+                        <div class="avatar-preview" id="avatar-preview">
+                            Pré-visualização do avatar aparecerá aqui
+                        </div>
+                    </div>
+                    
+                    <label>Precisa de narração?</label>
+                    <div>
+                        <button id="generate-script-btn" style="background: var(--primary);">
+                            <i class="fas fa-microphone"></i> Gerar Roteiro de Narração
+                        </button>
+                    </div>
+                    
+                    <div id="script-section" style="display: none; margin-top: 20px;">
+                        <label>Pontos Principais:</label>
+                        <textarea id="script-points" placeholder="Liste os pontos que devem ser mencionados..."></textarea>
+                    </div>
+                </div>
+                
+                <button id="generate-btn" style="width: 100%; margin-top: 20px;">
+                    <i class="fas fa-play"></i> Gerar Vídeo
+                </button>
+                
+                <div class="progress-container" id="progress-container" style="display: none;">
+                    <div class="progress-bar" id="progress-bar"></div>
                 </div>
             </div>
             
-            <button id="generate-btn">
-                <i class="fas fa-magic"></i> Gerar Edit Automático
-            </button>
-        </div>
-        
-        <div class="progress-container" id="progress-container" style="display: none;">
-            <div class="progress-bar" id="progress-bar"></div>
-        </div>
-        
-        <div class="result-container" id="result-container">
-            <h3 style="text-align: center;">Seu Edit Está Pronto!</h3>
-            <div class="video-preview">
-                <video controls id="preview-video">
-                    Seu navegador não suporta o elemento de vídeo.
-                </video>
+            <div class="result-panel">
+                <h2><i class="fas fa-play-circle"></i> Pré-visualização</h2>
+                
+                <div class="video-container">
+                    <video id="preview-video" controls>
+                        Seu navegador não suporta vídeos HTML5.
+                    </video>
+                </div>
+                
+                <div id="video-details" style="margin-bottom: 20px;">
+                    <!-- Detalhes serão inseridos aqui -->
+                </div>
+                
+                <a href="#" class="download-btn" id="download-btn" style="display: none;">
+                    <i class="fas fa-download"></i> Baixar Vídeo
+                </a>
             </div>
-            <a href="#" class="download-btn" id="download-btn">
-                <i class="fas fa-download"></i> Baixar Edit
-            </a>
         </div>
     </div>
 
     <script>
-        // Configuração dos tipos de edit
-        const editTemplates = {
-            'messi': {
-                title: 'Edit do Messi - Melhores Momentos',
-                music: 'Trap Royalty Free',
-                style: 'dinâmico com transições rápidas',
-                duration: 45,
-                hashtags: ['#messi', '#futebol', '#skills', '#goat']
-            },
-            'neymar': {
-                title: 'Edit do Neymar - Jogadas Incríveis',
-                music: 'Funk BR',
-                style: 'estilo hype brasileiro',
-                duration: 50,
-                hashtags: ['#neymar', '#futebol', '#skills', '#brasil']
-            },
-            'f1': {
-                title: 'Edit de F1 - Emoção nas Pistas',
-                music: 'Eletrônica Energética',
-                style: 'rápido e intenso',
-                duration: 60,
-                hashtags: ['#f1', '#corrida', '#velocidade', '#formula1']
-            },
-            'sunflower': {
-                title: 'Edit na Música Sunflower',
-                music: 'Sunflower - Post Malone',
-                style: 'transições suaves',
-                duration: 30,
-                hashtags: ['#sunflower', '#postmalone', '#edit', '#viral']
-            },
-            'skate': {
-                title: 'Edit de Skate - Manobras Radicais',
-                music: 'Rock Alternativo',
-                style: 'edição radical',
-                duration: 55,
-                hashtags: ['#skate', '#manobras', '#esporte', '#radical']
-            },
-            'basquete': {
-                title: 'Edit de Basquete - Enterradas Incríveis',
-                music: 'Hip Hop Motivacional',
-                style: 'dinâmico com câmera lenta',
-                duration: 40,
-                hashtags: ['#basquete', '#nba', '#enterradas', '#esporte']
-            }
-        };
-        
         // Elementos do DOM
-        const editRequestInput = document.getElementById('edit-request');
+        const videoTypeSelect = document.getElementById('video-type');
+        const videoSubjectInput = document.getElementById('video-subject');
+        const editOptionsDiv = document.getElementById('edit-options');
+        const promotionalOptionsDiv = document.getElementById('promotional-options');
         const generateBtn = document.getElementById('generate-btn');
+        const previewVideo = document.getElementById('preview-video');
         const progressContainer = document.getElementById('progress-container');
         const progressBar = document.getElementById('progress-bar');
-        const resultContainer = document.getElementById('result-container');
-        const previewVideo = document.getElementById('preview-video');
         const downloadBtn = document.getElementById('download-btn');
-        const exampleBtns = document.querySelectorAll('.example-btn');
-        
-        // Exemplos rápidos
-        exampleBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                editRequestInput.value = this.textContent;
-            });
+        const videoDetailsDiv = document.getElementById('video-details');
+        const generateAvatarBtn = document.getElementById('generate-avatar-btn');
+        const avatarSection = document.getElementById('avatar-section');
+        const avatarPreview = document.getElementById('avatar-preview');
+        const avatarDescription = document.getElementById('avatar-description');
+        const generateScriptBtn = document.getElementById('generate-script-btn');
+        const scriptSection = document.getElementById('script-section');
+        const scriptPoints = document.getElementById('script-points');
+        const musicTrackInput = document.getElementById('music-track');
+        const videoDurationInput = document.getElementById('video-duration');
+
+        // Configuração de exemplos
+        const examples = {
+            'edit': [
+                { name: 'Edit do Messi', subject: 'Edit do Messi - Melhores Momentos', music: 'Trap Royalty Free 0:00 até 0:45', duration: 45 },
+                { name: 'Edit de F1', subject: 'Edit de F1 - Emoção nas Pistas', music: 'Eletrônica Energética 1:10 até 1:55', duration: 45 }
+            ],
+            'promotional': [
+                { name: 'Sandália Grendene', subject: 'Sandália Grendene Verão 2024', avatar: 'Mulher 30 anos, sorrindo, mostrando os pés com a sandália em praia', script: 'Conforto, resistência, design moderno, qualidade' }
+            ],
+            'educational': [
+                { name: 'Astronomia', subject: 'Os 5 maiores planetas do sistema solar', script: 'Mercúrio, Vênus, Terra, Marte, Júpiter, Saturno, Urano, Netuno, características de cada um' }
+            ]
+        };
+
+        // Mostrar/ocultar opções baseadas no tipo de vídeo
+        videoTypeSelect.addEventListener('change', function() {
+            const type = this.value;
+            
+            if (type === 'edit') {
+                editOptionsDiv.style.display = 'block';
+                promotionalOptionsDiv.style.display = 'none';
+            } else {
+                editOptionsDiv.style.display = 'none';
+                promotionalOptionsDiv.style.display = 'block';
+                
+                // Preencher exemplos
+                const typeExamples = examples[type];
+                videoSubjectInput.placeholder = `Ex: ${typeExamples.map(ex => ex.subject).join(', ')}`;
+            }
         });
-        
-        // Gerar edit
-        generateBtn.addEventListener('click', function() {
-            const request = editRequestInput.value.trim().toLowerCase();
-            if (!request) return;
+
+        // Gerar avatar IA
+        generateAvatarBtn.addEventListener('click', function() {
+            avatarSection.style.display = 'block';
             
-            // Mostra progresso
-            progressContainer.style.display = 'block';
-            resultContainer.style.display = 'none';
-            
-            // Simula o processo de geração
-            simulateEditGeneration(request);
-        });
-        
-        function simulateEditGeneration(request) {
-            // Determina o tipo de edit
-            let editType = 'custom';
-            let editData = {
-                title: `Edit de ${request}`,
-                music: 'Música Automática',
-                style: 'edição profissional',
-                duration: 45,
-                hashtags: ['#edit', '#viral', '#trending']
-            };
-            
-            // Verifica se é um template conhecido
-            for (const [key, template] of Object.entries(editTemplates)) {
-                if (request.includes(key)) {
-                    editType = key;
-                    editData = template;
-                    break;
+            // Simular geração de avatar
+            setTimeout(() => {
+                avatarPreview.innerHTML = '<img src="https://via.placeholder.com/800x450/6e48aa/FFFFFF?text=Avatar+IA" style="width:100%;height:100%;object-fit:cover;">';
+                
+                // Exemplo automático
+                const type = videoTypeSelect.value;
+                if (type === 'promotional' && videoSubjectInput.value.includes('Grendene')) {
+                    avatarDescription.value = examples.promotional[0].avatar;
                 }
+            }, 500);
+        });
+
+        // Gerar roteiro de narração
+        generateScriptBtn.addEventListener('click', function() {
+            scriptSection.style.display = 'block';
+            
+            // Exemplo automático
+            const type = videoTypeSelect.value;
+            const subject = videoSubjectInput.value;
+            
+            if (type === 'promotional' && subject.includes('Grendene')) {
+                scriptPoints.value = examples.promotional[0].script;
+            } else if (type === 'educational' && subject.includes('planet')) {
+                scriptPoints.value = examples.educational[0].script;
+            }
+        });
+
+        // Gerar vídeo
+        generateBtn.addEventListener('click', async function() {
+            const type = videoTypeSelect.value;
+            const subject = videoSubjectInput.value;
+            
+            if (!subject) {
+                alert('Por favor, insira o assunto do vídeo');
+                return;
             }
             
-            // Atualiza a interface durante o processamento
-            let progress = 0;
+            // Mostrar progresso
+            progressContainer.style.display = 'block';
+            progressBar.style.width = '0%';
+            downloadBtn.style.display = 'none';
+            
+            // Simular etapas de processamento
             const steps = [
-                {text: 'Analisando seu pedido...', percent: 10},
-                {text: 'Buscando os melhores clipes...', percent: 25},
-                {text: 'Selecionando música ideal...', percent: 40},
-                {text: 'Editando com técnicas profissionais...', percent: 65},
-                {text: 'Aplicando efeitos visuais...', percent: 85},
-                {text: 'Renderizando vídeo final...', percent: 100}
+                { text: 'Analisando seu pedido...', percent: 10 },
+                { text: 'Coletando material de vídeo...', percent: 25 },
+                { text: type === 'edit' ? 'Selecionando música...' : 'Gerando avatar IA...', percent: 40 },
+                { text: type === 'edit' ? 'Editando cenas...' : 'Criando roteiro...', percent: 60 },
+                { text: 'Renderizando vídeo final...', percent: 85 },
+                { text: 'Otimizando qualidade...', percent: 100 }
             ];
             
-            let currentStep = 0;
-            
-            function processNextStep() {
-                if (currentStep >= steps.length) {
-                    // Processo completo - mostra o resultado
-                    progressContainer.style.display = 'none';
-                    resultContainer.style.display = 'block';
-                    
-                    // Atualiza o vídeo de pré-visualização (simulado)
-                    previewVideo.poster = `https://via.placeholder.com/800x450/6e48aa/FFFFFF?text=${encodeURIComponent(editData.title)}`;
-                    
-                    // Rola a página para mostrar o resultado
-                    setTimeout(() => {
-                        resultContainer.scrollIntoView({ behavior: 'smooth' });
-                    }, 500);
-                    
-                    return;
-                }
-                
-                const step = steps[currentStep];
-                progress = step.percent;
-                progressBar.style.width = `${progress}%`;
-                
-                // Simula tempo de processamento para cada etapa
-                setTimeout(() => {
-                    currentStep++;
-                    processNextStep();
-                }, 800);
+            // Processar cada etapa
+            for (const step of steps) {
+                progressBar.style.width = `${step.percent}%`;
+                await new Promise(resolve => setTimeout(resolve, 800));
             }
             
-            processNextStep();
+            // Gerar vídeo de exemplo (na prática seria um vídeo real)
+            const videoBlob = await generateExampleVideo(type, subject);
+            const videoUrl = URL.createObjectURL(videoBlob);
+            
+            // Mostrar resultado
+            previewVideo.src = videoUrl;
+            progressContainer.style.display = 'none';
+            downloadBtn.style.display = 'flex';
+            
+            // Mostrar detalhes
+            showVideoDetails(type, subject);
+        });
+
+        // Função para gerar vídeo de exemplo (simulado)
+        async function generateExampleVideo(type, subject) {
+            // Criar canvas para gerar vídeo simples
+            const canvas = document.createElement('canvas');
+            canvas.width = 800;
+            canvas.height = 450;
+            const ctx = canvas.getContext('2d');
+            
+            // Texto do vídeo
+            ctx.fillStyle = '#6e48aa';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 40px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(subject, canvas.width/2, canvas.height/2);
+            
+            if (type === 'promotional') {
+                ctx.font = '24px Arial';
+                ctx.fillText('Apresentador Virtual IA', canvas.width/2, canvas.height/2 + 50);
+            }
+            
+            // Converter canvas para blob de vídeo
+            const stream = canvas.captureStream(30);
+            const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+            
+            return new Promise(resolve => {
+                const chunks = [];
+                recorder.ondataavailable = e => chunks.push(e.data);
+                recorder.onstop = () => resolve(new Blob(chunks, { type: 'video/webm' }));
+                recorder.start();
+                setTimeout(() => recorder.stop(), 3000);
+            });
         }
-        
-        // Simula o download
+
+        // Mostrar detalhes do vídeo
+        function showVideoDetails(type, subject) {
+            let details = `
+                <h3 style="margin-top: 0;">Detalhes do Vídeo</h3>
+                <p><strong>Tipo:</strong> ${type === 'edit' ? 'Edit Criativo' : type === 'promotional' ? 'Vídeo Promocional' : 'Conteúdo Educativo'}</p>
+                <p><strong>Assunto:</strong> ${subject}</p>
+            `;
+            
+            if (type === 'edit') {
+                details += `
+                    <p><strong>Música:</strong> ${musicTrackInput.value || 'Automática'}</p>
+                    <p><strong>Duração:</strong> ${videoDurationInput.value} segundos</p>
+                `;
+            } else {
+                if (avatarSection.style.display === 'block') {
+                    details += `<p><strong>Apresentador:</strong> ${avatarDescription.value || 'Customizado'}</p>`;
+                }
+                if (scriptSection.style.display === 'block') {
+                    details += `<p><strong>Narração:</strong> Roteiro gerado automaticamente</p>`;
+                }
+            }
+            
+            videoDetailsDiv.innerHTML = details;
+        }
+
+        // Download do vídeo
         downloadBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            const originalText = this.innerHTML;
-            this.innerHTML = '<i class="fas fa-download"></i> Baixando... <div class="loading"></div>';
-            
-            setTimeout(() => {
-                this.innerHTML = '<i class="fas fa-check"></i> Download completo!';
-                setTimeout(() => {
-                    this.innerHTML = originalText;
-                }, 2000);
-            }, 3000);
+            const a = document.createElement('a');
+            a.href = previewVideo.src;
+            a.download = `mta-ia-video-${new Date().getTime()}.webm`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         });
     </script>
 </body>
