@@ -1,408 +1,254 @@
+```
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VideoCreator AI - Plataforma de Criação Automatizada</title>
-    <style>
-        :root {
-            --primary: #6e48aa;
-            --secondary: #9d50bb;
-            --accent: #4776E6;
-            --light: #f8f9fa;
-            --dark: #343a40;
-            --success: #28a745;
-            --warning: #ffc107;
-            --danger: #dc3545;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 20px 0;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        
-        h1, h2, h3 {
-            margin: 0 0 15px;
-        }
-        
-        .card {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        
-        .btn {
-            display: inline-block;
-            background: var(--accent);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background 0.3s;
-        }
-        
-        .btn:hover {
-            background: #3a5bc7;
-        }
-        
-        .btn-secondary {
-            background: var(--secondary);
-        }
-        
-        .btn-success {
-            background: var(--success);
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-        
-        textarea, input[type="text"], select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: inherit;
-        }
-        
-        textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-        
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-        
-        .scene-preview {
-            border: 1px solid #eee;
-            padding: 15px;
-            border-radius: 6px;
-        }
-        
-        .scene-preview img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-        
-        .progress-bar {
-            height: 10px;
-            background: #e9ecef;
-            border-radius: 5px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-        
-        .progress {
-            height: 100%;
-            background: var(--accent);
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-        
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 */
-            height: 0;
-            overflow: hidden;
-            background: #000;
-            border-radius: 8px;
-        }
-        
-        .video-container video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        
-        .hashtags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        
-        .hashtag {
-            background: #e9f5ff;
-            color: var(--accent);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.9em;
-        }
-        
-        .tab-container {
-            margin-bottom: 20px;
-        }
-        
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        .tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-        }
-        
-        .tab.active {
-            border-bottom-color: var(--accent);
-            font-weight: 500;
-        }
-        
-        .tab-content {
-            display: none;
-            padding: 20px 0;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        @media (max-width: 768px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>VideoCreator AI</h1>
-            <p>Sistema avançado de criação de vídeos automatizados com IA</p>
-        </header>
-        
-        <div class="card">
-            <h2>Briefing do Vídeo</h2>
-            <div class="form-group">
-                <label for="briefing">Descreva seu vídeo:</label>
-                <textarea id="briefing" placeholder="Ex: Quero um vídeo de 30s sobre tênis esportivo, tom jovem, com foco em durabilidade..."></textarea>
-            </div>
-            <button id="generateBtn" class="btn">Gerar Vídeo</button>
-        </div>
-        
-        <div class="progress-bar" id="progressContainer" style="display: none;">
-            <div class="progress" id="progressBar"></div>
-        </div>
-        
-        <div class="tab-container">
-            <div class="tabs">
-                <div class="tab active" data-tab="analysis">Análise</div>
-                <div class="tab" data-tab="storyboard">Storyboard</div>
-                <div class="tab" data-tab="video">Vídeo Final</div>
-                <div class="tab" data-tab="social">Redes Sociais</div>
-            </div>
-            
-            <div class="tab-content active" id="analysis">
-                <div class="card">
-                    <h3>Palavras-chave extraídas</h3>
-                    <pre id="keywordsOutput">{
-  "produto": "Produto genérico",
-  "tom": "Formal",
-  "público": "Geral",
-  "duraçao": "30s"
-}</pre>
-                </div>
-                
-                <div class="card">
-                    <h3>Roteiro Gerado</h3>
-                    <div id="scriptOutput">
-                        <p>[Cena 1: Close do Produto genérico com efeito slow-motion, foco na durabilidade.]</p>
-                        <p>[Cena 2: Jovem usando o tênis em corrida na cidade, sorriso confiante.]</p>
-                        <p>[Cena 3: Detalhes do tênis, mostrando qualidade dos materiais.]</p>
-                        <p>[Cena 4: Logo da marca e chamada para ação, tom formal e descontraído.]</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="tab-content" id="storyboard">
-                <h2>Storyboard - Cenas e Prompts</h2>
-                <div class="grid">
-                    <div class="card scene-preview">
-                        <h3>Cena 1</h3>
-                        <p>Cena 1: Close do Produto genérico com efeito slow-motion, foco na durabilidade.</p>
-                        <p><strong>Prompt:</strong> Produto genérico em ação, fundo urbano, estilo 'anúncio Nike', tom formal, cores vibrantes, 4K, [cena 1: close do produto genérico com efeito slow-motion, foco na durabilidade.]</p>
-                        <img src="https://via.placeholder.com/400x225?text=Imagem+da+Cena+1" alt="Cena 1">
-                    </div>
-                    
-                    <div class="card scene-preview">
-                        <h3>Cena 2</h3>
-                        <p>Cena 2: Jovem usando o tênis em corrida na cidade, sorriso confiante.</p>
-                        <p><strong>Prompt:</strong> Produto genérico em ação, fundo urbano, estilo 'anúncio Nike', tom formal, cores vibrantes, 4K, [cena 2: jovem usando o tênis em corrida na cidade, sorriso confiante.]</p>
-                        <img src="https://via.placeholder.com/400x225?text=Imagem+da+Cena+2" alt="Cena 2">
-                    </div>
-                    
-                    <div class="card scene-preview">
-                        <h3>Cena 3</h3>
-                        <p>Cena 3: Detalhes do tênis, mostrando qualidade dos materiais.</p>
-                        <p><strong>Prompt:</strong> Produto genérico em ação, fundo urbano, estilo 'anúncio Nike', tom formal, cores vibrantes, 4K, [cena 3: detalhes do tênis, mostrando qualidade dos materiais.]</p>
-                        <img src="https://via.placeholder.com/400x225?text=Imagem+da+Cena+3" alt="Cena 3">
-                    </div>
-                    
-                    <div class="card scene-preview">
-                        <h3>Cena 4</h3>
-                        <p>Cena 4: Logo da marca e chamada para ação, tom formal e descontraído.</p>
-                        <p><strong>Prompt:</strong> Produto genérico em ação, fundo urbano, estilo 'anúncio Nike', tom formal, cores vibrantes, 4K, [cena 4: logo da marca e chamada para ação, tom formal e descontraído.]</p>
-                        <img src="https://via.placeholder.com/400x225?text=Imagem+da+Cena+4" alt="Cena 4">
-                    </div>
-                </div>
-            </div>
-            
-            <div class="tab-content" id="video">
-                <div class="card">
-                    <h2>Vídeo Final</h2>
-                    <div class="video-container">
-                        <video controls poster="https://via.placeholder.com/800x450?text=Thumbnail+do+V%C3%ADdeo">
-                            <source src="#" type="video/mp4">
-                            Seu navegador não suporta o elemento de vídeo.
-                        </video>
-                    </div>
-                    
-                    <div style="margin-top: 20px;">
-                        <button class="btn btn-success">Baixar Vídeo</button>
-                        <button class="btn btn-secondary" style="margin-left: 10px;">Gerar Novas Versões</button>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <h3>Narração</h3>
-                    <audio controls style="width: 100%;">
-                        <source src="#" type="audio/mpeg">
-                        Seu navegador não suporta o elemento de áudio.
-                    </audio>
-                    <div id="narrationText" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px;">
-                        Texto da narração gerado automaticamente aparecerá aqui...
-                    </div>
-                </div>
-            </div>
-            
-            <div class="tab-content" id="social">
-                <div class="grid">
-                    <div class="card">
-                        <h3>Versão para TikTok</h3>
-                        <div class="video-container">
-                            <video controls poster="https://via.placeholder.com/450x800?text=TikTok+Version">
-                                <source src="#" type="video/mp4">
-                            </video>
-                        </div>
-                        <p>Vídeo vertical 9:16 com legendas automáticas.</p>
-                        <div class="hashtags">
-                            <span class="hashtag">#esportivo</span>
-                            <span class="hashtag">#tênis</span>
-                            <span class="hashtag">#durabilidade</span>
-                            <span class="hashtag">#jovem</span>
-                        </div>
-                        <button class="btn" style="margin-top: 15px;">Baixar Versão TikTok</button>
-                    </div>
-                    
-                    <div class="card">
-                        <h3>Versão para Instagram Reels</h3>
-                        <div class="video-container">
-                            <video controls poster="https://via.placeholder.com/450x800/4776E6/FFFFFF?text=Instagram+Reels">
-                                <source src="#" type="video/mp4">
-                            </video>
-                        </div>
-                        <p>Capa personalizada e chamada para ação "Compre agora!".</p>
-                        <div class="hashtags">
-                            <span class="hashtag">#modaesportiva</span>
-                            <span class="hashtag">#tênis</span>
-                            <span class="hashtag">#estilodevida</span>
-                            <span class="hashtag">#qualidade</span>
-                        </div>
-                        <button class="btn" style="margin-top: 15px;">Baixar Versão Reels</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Simulação do processo de geração
-        document.getElementById('generateBtn').addEventListener('click', function() {
-            const progressBar = document.getElementById('progressBar');
-            const progressContainer = document.getElementById('progressContainer');
-            
-            progressContainer.style.display = 'block';
-            
-            // Simulação de progresso
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 10;
-                progressBar.style.width = progress + '%';
-                
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    // Mostrar primeira aba de resultados
-                    document.querySelector('.tab-content.active').classList.remove('active');
-                    document.getElementById('analysis').classList.add('active');
-                    
-                    // Ativar tabs
-                    document.querySelectorAll('.tab').forEach(tab => {
-                        tab.addEventListener('click', function() {
-                            document.querySelector('.tab.active').classList.remove('active');
-                            this.classList.add('active');
-                            
-                            const tabId = this.getAttribute('data-tab');
-                            document.querySelector('.tab-content.active').classList.remove('active');
-                            document.getElementById(tabId).classList.add('active');
-                        });
-                    });
-                }
-            }, 300);
-        });
-        
-        // Sistema de tabs
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                document.querySelector('.tab.active').classList.remove('active');
-                this.classList.add('active');
-                
-                const tabId = this.getAttribute('data-tab');
-                document.querySelector('.tab-content.active').classList.remove('active');
-                document.getElementById(tabId).classList.add('active');
-            });
-        });
-    </script>
-</body>
-</html>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>IA Criativa para Vídeos Automáticos</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0;
+    background: #f0f3f7;
+    color: #333;
+  }
+  header {
+    background: #2d89ef;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+  }
+  main {
+    max-width: 900px;
+    margin: 2rem auto;
+    background: white;
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgb(0 0 0 /0.1);
+  }
+  h1,h2,h3 {
+    margin-top: 0;
+  }
+  label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+  textarea, input[type=text] {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #bbb;
+    margin-bottom: 1rem;
+    resize: vertical;
+    min-height: 80px;
+  }
+  button {
+    background: #2d89ef;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background: #1b5fbd;
+  }
+  pre {
+    background: #f4f6fa;
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+  }
+  .section {
+    margin-bottom: 2rem;
+  }
+  .scene {
+    border: 1px solid #ccc;
+    padding: 0.6rem 0.8rem;
+    margin-bottom: 0.8rem;
+    border-radius: 4px;
+    background: #fafafa;
+  }
+  .scene img {
+    max-width: 100%;
+    border-radius: 4px;
+  }
+  .prompt {
+    font-style: italic;
+    color: #666;
+  }
+  .output-block {
+    background: #e7f0fd;
+    border-left: 6px solid #2d89ef;
+    padding: 1rem 1.2rem;
+    margin-bottom: 2rem;
+    white-space: pre-wrap;
+  }
+  .hashtags {
+    font-weight: bold;
+    color: #2d89ef;
+  }
+  .video-mockup {
+    background: #222;
+    color: #eee;
+    text-align: center;
+    border-radius: 8px;
+    padding: 1rem;
+    user-select: none;
+  }
+  .video-mockup img {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+  .footer {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #999;
+    margin-top: 2rem;
+  }
+  .loader {
+    display: inline-block;
+    border: 4px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 4px solid #2d89ef;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+    vertical-align: middle;
+    margin-left: 0.5rem;
+  }
+  @keyframes spin {
+    0% {transform: rotate(0deg);}
+    100% {transform: rotate(360deg
+``````
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>IA Criativa para Vídeos Automáticos</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0;
+    background: #f0f3f7;
+    color: #333;
+  }
+  header {
+    background: #2d89ef;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+  }
+  main {
+    max-width: 900px;
+    margin: 2rem auto;
+    background: white;
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgb(0 0 0 /0.1);
+  }
+  h1,h2,h3 {
+    margin-top: 0;
+  }
+  label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+  textarea, input[type=text] {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #bbb;
+    margin-bottom: 1rem;
+    resize: vertical;
+    min-height: 80px;
+  }
+  button {
+    background: #2d89ef;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background: #1b5fbd;
+  }
+  pre {
+    background: #f4f6fa;
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+  }
+  .section {
+    margin-bottom: 2rem;
+  }
+  .scene {
+    border: 1px solid #ccc;
+    padding: 0.6rem 0.8rem;
+    margin-bottom: 0.8rem;
+    border-radius: 4px;
+    background: #fafafa;
+  }
+  .scene img {
+    max-width: 100%;
+    border-radius: 4px;
+  }
+  .prompt {
+    font-style: italic;
+    color: #666;
+  }
+  .output-block {
+    background: #e7f0fd;
+    border-left: 6px solid #2d89ef;
+    padding: 1rem 1.2rem;
+    margin-bottom: 2rem;
+    white-space: pre-wrap;
+  }
+  .hashtags {
+    font-weight: bold;
+    color: #2d89ef;
+  }
+  .video-mockup {
+    background: #222;
+    color: #eee;
+    text-align: center;
+    border-radius: 8px;
+    padding: 1rem;
+    user-select: none;
+  }
+  .video-mockup img {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+  .footer {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #999;
+    margin-top: 2rem;
+  }
+  .loader {
+    display: inline-block;
+    border: 4px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 4px solid #2d89ef;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+    vertical-align: middle;
+    margin-left: 0.5rem;
+  }
+  @keyframes spin {
+    0% {transform: rotate(0deg);}
+    100% {transform: rotate(360deg
+```
+    
