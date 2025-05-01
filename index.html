@@ -372,3 +372,180 @@
   </script>
 </body>
 </html>
+"""
+video_creator_ai_pro.py
+
+Pipeline completo para criação automática de vídeos a partir de briefing textual.
+Usa APIs reais com tratamento de erros, paralelização e configuração modular.
+
+Requer:
+- OpenAI API key (GPT-4)
+- Stable Diffusion API (ou local com GPU)
+- ElevenLabs API (voz)
+- FFmpeg instalado (edição)
+
+Autor: BLACKBOXAI
+Versão: 2.0
+"""
+
+import os
+import json
+import re
+import requests
+import concurrent.futures
+from typing import List, Dict, Any
+from pathlib import Path
+from openai import OpenAI
+from elevenlabs import generate, set_api_key
+import cv2  # OpenCV
+import numpy as np
+
+# Configurações (substitua com suas chaves)
+CONFIG = {
+    "openai_key": "sua-chave-openai",
+    "elevenlabs_key": "sua-chave-elevenlabs",
+    "stablediffusion_url": "https://api.stablediffusion.com/v1",
+    "output_dir": "videos_gerados",
+    "default_voice": "Marcos",  # ElevenLabs voice ID
+    "ffmpeg_path": "ffmpeg"  # Ou caminho completo se não estiver no PATH
+}
+
+# Clientes das APIs
+client_openai = OpenAI(api_key=CONFIG["openai_key"])
+set_api_key(CONFIG["elevenlabs_key"])
+
+# --- Funções Principais ---
+def generate_with_retry(api_func, max_retries=3, **kwargs):
+    """Tenta chamar uma API com retry automático."""
+    for _ in range(max_retries):
+        try:
+            return api_func(**kwargs)
+        except Exception as e:
+            print(f"Erro na API ({api_func.__name__}): {e}. Retrying...")
+    raise Exception(f"Falha após {max_retries} tentativas.")
+
+def nlp_extract_keywords(briefing: str) -> Dict[str, str]:
+    """Extrai palavras-chave usando GPT-4 para maior precisão."""
+    prompt = (
+        f"Extraia do briefing abaixo as seguintes informações em JSON:\n"
+        f"- produto (string)\n- tom (string)\n- público (string)\n- duração (string)\n"
+        f"Briefing: \"{briefing}\"\n\nExemplo de saída:\n"
+        "{\"produto\": \"Tênis X\", \"tom\": \"descontraído\", ...}"
+    )
+    
+    response = generate_with_retry(
+        client_openai.chat.completions.create,
+        model="gpt-4",
+        messages=[{"role": "user", "content": prompt}],
+        response_format={"type": "json_object"}
+    )
+    return json.loads(response.choices[0].message.content)
+
+def llm_generate_script(keywords: Dict[str, str]) -> str:
+    """Gera roteiro detalhado com GPT-4."""
+    prompt = (
+        f"Crie um roteiro de vídeo de {keywords['duração']} com:\n"
+        f"Produto: {keywords['produto']}\nTom: {keywords['tom']}\n"
+        f"Público: {keywords['público']}\n\n"
+        "Formato: [Cena X: Descrição da cena...]"
+    )
+    
+    response = generate_with_retry(
+        client_openai.chat.completions.create,
+        model="gpt-4",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.7
+    )
+    return response.choices[0].message.content
+
+def generate_scene_image(prompt: str, output_path: str) -> None:
+    """Gera imagem via Stable Diffusion API."""
+    headers = {"Authorization": f"Bearer {CONFIG['stablediffusion_key']}"}
+    data = {
+        "prompt": prompt,
+        "negative_prompt": "blurry, low quality",
+        "width": 1024,
+        "height": 768
+    }
+    
+    response = generate_with_retry(
+        requests.post,
+        url=f"{CONFIG['stablediffusion_url']}/generate",
+        headers=headers,
+        json=data
+    )
+    with open(output_path, "wb") as f:
+        f.write(response.content)
+
+def generate_voiceover(text: str, output_path: str) -> None:
+    """Gera narração com ElevenLabs."""
+    audio = generate_with_retry(
+        generate,
+        text=text,
+        voice=CONFIG["default_voice"],
+        model="eleven_monolingual_v2"
+    )
+    with open(output_path, "wb") as f:
+        audio.write_to_file(output_path)
+
+def combine_assets(scene_images: List[str], voiceover_path: str, output_path: str) -> None:
+    """Combina imagens e áudio em vídeo com FFmpeg."""
+    # Cria lista de arquivos para FFmpeg
+    with open("temp_filelist.txt", "w") as f:
+        for img in scene_images:
+            f.write(f"file '{img}'\nduration 5\n")  # 5s por cena
+    
+    cmd = [
+        CONFIG["ffmpeg_path"],
+        "-f", "concat",
+        "-i", "temp_filelist.txt",
+        "-i", voiceover_path,
+        "-c:v", "libx264",
+        "-pix_fmt", "yuv420p",
+        "-vf", "fps=30",
+        "-shortest",
+        output_path
+    ]
+    subprocess.run(cmd, check=True)
+
+# --- Pipeline Principal ---
+def run_pipeline(briefing: str) -> Dict[str, str]:
+    """Executa todo o fluxo e retorna paths dos vídeos gerados."""
+    Path(CONFIG["output_dir"]).mkdir(exist_ok=True)
+    
+    # 1. Análise do briefing
+    keywords = nlp_extract_keywords(briefing)
+    script = llm_generate_script(keywords)
+    
+    # 2. Geração paralela de assets
+    scenes = split_script_to_scenes(script)
+    scene_images = []
+    
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        # Gera imagens em paralelo
+        futures = []
+        for i, scene in enumerate(scenes):
+            prompt = generate_image_prompt(scene, keywords)
+            img_path = f"{CONFIG['output_dir']}/scene_{i+1}.png"
+            futures.append(executor.submit(generate_scene_image, prompt, img_path))
+        
+        for future in concurrent.futures.as_completed(futures):
+            scene_images.append(future.result())
+    
+    # 3. Gera voz e combina
+    voice_path = f"{CONFIG['output_dir']}/voiceover.mp3"
+    generate_voiceover(script, voice_path)
+    
+    output_video = f"{CONFIG['output_dir']}/final_video.mp4"
+    combine_assets(scene_images, voice_path, output_video)
+    
+    return {
+        "video": output_video,
+        "scenes": scene_images,
+        "script": script
+    }
+
+if __name__ == "__main__":
+    briefing = "Quero um vídeo de 30s sobre tênis esportivo, tom jovem, foco em durabilidade"
+    result = run_pipeline(briefing)
+    print(f"Vídeo gerado em: {result['video']}")
