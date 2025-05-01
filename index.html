@@ -3,188 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudioVid AI - Editor de Vídeo Inteligente</title>
+    <title>EditAI - Sistema Inteligente de Edição de Vídeos</title>
     <style>
         :root {
-            --primary: #4a6bff;
-            --secondary: #6e48aa;
-            --accent: #ff6b6b;
-            --dark: #2c3e50;
+            --primary: #6e48aa;
+            --secondary: #9d50bb;
+            --accent: #4776E6;
             --light: #f8f9fa;
-            --success: #20c997;
+            --dark: #343a40;
+            --success: #28a745;
             --warning: #ffc107;
             --danger: #dc3545;
-            --gray: #6c757d;
         }
         
-        * {
-            box-sizing: border-box;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
             margin: 0;
             padding: 0;
         }
         
-        body {
-            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background-color: #f5f7fa;
-            color: var(--dark);
-            line-height: 1.6;
-        }
-        
         .container {
-            max-width: 1200px;
+            max-width: 800px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 20px;
         }
         
         header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            padding: 1.5rem 0;
+            padding: 30px 0;
+            text-align: center;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 30px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        h1, h2, h3 {
+            margin: 0 0 15px;
         }
         
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
+        .chat-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
         }
         
-        .logo-icon {
-            margin-right: 10px;
-            font-size: 2rem;
-        }
-        
-        nav ul {
-            display: flex;
-            list-style: none;
-        }
-        
-        nav ul li {
-            margin-left: 1.5rem;
-        }
-        
-        nav ul li a {
+        .chat-header {
+            background: var(--primary);
             color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: opacity 0.3s;
+            padding: 15px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
         }
         
-        nav ul li a:hover {
-            opacity: 0.9;
+        .chat-header i {
+            margin-right: 10px;
+            font-size: 1.2em;
         }
         
-        .main-content {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 30px;
-            margin: 2rem 0;
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #fafafa;
         }
         
-        .sidebar {
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+            padding: 12px 15px;
+            border-radius: 18px;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .ai-message {
             background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            height: fit-content;
+            border: 1px solid #eee;
+            border-radius: 18px 18px 18px 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         
-        .editor-container {
+        .user-message {
+            background: var(--accent);
+            color: white;
+            margin-left: auto;
+            border-radius: 18px 18px 4px 18px;
+        }
+        
+        .input-area {
+            display: flex;
+            padding: 15px;
             background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-top: 1px solid #eee;
         }
         
-        .section-title {
-            font-size: 1.3rem;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--light);
-            color: var(--primary);
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--dark);
-        }
-        
-        input[type="text"],
-        input[type="file"],
-        textarea,
-        select {
-            width: 100%;
-            padding: 0.8rem;
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 15px;
             border: 1px solid #ddd;
-            border-radius: 6px;
-            font-family: inherit;
-            font-size: 1rem;
+            border-radius: 30px;
+            font-size: 16px;
+            outline: none;
             transition: border 0.3s;
         }
         
-        input[type="text"]:focus,
-        textarea:focus,
-        select:focus {
-            border-color: var(--primary);
-            outline: none;
+        input[type="text"]:focus {
+            border-color: var(--accent);
         }
         
-        textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-        
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.8rem 1.5rem;
+        button {
+            background: var(--accent);
+            color: white;
             border: none;
-            border-radius: 6px;
-            font-weight: 500;
+            border-radius: 30px;
+            padding: 0 20px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #3a5bc7;
+        }
+        
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .option-btn {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 8px 15px;
             cursor: pointer;
             transition: all 0.3s;
-            text-decoration: none;
+            font-size: 14px;
         }
         
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #3a5bd9;
-            transform: translateY(-2px);
-        }
-        
-        .btn-secondary {
-            background: var(--secondary);
-            color: white;
-        }
-        
-        .btn-icon {
-            margin-right: 8px;
+        .option-btn:hover {
+            background: var(--light);
+            border-color: var(--accent);
         }
         
         .video-preview {
-            width: 100%;
             background: #000;
-            border-radius: 8px;
+            border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 1.5rem;
+            margin-top: 20px;
         }
         
         .video-preview video {
@@ -192,136 +172,56 @@
             display: block;
         }
         
-        .timeline {
-            background: #f1f3f5;
-            height: 100px;
-            border-radius: 6px;
-            margin: 1.5rem 0;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .timeline-clip {
-            position: absolute;
-            height: 80px;
-            top: 10px;
-            background: var(--primary);
-            border-radius: 4px;
-            cursor: move;
-        }
-        
-        .assets-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 15px;
-            margin: 1.5rem 0;
-        }
-        
-        .asset-card {
-            border: 1px solid #eee;
-            border-radius: 6px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        
-        .asset-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .asset-thumbnail {
-            height: 80px;
-            background: #eee;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .asset-thumbnail img {
-            max-width: 100%;
-            max-height: 100%;
-        }
-        
-        .asset-info {
-            padding: 0.5rem;
-            font-size: 0.9rem;
-        }
-        
-        .ai-suggestions {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 1.5rem 0;
-        }
-        
-        .suggestion-item {
-            padding: 0.8rem;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        
-        .suggestion-item:hover {
-            background: #e9ecef;
-        }
-        
-        .toolbar {
-            display: flex;
-            gap: 10px;
-            margin: 1.5rem 0;
-            flex-wrap: wrap;
-        }
-        
-        .tool-btn {
-            padding: 0.6rem 1rem;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            transition: all 0.3s;
-        }
-        
-        .tool-btn:hover {
-            background: #f1f3f5;
-            border-color: #bbb;
-        }
-        
         .progress-container {
-            height: 10px;
-            background: #e9ecef;
-            border-radius: 5px;
-            margin: 1.5rem 0;
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            margin: 20px 0;
             overflow: hidden;
         }
         
         .progress-bar {
             height: 100%;
-            background: var(--primary);
+            background: linear-gradient(90deg, var(--primary), var(--accent));
             width: 0%;
             transition: width 0.5s ease;
         }
         
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .header-content {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            nav ul {
-                margin-top: 1rem;
-                justify-content: center;
-            }
-            
-            nav ul li {
-                margin: 0 0.5rem;
-            }
+        .download-section {
+            text-align: center;
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .download-btn {
+            background: var(--success);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .download-btn i {
+            margin-right: 10px;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -329,198 +229,242 @@
 <body>
     <header>
         <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <span class="logo-icon"><i class="fas fa-video"></i></span>
-                    <span>StudioVid AI</span>
-                </div>
-                <nav>
-                    <ul>
-                        <li><a href="#"><i class="fas fa-home"></i> Início</a></li>
-                        <li><a href="#"><i class="fas fa-project-diagram"></i> Projetos</a></li>
-                        <li><a href="#"><i class="fas fa-cog"></i> Configurações</a></li>
-                    </ul>
-                </nav>
-            </div>
+            <h1><i class="fas fa-robot"></i> EditAI</h1>
+            <p>Sistema Inteligente de Edição de Vídeos com IA</p>
         </div>
     </header>
     
     <div class="container">
-        <div class="main-content">
-            <aside class="sidebar">
-                <h3 class="section-title"><i class="fas fa-folder-open btn-icon"></i> Projeto Atual</h3>
-                <div class="form-group">
-                    <label for="project-name">Nome do Projeto</label>
-                    <input type="text" id="project-name" value="Meu Vídeo Promocional">
-                </div>
-                
-                <h3 class="section-title"><i class="fas fa-upload btn-icon"></i> Importar Mídia</h3>
-                <div class="form-group">
-                    <button class="btn btn-primary" style="width: 100%;">
-                        <i class="fas fa-cloud-upload-alt btn-icon"></i> Upload de Arquivos
-                    </button>
-                </div>
-                
-                <div class="form-group">
-                    <label for="media-search">Buscar Stock</label>
-                    <div style="display: flex;">
-                        <input type="text" id="media-search" placeholder="Buscar vídeos, imagens...">
-                        <button class="btn btn-secondary" style="margin-left: 5px;">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <h3 class="section-title"><i class="fas fa-boxes btn-icon"></i> Biblioteca</h3>
-                <div class="assets-grid">
-                    <div class="asset-card">
-                        <div class="asset-thumbnail">
-                            <i class="fas fa-image" style="font-size: 2rem; color: var(--gray);"></i>
-                        </div>
-                        <div class="asset-info">Cena 1.jpg</div>
-                    </div>
-                    <div class="asset-card">
-                        <div class="asset-thumbnail">
-                            <i class="fas fa-video" style="font-size: 2rem; color: var(--gray);"></i>
-                        </div>
-                        <div class="asset-info">Entrevista.mp4</div>
-                    </div>
-                    <div class="asset-card">
-                        <div class="asset-thumbnail">
-                            <i class="fas fa-music" style="font-size: 2rem; color: var(--gray);"></i>
-                        </div>
-                        <div class="asset-info">Trilha.wav</div>
-                    </div>
-                </div>
-                
-                <h3 class="section-title"><i class="fas fa-robot btn-icon"></i> Sugestões de IA</h3>
-                <div class="ai-suggestions">
-                    <div class="suggestion-item">
-                        <strong>Transição recomendada:</strong> Dissolve entre cenas 1 e 2
-                    </div>
-                    <div class="suggestion-item">
-                        <strong>Música sugerida:</strong> Upbeat Corporate
-                    </div>
-                    <div class="suggestion-item">
-                        <strong>Legenda automática:</strong> "Durabilidade incomparável"
-                    </div>
-                </div>
-            </aside>
-            
-            <main class="editor-container">
-                <h2 class="section-title"><i class="fas fa-edit btn-icon"></i> Editor de Vídeo</h2>
-                
-                <div class="video-preview">
-                    <video controls>
-                        <source src="#" type="video/mp4">
-                        Seu navegador não suporta o elemento de vídeo.
-                    </video>
-                </div>
-                
-                <div class="toolbar">
-                    <button class="tool-btn"><i class="fas fa-cut"></i> Cortar</button>
-                    <button class="tool-btn"><i class="fas fa-text-height"></i> Texto</button>
-                    <button class="tool-btn"><i class="fas fa-music"></i> Áudio</button>
-                    <button class="tool-btn"><i class="fas fa-exchange-alt"></i> Transições</button>
-                    <button class="tool-btn"><i class="fas fa-magic"></i> Efeitos</button>
-                    <button class="tool-btn"><i class="fas fa-robot"></i> IA Criativa</button>
-                </div>
-                
-                <div class="timeline">
-                    <div class="timeline-clip" style="left: 10px; width: 100px;"></div>
-                    <div class="timeline-clip" style="left: 130px; width: 80px;"></div>
-                    <div class="timeline-clip" style="left: 230px; width: 120px;"></div>
-                </div>
-                
-                <h3 class="section-title"><i class="fas fa-comment-alt btn-icon"></i> Detalhes do Projeto</h3>
-                <div class="form-group">
-                    <label for="video-title">Título do Vídeo</label>
-                    <input type="text" id="video-title" placeholder="Digite o título do vídeo">
-                </div>
-                
-                <div class="form-group">
-                    <label for="video-desc">Descrição</label>
-                    <textarea id="video-desc" placeholder="Descreva o conteúdo do vídeo..."></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="video-style">Estilo do Vídeo</label>
-                    <select id="video-style">
-                        <option value="corporate">Corporate</option>
-                        <option value="cinematic">Cinematográfico</option>
-                        <option value="social">Mídias Sociais</option>
-                        <option value="youtube">YouTube</option>
-                    </select>
-                </div>
-                
-                <h3 class="section-title"><i class="fas fa-bolt btn-icon"></i> Melhorias com IA</h3>
-                <div class="form-group">
-                    <label for="ai-prompt">Prompt Criativo</label>
-                    <textarea id="ai-prompt" placeholder="Ex: Crie um vídeo dinâmico com transições suaves e tom profissional..."></textarea>
-                    <button class="btn btn-primary">
-                        <i class="fas fa-magic btn-icon"></i> Gerar com IA
-                    </button>
-                </div>
-                
-                <div class="progress-container">
-                    <div class="progress-bar" id="progress-bar"></div>
-                </div>
-                
-                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 2rem;">
-                    <button class="btn">
-                        <i class="fas fa-save btn-icon"></i> Salvar Rascunho
-                    </button>
-                    <button class="btn btn-primary">
-                        <i class="fas fa-file-export btn-icon"></i> Exportar Vídeo
-                    </button>
-                </div>
-            </main>
+        <div class="chat-container">
+            <div class="chat-header">
+                <i class="fas fa-comments"></i> Assistente de Edição
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <!-- Mensagens serão adicionadas aqui dinamicamente -->
+            </div>
+            <div class="input-area">
+                <input type="text" id="user-input" placeholder="Digite sua mensagem..." autocomplete="off">
+                <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+        
+        <div class="video-preview" id="video-preview" style="display: none;">
+            <video controls id="preview-video">
+                Seu navegador não suporta o elemento de vídeo.
+            </video>
+        </div>
+        
+        <div class="progress-container" id="progress-container" style="display: none;">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="download-section" id="download-section">
+            <h3>Seu vídeo está pronto!</h3>
+            <a href="#" class="download-btn" id="download-btn">
+                <i class="fas fa-download"></i> Baixar Vídeo
+            </a>
         </div>
     </div>
 
     <script>
-        // Simulação de progresso ao usar IA
-        document.querySelector('#ai-prompt + button').addEventListener('click', function() {
-            const progressBar = document.getElementById('progress-bar');
+        // Estado do sistema
+        const state = {
+            currentStep: 0,
+            videoData: {
+                subject: '',
+                platform: '',
+                music: '',
+                duration: '',
+                style: '',
+                sources: []
+            },
+            editing: false
+        };
+        
+        // Fluxo de perguntas da IA
+        const questions = [
+            {
+                question: "Olá! Sou sua assistente de edição de vídeos com IA. Sobre o que você gostaria que eu criasse um vídeo? (Ex: 'Uma edit do Neymar', 'Um compilado de gols')",
+                field: 'subject',
+                options: null
+            },
+            {
+                question: "Para qual plataforma será esse vídeo?",
+                field: 'platform',
+                options: ['TikTok', 'YouTube', 'Instagram', 'Twitter', 'Facebook']
+            },
+            {
+                question: "Qual estilo de música você gostaria no vídeo? (Ex: 'Eletrônica', 'Pop', 'Trap') ou digite 'surpreenda-me' para eu escolher",
+                field: 'music',
+                options: ['Eletrônica', 'Pop', 'Trap', 'Rock', 'Hip Hop', 'Lo-fi', 'Surpreenda-me']
+            },
+            {
+                question: "Qual a duração desejada para o vídeo?",
+                field: 'duration',
+                options: ['15 segundos', '30 segundos', '1 minuto', '2 minutos', '3 minutos']
+            },
+            {
+                question: "Qual estilo de edição você prefere?",
+                field: 'style',
+                options: ['Dinâmico com muitas transições', 'Clássico e clean', 'Cinematográfico', 'Estilo meme', 'Estilo hype']
+            },
+            {
+                question: "Você gostaria que eu buscasse automaticamente os melhores vídeos do(a) ${subject} na internet para usar na edição?",
+                field: 'autoSearch',
+                options: ['Sim, busque os melhores vídeos', 'Não, eu vou enviar meus vídeos']
+            }
+        ];
+        
+        // Elementos do DOM
+        const chatMessages = document.getElementById('chat-messages');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const videoPreview = document.getElementById('video-preview');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+        const downloadSection = document.getElementById('download-section');
+        const downloadBtn = document.getElementById('download-btn');
+        
+        // Inicia o chat
+        window.onload = function() {
+            addMessage('ai', questions[0].question, questions[0].options);
+        };
+        
+        // Envia mensagem quando o botão é clicado ou Enter é pressionado
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+        
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (message === '') return;
+            
+            addMessage('user', message);
+            userInput.value = '';
+            
+            // Processa a resposta do usuário
+            processUserResponse(message);
+        }
+        
+        function addMessage(sender, text, options = null) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(sender === 'ai' ? 'ai-message' : 'user-message');
+            messageDiv.innerHTML = text;
+            
+            chatMessages.appendChild(messageDiv);
+            
+            if (options && sender === 'ai') {
+                const optionsContainer = document.createElement('div');
+                optionsContainer.classList.add('options-container');
+                
+                options.forEach(option => {
+                    const optionBtn = document.createElement('div');
+                    optionBtn.classList.add('option-btn');
+                    optionBtn.textContent = option;
+                    optionBtn.addEventListener('click', function() {
+                        userInput.value = option;
+                        sendMessage();
+                    });
+                    optionsContainer.appendChild(optionBtn);
+                });
+                
+                chatMessages.appendChild(optionsContainer);
+            }
+            
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function processUserResponse(response) {
+            if (state.editing) return;
+            
+            // Armazena a resposta no estado
+            if (state.currentStep < questions.length) {
+                const currentQuestion = questions[state.currentStep];
+                state.videoData[currentQuestion.field] = response;
+                
+                // Substitui variáveis na próxima pergunta
+                let nextQuestion = questions[state.currentStep + 1]?.question || '';
+                nextQuestion = nextQuestion.replace('${subject}', state.videoData.subject);
+                
+                state.currentStep++;
+                
+                if (state.currentStep < questions.length) {
+                    setTimeout(() => {
+                        addMessage('ai', nextQuestion, questions[state.currentStep].options);
+                    }, 1000);
+                } else {
+                    // Todas as perguntas foram respondidas, iniciar edição
+                    startEditing();
+                }
+            }
+        }
+        
+        function startEditing() {
+            state.editing = true;
+            
+            // Mostra mensagem de processamento
+            addMessage('ai', `Ótimo! Vou criar um vídeo sobre <strong>${state.videoData.subject}</strong> para <strong>${state.videoData.platform}</strong> com música <strong>${state.videoData.music}</strong>, duração de <strong>${state.videoData.duration}</strong> e estilo <strong>${state.videoData.style}</strong>.`);
+            
+            setTimeout(() => {
+                addMessage('ai', '🔍 Buscando os melhores vídeos na internet...');
+                
+                // Simula busca de vídeos
+                simulateProgress('Buscando vídeos...', 20, () => {
+                    addMessage('ai', '🎬 Analisando e selecionando os melhores clipes...');
+                    simulateProgress('Analisando vídeos...', 30, () => {
+                        addMessage('ai', '🎵 Selecionando a música perfeita...');
+                        simulateProgress('Processando áudio...', 20, () => {
+                            addMessage('ai', '✂️ Editando vídeo com técnicas profissionais...');
+                            simulateProgress('Editando vídeo...', 30, () => {
+                                // Vídeo pronto
+                                addMessage('ai', '✅ Seu vídeo está pronto! Visualize abaixo:');
+                                
+                                // Mostra o preview do vídeo (simulado)
+                                videoPreview.style.display = 'block';
+                                document.getElementById('preview-video').poster = 'https://via.placeholder.com/800x450/6e48aa/FFFFFF?text=Preview+do+V%C3%ADdeo';
+                                progressContainer.style.display = 'none';
+                                downloadSection.style.display = 'block';
+                                
+                                // Rola para mostrar o vídeo
+                                setTimeout(() => {
+                                    videoPreview.scrollIntoView({ behavior: 'smooth' });
+                                }, 500);
+                            });
+                        });
+                    });
+                });
+            }, 1500);
+        }
+        
+        function simulateProgress(message, duration, callback) {
+            progressContainer.style.display = 'block';
             progressBar.style.width = '0%';
             
             let progress = 0;
             const interval = setInterval(() => {
-                progress += 5;
+                progress += 1;
                 progressBar.style.width = progress + '%';
                 
                 if (progress >= 100) {
                     clearInterval(interval);
-                    alert('Vídeo gerado com sucesso pela IA!');
+                    callback();
                 }
-            }, 200);
-        });
+            }, duration);
+        }
         
-        // Drag and drop para timeline (simplificado)
-        const clips = document.querySelectorAll('.timeline-clip');
-        clips.forEach(clip => {
-            clip.addEventListener('mousedown', function(e) {
-                const startX = e.clientX;
-                const startLeft = parseInt(clip.style.left) || 0;
-                
-                function moveClip(e) {
-                    const newLeft = startLeft + e.clientX - startX;
-                    clip.style.left = Math.max(0, newLeft) + 'px';
-                }
-                
-                function stopDrag() {
-                    document.removeEventListener('mousemove', moveClip);
-                    document.removeEventListener('mouseup', stopDrag);
-                }
-                
-                document.addEventListener('mousemove', moveClip);
-                document.addEventListener('mouseup', stopDrag);
-            });
-        });
-        
-        // Simulação de upload
-        document.querySelector('.btn-primary[style*="width: 100%"]').addEventListener('click', function() {
-            alert('Selecione os arquivos para upload');
+        // Simula o download do vídeo
+        downloadBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            this.innerHTML = '<i class="fas fa-download"></i> Baixando... <div class="loading"></div>';
+            
+            setTimeout(() => {
+                this.innerHTML = '<i class="fas fa-check"></i> Download completo!';
+                setTimeout(() => {
+                    this.innerHTML = '<i class="fas fa-download"></i> Baixar Vídeo';
+                }, 2000);
+            }, 3000);
         });
     </script>
 </body>
