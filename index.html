@@ -66,3 +66,76 @@ if __name__ == "__main__":
     roteiro = gerar_roteiro(pedido)
     audio_path = gerar_audio(roteiro)
     criar_video_com_audio(audio_path, roteiro)
+import streamlit as st
+import os
+import openai
+from moviepy.editor import *
+from transformers import pipeline
+
+# Configurações
+openai.api_key = "SUA_CHAVE_OPENAI_AQUI"  # Substitua pela sua chave
+
+# Pastas
+os.makedirs("audio", exist_ok=True)
+os.makedirs("video", exist_ok=True)
+
+# Função: Geração de roteiro
+def gerar_roteiro(prompt):
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": "Você é um criador de roteiros de vídeos."},
+            {"role": "user", "content": prompt}
+        ]
+    )
+    return response.choices[0].message.content.strip()
+
+# Função: Geração de voz
+def gerar_audio(roteiro, nome_arquivo="audio/voz.mp3"):
+    synthesizer = pipeline("text-to-speech", model="facebook/fastspeech2-en-ljspeech")
+    audio = synthesizer(roteiro)
+    with open(nome_arquivo, "wb") as f:
+        f.write(audio["audio"])
+    return nome_arquivo
+
+# Função: Criação do vídeo
+def criar_video_com_audio(audio_path, roteiro, output="video/final.mp4"):
+    fundo = ColorClip(size=(1280, 720), color=(0, 0, 0), duration=20)
+    txt_clip = TextClip(roteiro[:300], fontsize=40, color='white', size=(1200, None), method="caption")
+    txt_clip = txt_clip.set_position("center").set_duration(20)
+    audio = AudioFileClip(audio_path)
+    fundo = fundo.set_audio(audio).set_duration(audio.duration)
+    video_final = CompositeVideoClip([fundo, txt_clip])
+    video_final.write_videofile(output, fps=24, codec='libx264')
+    return output
+
+# ========== INTERFACE ==========
+st.set_page_config(page_title="Gerador de Vídeos com IA", layout="centered")
+
+st.title("📹 IA Criadora de Vídeos")
+st.markdown("Digite seu pedido abaixo. A IA irá gerar roteiro, narração e vídeo automaticamente.")
+
+prompt = st.text_area("Pedido do cliente", height=150, placeholder="Ex: Me faça um vídeo explicando buracos negros de forma simples.")
+
+if st.button("Gerar Vídeo"):
+    if prompt.strip() == "":
+        st.warning("Digite um pedido primeiro.")
+    else:
+        with st.spinner("🧠 Gerando roteiro..."):
+            roteiro = gerar_roteiro(prompt)
+        st.success("✅ Roteiro gerado!")
+        st.text_area("📜 Roteiro:", value=roteiro, height=200)
+
+        with st.spinner("🔊 Criando narração..."):
+            audio_path = gerar_audio(roteiro)
+
+        st.audio(audio_path)
+
+        with st.spinner("🎬 Montando vídeo final..."):
+            video_path = criar_video_com_audio(audio_path, roteiro)
+
+        st.video(video_path)
+        st.success("✅ Vídeo completo!")
+
+        with open(video_path, "rb") as file:
+            st.download_button("📥 Baixar Vídeo", data=file, file_name="video_final.mp4", mime="video/mp4")
